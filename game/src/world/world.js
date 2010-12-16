@@ -160,3 +160,20 @@ World.prototype.getWidth = function() {
 World.prototype.getHeight = function() {
     return this.height;
 }
+
+/*
+World.prototype.setPlayerStart = function(cellX, cellY) {
+    this.playerStart = new Vector(cellX + 0.5, cellY + 0.5);
+}
+
+World.prototype.setPlayerGoal = function(cellX, cellY) {
+    this.playerGoal = new Vector(cellX + 0.5, cellY + 0.5);
+}
+
+World.prototype.getPlayerStart = function() {
+    return this.playerStart;
+}
+
+World.prototype.getPlayerGoal = function() {
+    return this.playerGoal;
+} */
