@@ -15,13 +15,22 @@ var keyMapPlayerB = {
 	68: 'rightKey'   // d key
 };
 var keyMapGame = {
-    27: 'menuKey',      // esc key
-    32: 'nextLevelKey', // spacebar
     75: 'killKey'       // k key
 };
 var gameScale = 50;
+
+// enum GameStatus
+var GAME_IN_PLAY = 0;
+var GAME_WON = 1;
+var GAME_LOST = 2;
+
+// text constants
 var GAME_WIN_TEXT = "You won!  Hit SPACE to play the next level or ESC for the level selection menu.";
+var GOLDEN_COG_TEXT = "You earned a golden cog!";
+var SILVER_COG_TEXT = "You earned a silver cog!";
 var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new level.";
+var TEXT_BOX_X_MARGIN = 12;
+var TEXT_BOX_Y_MARGIN = 28;
 
 Game.extends(Screen);
 
@@ -29,32 +38,34 @@ Game.extends(Screen);
 function Game() {
 	this.camera = new Camera();
 	this.fps = 0;
+    this.gameStatus = GAME_IN_PLAY;
 
 	gameState = new GameState();
 
-    // The following enemies haven't been drawn yet, or the drawing should be changed
-    gameState.addEnemy(new MultiGun(gameState.spawnPoint.add(new Vector(0.2, 9))));
-    gameState.addEnemy(new HelpSign(gameState.spawnPoint.add(new Vector(14, 0)), "I am a sign with a short message!"));
-    gameState.addEnemy(new HelpSign(gameState.spawnPoint.add(new Vector(10, 0)), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
-    gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(14, 0))));
-    gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(0, 12))));
-    gameState.addEnemy(new Headache(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
-    gameState.addEnemy(new DoomMagnet(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
-    gameState.addEnemy(new BouncyRocketLauncher(gameState.spawnPoint.add(new Vector(10, 9)), gameState.playerA));
-    gameState.addEnemy(new RiotGun(gameState.spawnPoint.add(new Vector(5, 2)), Math.PI * 0.55));
+    // TODO: Headache graphics
+    //gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
+    // Riot bullets maybe should be changed?
+    //gameState.addEnemy(new RiotGun(new Vector(5.5, 2.5), Math.PI * 0.55));
 
     // The following enemies are done!
-    //gameState.addEnemy(new ShockHawk(gameState.spawnPoint.add(new Vector(4.8, 10)), gameState.playerB));
-    //gameState.addEnemy(new SpikeBall(gameState.spawnPoint.add(new Vector(4.8, 8))));
-    //gameState.addEnemy(new RocketSpider(gameState.spawnPoint.add(new Vector(4, 3)), 0));
-    //gameState.addEnemy(new Hunter(gameState.spawnPoint.add(new Vector(9, 0.2)), gameState.playerB));
-    //gameState.addEnemy(new Bomber(gameState.spawnPoint.add(new Vector(4, 2.5)), 0));
-    //gameState.addEnemy(new Wheeligator(gameState.spawnPoint.add(new Vector(3, 4.1)), 0));
-    //gameState.addEnemy(new WallCrawler(gameState.spawnPoint.add(new Vector(0, 3)), 0));
-    //gameState.addEnemy(new WallAvoider(gameState.spawnPoint.add(new Vector(1, 5)), gameState.playerA));
-    //gameState.addEnemy(new Popper(gameState.spawnPoint.add(new Vector(5, .1))));
-    //gameState.addEnemy(new CorrosionCloud(gameState.spawnPoint.add(new Vector(4, 4)), gameState.playerB));
-    //gameState.addEnemy(new Grenadier(gameState.spawnPoint.add(new Vector(5, 5)), gameState.playerA));
+    gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
+    gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
+    gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
+    gameState.addEnemy(new BouncyRocketLauncher(new Vector(8.5, 0.5), gameState.playerA));
+    gameState.addEnemy(new GoldenCog(new Vector(14.5, 0.5)));
+    gameState.addEnemy(new GoldenCog(new Vector(0.5, 12.5)));
+    //gameState.addEnemy(new MultiGun(new Vector(0.7, 5.5)));
+    //gameState.addEnemy(new ShockHawk(new Vector(5.3, 10.5), gameState.playerB));
+    //gameState.addEnemy(new SpikeBall(new Vector(5.3, 8.5)));
+    //gameState.addEnemy(new RocketSpider(new Vector(4.5, 3.5), 0));
+    //gameState.addEnemy(new Hunter(new Vector(9.5, 0.7), gameState.playerB));
+    //gameState.addEnemy(new Bomber(new Vector(4.5, 3.0), 0));
+    //gameState.addEnemy(new Wheeligator(new Vector(3.5, 4.6), 0));
+    //gameState.addEnemy(new WallCrawler(new Vector(0.5, 3.5), 0));
+    //gameState.addEnemy(new WallAvoider(new Vector(1.5, 5.5), gameState.playerA));
+    //gameState.addEnemy(new Popper(new Vector(5.5, 0.6)));
+    //gameState.addEnemy(new CorrosionCloud(new Vector(4.5, 4.5), gameState.playerB));
+    //gameState.addEnemy(new Grenadier(new Vector(5.5, 5.5), gameState.playerA));
 }
 
 Game.prototype.resize = function(w, h) {
@@ -64,6 +75,11 @@ Game.prototype.resize = function(w, h) {
 };
 
 Game.prototype.tick = function(seconds) {
+    if (this.gameStatus === GAME_WON || gameState.gameWon()) {
+        this.gameStatus = GAME_WON;
+    } else if (this.gameStatus === GAME_LOST || gameState.gameLost()) {
+        this.gameStatus = GAME_LOST;
+    }
 	gameState.tick(seconds);
 	Particle.tick(seconds);
 
@@ -81,6 +97,23 @@ Game.prototype.render = function(c, center) {
 	c.restore();
 };
 
+function drawTextBox(c, text, xCenter, yCenter) {
+    // Get the font size
+    c.font = '14px Arial, sans-serif';
+    var textWidth = c.measureText(text).width;
+
+    // Draw the box
+	c.strokeStyle = '#7F7F7F';
+	c.fillStyle = '#BFBFBF';
+    c.fillRect(xCenter - (textWidth + TEXT_BOX_X_MARGIN) / 2, yCenter - (TEXT_BOX_Y_MARGIN - 10), textWidth + TEXT_BOX_X_MARGIN, TEXT_BOX_Y_MARGIN);
+    c.strokeRect(xCenter - (textWidth + TEXT_BOX_X_MARGIN) / 2, yCenter - (TEXT_BOX_Y_MARGIN - 10), textWidth + TEXT_BOX_X_MARGIN, TEXT_BOX_Y_MARGIN);
+
+    // Draw the text
+	c.fillStyle = 'black';
+    c.textAlign = 'center';
+    c.fillText(text, xCenter, yCenter);
+}
+
 Game.prototype.draw = function(c) {
 	// clear the background
 	c.fillStyle = '#BFBFBF';
@@ -94,20 +127,17 @@ Game.prototype.draw = function(c) {
 	this.camera.draw(c, this);
 	c.restore();
 
-    if (gameState.gameStatus === GAME_WON) {
+    if (this.gameStatus === GAME_WON) {
         // draw winning text
-        c.font = '14px Arial, sans-serif';
-        c.fillStyle = 'rgb(5, 175, 5)';
-        c.textAlign = 'center';
-        c.fillText(GAME_WIN_TEXT, this.width / 2, this.height / 2);
-    } else if (gameState.gameStatus === GAME_LOST) {
+        c.save();
+        drawTextBox(c, GAME_WIN_TEXT, this.width / 2, this.height / 2);
+        c.restore();
+    } else if (this.gameStatus === GAME_LOST) {
         // draw losing text
-        c.font = '14px Arial, sans-serif';
-        c.fillStyle = 'red';
-        c.textAlign = 'center';
-        c.fillText(GAME_LOSS_TEXT, this.width / 2, this.height / 2);
+        c.save();
+        drawTextBox(c, GAME_LOSS_TEXT, this.width / 2, this.height / 2);
+        c.restore();
     }
-
 
 	// draw the fps counter
 	c.font = '10px Arial, sans-serif';

@@ -15,6 +15,7 @@ function HelpSign(center, text, width) {
     this.textArray = null;
     this.text = text;
     this.drawText = false;
+    this.timeSinceStart = 0;
     if (width === undefined) {
         this.textWidth = HELP_SIGN_TEXT_WIDTH;
     } else {
@@ -53,6 +54,7 @@ HelpSign.prototype.getShape = function() { return this.hitBox; }
 HelpSign.prototype.canCollide = function() { return false; }
 
 HelpSign.prototype.tick = function(seconds) {
+    this.timeSinceStart += seconds;
     this.drawText = false;
     Enemy.prototype.tick.call(this, seconds);
 }
@@ -62,17 +64,45 @@ HelpSign.prototype.reactToPlayer = function(player) {
 }
 
 HelpSign.prototype.draw = function(c) {
+    // split up the text into an array the first call
     if (this.textArray === null) {
         this.textArray = this.splitUpText(c, this.text);
     }
-    this.hitBox.draw(c);
+    var pos = this.getCenter();
+
+    c.save();
+    c.textAlign = "center";
+    c.scale(1 / gameScale, -1 / gameScale);
+
+    c.save();
+    // draw the sprite
+    c.font = "34px sans serif";
+    c.lineWidth = 5;
+    c.fillStyle = "yellow";
+    c.translate(pos.x * gameScale, pos.y * gameScale - 36);
+    var timeFloor = Math.floor(this.timeSinceStart);
+    /* 2 second period version
+    var scale = this.timeSinceStart;
+    if (timeFloor % 2 === 0) {
+        scale -= timeFloor;
+    } else {
+        scale -= 1 + timeFloor;
+    }
+    scale = Math.cos(scale * Math.PI) / 9 + 1; */
+
+    var scale = this.timeSinceStart - timeFloor;
+    scale = Math.cos(scale * 2 * Math.PI) / 16 + 1;
+
+    // convert from 0-2 to 1 - 1/16 to 1 + 1/16
+    c.scale(scale, scale);
+    c.fillText("?", 0, 0);
+    c.restore();
+
+    // draw the text
     if (this.drawText) {
-        c.save();
-        c.scale(1 / gameScale, -1 / gameScale);
         c.font = "12px sans serif";
         c.fillStyle = "black";
         c.lineWidth = 2;
-        c.textAlign = "center";
         var textCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
         var textTop = -this.hitBox.getTop() * gameScale - 12 * this.textArray.length;
         // Draw each phrase, starting from the top down
@@ -81,7 +111,8 @@ HelpSign.prototype.draw = function(c) {
             c.fillText(text, textCenter, textTop);
             textTop += 12;
         }
-        c.restore();
     }
+
+    c.restore();
 }
 

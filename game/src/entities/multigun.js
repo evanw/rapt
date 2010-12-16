@@ -71,6 +71,32 @@ MultiGun.prototype.afterTick = function(seconds) {
 };
 
 MultiGun.prototype.draw = function(c) {
+    // Draw the red and/or blue circles
+    if (this.redGun.eq(this.blueGun) && !gameState.playerA.isDead() && !gameState.playerB.isDead()) {
+        var angle = (this.redGun.sub(this.getCenter())).atan2();
+        c.fillStyle = "rgb(205, 0, 0)";
+        c.beginPath();
+		c.arc(this.redGun.x, this.redGun.y, 0.1, angle, angle + Math.PI);
+        c.fill();
+        c.fillStyle = "rgb(0, 0, 255)";
+        c.beginPath();
+		c.arc(this.blueGun.x, this.blueGun.y, 0.1, angle + Math.PI, angle + 2 * Math.PI);
+        c.fill();
+    } else {
+        if (!gameState.playerA.isDead()) {
+            c.fillStyle = "rgb(205, 0, 0)";
+            c.beginPath();
+            c.arc(this.redGun.x, this.redGun.y, 0.1, 0, 2 * Math.PI);
+            c.fill();
+        }
+        if(!gameState.playerB.isDead()) {
+            c.fillStyle = "rgb(0, 0, 255)";
+            c.beginPath();
+            c.arc(this.blueGun.x, this.blueGun.y, 0.1, 0, 2 * Math.PI);
+            c.fill();
+        }
+    }
+
     // Draw the body
     c.strokeStyle = "black";
     c.beginPath();
@@ -110,29 +136,4 @@ MultiGun.prototype.draw = function(c) {
     c.arc(this.gunPositions[3].x, this.gunPositions[3].y, 0.1, 0, 2 * Math.PI);
     c.stroke();
 
-    // Draw the red and/or blue circles
-    if (this.redGun.eq(this.blueGun) && !gameState.playerA.isDead() && !gameState.playerB.isDead()) {
-        var angle = (this.redGun.sub(this.getCenter())).atan2();
-        c.fillStyle = "rgb(205, 0, 0)";
-        c.beginPath();
-		c.arc(this.redGun.x, this.redGun.y, 0.1, angle, angle + Math.PI);
-        c.fill();
-        c.fillStyle = "rgb(0, 0, 255)";
-        c.beginPath();
-		c.arc(this.blueGun.x, this.blueGun.y, 0.1, angle + Math.PI, angle + 2 * Math.PI);
-        c.fill();
-    } else {
-        if (!gameState.playerA.isDead()) {
-            c.fillStyle = "rgb(205, 0, 0)";
-            c.beginPath();
-            c.arc(this.redGun.x, this.redGun.y, 0.1, 0, 2 * Math.PI);
-            c.fill();
-        }
-        if(!gameState.playerB.isDead()) {
-            c.fillStyle = "rgb(0, 0, 255)";
-            c.beginPath();
-            c.arc(this.blueGun.x, this.blueGun.y, 0.1, 0, 2 * Math.PI);
-            c.fill();
-        }
-    }
 };

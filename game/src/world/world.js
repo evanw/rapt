@@ -6,6 +6,8 @@ function World(w, h) {
 	this.width = w;
 	this.height = h;
 	this.safety = null;
+	this.spawnPoint = new Vector(0.5, 0.5);
+	this.goal = new Vector(2.5, 0.5);
 
 	for(var x = 0; x < w; x++) {
 		this.cells[x] = new Array(h);
@@ -161,19 +163,19 @@ World.prototype.getHeight = function() {
     return this.height;
 }
 
-/*
-World.prototype.setPlayerStart = function(cellX, cellY) {
-    this.playerStart = new Vector(cellX + 0.5, cellY + 0.5);
+
+World.prototype.setSpawnPoint = function(cellX, cellY) {
+    this.spawnPoint = new Vector(cellX + 0.5, cellY + 0.5);
 }
 
-World.prototype.setPlayerGoal = function(cellX, cellY) {
-    this.playerGoal = new Vector(cellX + 0.5, cellY + 0.5);
+World.prototype.setGoal = function(cellX, cellY) {
+    this.goal = new Vector(cellX + 0.5, cellY + 0.5);
 }
 
-World.prototype.getPlayerStart = function() {
-    return this.playerStart;
+World.prototype.getSpawnPoint = function() {
+    return this.spawnPoint;
 }
 
-World.prototype.getPlayerGoal = function() {
-    return this.playerGoal;
-} */
+World.prototype.getGoal = function() {
+    return this.goal;
+}

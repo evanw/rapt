@@ -40,8 +40,5 @@ GoldenCog.prototype.afterTick = function(seconds) {
 
 GoldenCog.prototype.draw = function(c) {
     var position = this.getCenter();
-    c.fillStyle = "rgb(250, 210, 60)";
-    c.beginPath();
-    c.arc(position.x, position.y, GOLDEN_COG_RADIUS, 0, Math.PI * 2, false);
-    c.fill();
+    drawGoldenCog(c, position.x, position.y, this.timeSinceStart);
 };
