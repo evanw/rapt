@@ -14,3 +14,7 @@ Document.prototype.setCell = function(x, y, type) {
 Document.prototype.addPlaceable = function(placeable) {
 	this.undoStack.push(new AddPlaceableCommand(this.world, placeable));
 };
+
+Document.prototype.removePlaceable = function(placeable) {
+	this.undoStack.push(new RemovePlaceableCommand(this.world, placeable));
+};

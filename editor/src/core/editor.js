@@ -223,3 +223,13 @@ Editor.prototype.redo = function() {
 
 Editor.prototype.save = function() {
 };
+
+Editor.prototype.deleteSeleciton = function() {
+	this.doc.undoStack.beginMacro();
+	for (var i = 0; i < this.selection.length; i++) {
+		this.doc.removePlaceable(this.selection[i]);
+	}
+	this.doc.undoStack.endMacro();
+	this.selection = [];
+	this.draw();
+};

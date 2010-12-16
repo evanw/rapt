@@ -34,3 +34,20 @@ AddPlaceableCommand.prototype.undo = function() {
 AddPlaceableCommand.prototype.redo = function() {
 	this.world.addPlaceable(this.placeable);
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class RemovePlaceableCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function RemovePlaceableCommand(world, placeable) {
+	this.world = world;
+	this.placeable = placeable;
+}
+
+RemovePlaceableCommand.prototype.undo = function() {
+	this.world.addPlaceable(this.placeable);
+};
+
+RemovePlaceableCommand.prototype.redo = function() {
+	this.world.removePlaceable(this.placeable);
+};

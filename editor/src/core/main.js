@@ -26,12 +26,14 @@ function fillHelp() {
 	var alt = mac ? '&#x2325;' : 'Alt+';
 	var shift = mac ? '&#x21E7;' : 'Shift+';
 	var meta = mac ? '&#x2318;' : 'Win+';
+	var backspace = mac ? '&#x232B;' : 'Backspace';
 	
 	// Keyboard shortcuts
 	var keys = [
 		'Save', (mac ? meta : ctrl) + 'S',
 		'Undo', (mac ? meta : ctrl) + 'Z',
 		'Redo', mac ? shift + meta + 'Z' : ctrl + 'Y',
+		'Delete selection', backspace,
 		'---', '---',
 		'Pan camera', 'Right-drag',
 		'Zoom camera', 'Scrollwheel'
@@ -113,9 +115,12 @@ $(document).keydown(function(e) {
 		} else if (e.which == 'Y'.charCodeAt(0)) {
 			editor.redo();
 			e.preventDefault();
-		} else if(e.which == 'S'.charCodeAt(0)) {
+		} else if (e.which == 'S'.charCodeAt(0)) {
 			editor.save();
 			e.preventDefault();
 		}
+	} else if (e.which == 8 /*BACKSPACE*/) {
+		editor.deleteSeleciton();
+		e.preventDefault();
 	}
 });

@@ -112,7 +112,7 @@ PlaceDoorTool.prototype.mouseUp = function(point) {
 
 PlaceDoorTool.prototype.draw = function(c) {
 	if (this.edge != null) {
-		c.strokeStyle = 'black';
+		c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
 		this.edge.draw(c);
 		
 		if (!this.isOneWay) {
@@ -132,22 +132,28 @@ function SelectionTool(editor) {
 	this.start = this.end = null;
 }
 
+SelectionTool.prototype.getSelection = function(start, end) {
+	var selectionRect = new Rectangle(start, end);
+	var placeables = this.editor.doc.world.placeables;
+	var selection = [];
+	for (var i = 0; i < placeables.length; i++) {
+		var p = placeables[i];
+		if (p.touchesSelection(selectionRect)) {
+			selection.push(p);
+		}
+	}
+	return selection;
+};
+
 SelectionTool.prototype.mouseDown = function(point) {
 	this.start = this.end = point;
+	this.mouseMoved(point);
 };
 
 SelectionTool.prototype.mouseMoved = function(point) {
 	this.end = point;
 	if (this.start != null) {
-		var selectionRect = new Rectangle(this.start, this.end);
-		var placeables = this.editor.doc.world.placeables;
-		this.editor.selection = [];
-		for (var i = 0; i < placeables.length; i++) {
-			var p = placeables[i];
-			if (p.touchesSelection(selectionRect)) {
-				this.editor.selection.push(p);
-			}
-		}
+		this.editor.selection = this.getSelection(this.start, this.end);
 	}
 };
 
