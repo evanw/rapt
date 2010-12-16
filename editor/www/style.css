@@ -1,6 +1,6 @@
 body {
 	color: black;
-	background: white;
+	background: #7F7F7F;
 	overflow: hidden; /* canvas overflows in firefox */
 	font: 12px 'Lucida Grande', Helvetica, Arial, sans-serif;
 }
@@ -72,8 +72,8 @@ body {
 	border-color: #1F1F1F;
 	background: #7F7F7F;
 	text-shadow: 0 1px 0 black;
-	-moz-box-shadow: inset 0 2px 4px #1F1F1F;
-	-webkit-box-shadow: inset 0 2px 4px #1F1F1F;
+	-moz-box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
+	-webkit-box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
 }
 
 #canvas {
