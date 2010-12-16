@@ -26,7 +26,7 @@ Vector.prototype.maxComponents = function(v) { return new Vector(Math.max(this.x
 Vector.prototype.projectOntoAUnitVector = function(v) { return v.mul(this.dot(v)); };
 Vector.prototype.toString = function() { return '(' + this.x.toFixed(3) + ', ' + this.y.toFixed(3) + ')'; };
 Vector.prototype.adjustTowardsTarget = function(target, maxDistance) {
-    var v = ((target.sub(this)).length() < maxDistance) ? target : this.add(target.sub(this)).unit().mul(maxDistance);
+    var v = ((target.sub(this)).lengthSquared() < maxDistance * maxDistance) ? target : this.add((target.sub(this)).unit().mul(maxDistance));
     this.x = v.x;
     this.y = v.y;
 };

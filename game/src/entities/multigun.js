@@ -16,12 +16,13 @@ function MultiGun(center) {
     this.gunFired = new Array(4);
     this.gunPositions = new Array(4);
     
-    this.redGun = this.getCenter();
-    this.blueGun = this.getCenter();
+    var pos = this.getCenter();
+    this.redGun = new Vector(pos.x, pos.y);
+    this.blueGun = new Vector(pos.x, pos.y);
     this.gunPositions[0] = this.hitBox.lowerLeft;
     this.gunPositions[1] = new Vector(this.hitBox.getRight(), this.hitBox.getBottom());
     this.gunPositions[2] = new Vector(this.hitBox.getLeft(), this.hitBox.getTop());
-    this.gunPositions[3] = this.hitBox.lowerLeft.add(new Vector(this.hitBox.size, this.hitBox.size));
+    this.gunPositions[3] = this.hitBox.lowerLeft.add(new Vector(this.hitBox.getWidth(), this.hitBox.getHeight()));
 }
 
 MultiGun.prototype.canCollide = function() {
@@ -47,7 +48,6 @@ MultiGun.prototype.spawn = function() {
         // Player must be alive and in range to be shot
         if (!target.isDead() && relPosition.lengthSquared() < (MULTI_GUN_RANGE * MULTI_GUN_RANGE) &&
             !CollisionDetector.lineOfSightWorld(this.gunPositions[index], target.getCenter(), gameState.world)) {
-            console.log('spawning1');
             if (!this.gunFired[index]) {
                 gameState.addEnemy(new Laser(this.gunPositions[index], relPosition.atan2()), this.gunPositions[index]);
                 this.gunFired[index] = true;
@@ -71,7 +71,68 @@ MultiGun.prototype.afterTick = function(seconds) {
 };
 
 MultiGun.prototype.draw = function(c) {
-    var position = this.getCenter();
-    c.strokeStyle = "rgb(10, 20, 40)";
-    c.strokeRect(position.x - MULTI_GUN_WIDTH, position.y - MULTI_GUN_HEIGHT, MULTI_GUN_WIDTH, MULTI_GUN_HEIGHT);
+    // Draw the body
+    c.strokeStyle = "black";
+    c.beginPath();
+    // Bottom horizontal
+    c.moveTo(this.gunPositions[0].x, this.gunPositions[0].y + 0.1);
+    c.lineTo(this.gunPositions[1].x, this.gunPositions[1].y + 0.1);
+    c.moveTo(this.gunPositions[0].x, this.gunPositions[0].y - 0.1);
+    c.lineTo(this.gunPositions[1].x, this.gunPositions[1].y - 0.1);
+    // Top horizontal
+    c.moveTo(this.gunPositions[2].x, this.gunPositions[2].y - 0.1);
+    c.lineTo(this.gunPositions[3].x, this.gunPositions[3].y - 0.1);
+    c.moveTo(this.gunPositions[2].x, this.gunPositions[2].y + 0.1);
+    c.lineTo(this.gunPositions[3].x, this.gunPositions[3].y + 0.1);
+    // Left vertical
+    c.moveTo(this.gunPositions[0].x + 0.1, this.gunPositions[0].y);
+    c.lineTo(this.gunPositions[2].x + 0.1, this.gunPositions[2].y);
+    c.moveTo(this.gunPositions[0].x - 0.1, this.gunPositions[0].y);
+    c.lineTo(this.gunPositions[2].x - 0.1, this.gunPositions[2].y);
+    // Right vertical
+    c.moveTo(this.gunPositions[1].x - 0.1, this.gunPositions[1].y);
+    c.lineTo(this.gunPositions[3].x - 0.1, this.gunPositions[3].y);
+    c.moveTo(this.gunPositions[1].x + 0.1, this.gunPositions[1].y);
+    c.lineTo(this.gunPositions[3].x + 0.1, this.gunPositions[3].y);
+    c.stroke();
+
+    // Draw the gun holders
+    c.beginPath();
+    c.arc(this.gunPositions[0].x, this.gunPositions[0].y, 0.1, 0, 2 * Math.PI);
+    c.stroke();
+    c.beginPath();
+    c.arc(this.gunPositions[1].x, this.gunPositions[1].y, 0.1, 0, 2 * Math.PI);
+    c.stroke();
+    c.beginPath();
+    c.arc(this.gunPositions[2].x, this.gunPositions[2].y, 0.1, 0, 2 * Math.PI);
+    c.stroke();
+    c.beginPath();
+    c.arc(this.gunPositions[3].x, this.gunPositions[3].y, 0.1, 0, 2 * Math.PI);
+    c.stroke();
+
+    // Draw the red and/or blue circles
+    if (this.redGun.eq(this.blueGun) && !gameState.playerA.isDead() && !gameState.playerB.isDead()) {
+        var angle = (this.redGun.sub(this.getCenter())).atan2();
+        c.fillStyle = "rgb(205, 0, 0)";
+        c.beginPath();
+		c.arc(this.redGun.x, this.redGun.y, 0.1, angle, angle + Math.PI);
+        c.fill();
+        c.fillStyle = "rgb(0, 0, 255)";
+        c.beginPath();
+		c.arc(this.blueGun.x, this.blueGun.y, 0.1, angle + Math.PI, angle + 2 * Math.PI);
+        c.fill();
+    } else {
+        if (!gameState.playerA.isDead()) {
+            c.fillStyle = "rgb(205, 0, 0)";
+            c.beginPath();
+            c.arc(this.redGun.x, this.redGun.y, 0.1, 0, 2 * Math.PI);
+            c.fill();
+        }
+        if(!gameState.playerB.isDead()) {
+            c.fillStyle = "rgb(0, 0, 255)";
+            c.beginPath();
+            c.arc(this.blueGun.x, this.blueGun.y, 0.1, 0, 2 * Math.PI);
+            c.fill();
+        }
+    }
 };

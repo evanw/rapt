@@ -38,6 +38,7 @@ function createPopperSprites() {
 
 	sprites[POPPER_BODY].drawGeometry = function(c) {
 	    c.strokeStyle = 'black';
+	    c.fillStyle = 'black';
 		c.beginPath();
 		c.moveTo(0.2, -0.2);
 		c.lineTo(-0.2, -0.2);

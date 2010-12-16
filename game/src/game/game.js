@@ -25,24 +25,28 @@ function Game() {
 
 	gameState = new GameState();
 
-    // For testing
-    //gameState.addEnemy(new MultiGun(gameState.spawnPoint.add(new Vector(0.2, 9))));
-    gameState.addEnemy(new ShockHawk(gameState.spawnPoint.add(new Vector(4.8, 10)), gameState.playerB));
-    gameState.addEnemy(new SpikeBall(gameState.spawnPoint.add(new Vector(4.8, 8))));
+    // The following enemies haven't been drawn yet, or the drawing should be changed
+    gameState.addEnemy(new MultiGun(gameState.spawnPoint.add(new Vector(0.2, 9))));
+    gameState.addEnemy(new HelpSign(gameState.spawnPoint.add(new Vector(14, 0)), "I am a sign with a short message!"));
+    gameState.addEnemy(new HelpSign(gameState.spawnPoint.add(new Vector(10, 0)), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
+    gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(14, 0))));
+    gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(0, 12))));
+    gameState.addEnemy(new Headache(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
+    gameState.addEnemy(new DoomMagnet(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
+    gameState.addEnemy(new BouncyRocketLauncher(gameState.spawnPoint.add(new Vector(10, 9)), gameState.playerA));
     gameState.addEnemy(new RiotGun(gameState.spawnPoint.add(new Vector(5, 2)), Math.PI * 0.55));
-    gameState.addEnemy(new RocketSpider(gameState.spawnPoint.add(new Vector(4, 3)), 0));
-    //gameState.addEnemy(new BouncyRocketLauncher(gameState.spawnPoint.add(new Vector(1, 4)), gameState.playerA));
-    //gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(14, 0))));
-    //gameState.addEnemy(new GoldenCog(gameState.spawnPoint.add(new Vector(0, 12))));
+
+    // The following enemies are done!
+    //gameState.addEnemy(new ShockHawk(gameState.spawnPoint.add(new Vector(4.8, 10)), gameState.playerB));
+    //gameState.addEnemy(new SpikeBall(gameState.spawnPoint.add(new Vector(4.8, 8))));
+    //gameState.addEnemy(new RocketSpider(gameState.spawnPoint.add(new Vector(4, 3)), 0));
     //gameState.addEnemy(new Hunter(gameState.spawnPoint.add(new Vector(9, 0.2)), gameState.playerB));
-    //gameState.addEnemy(new DoomMagnet(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
     //gameState.addEnemy(new Bomber(gameState.spawnPoint.add(new Vector(4, 2.5)), 0));
     //gameState.addEnemy(new Wheeligator(gameState.spawnPoint.add(new Vector(3, 4.1)), 0));
     //gameState.addEnemy(new WallCrawler(gameState.spawnPoint.add(new Vector(0, 3)), 0));
     //gameState.addEnemy(new WallAvoider(gameState.spawnPoint.add(new Vector(1, 5)), gameState.playerA));
     //gameState.addEnemy(new Popper(gameState.spawnPoint.add(new Vector(5, .1))));
     //gameState.addEnemy(new CorrosionCloud(gameState.spawnPoint.add(new Vector(4, 4)), gameState.playerB));
-    //gameState.addEnemy(new Headache(gameState.spawnPoint.add(new Vector(0, 6)), gameState.playerA));
     //gameState.addEnemy(new Grenadier(gameState.spawnPoint.add(new Vector(5, 5)), gameState.playerA));
 }
 

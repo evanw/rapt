@@ -37,7 +37,6 @@ Laser.prototype.reactToWorld = function(contact) {
 Laser.prototype.draw = function(c) {
     var heading = this.velocity.unit().mul(LASER_RADIUS);
     var segment = new Segment(this.getCenter().sub(heading), this.getCenter().add(heading));
-    console.log(c.lineWidth);
     c.lineWidth = .07;
     c.strokeStyle = 'white';
     segment.draw(c);
