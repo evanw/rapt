@@ -128,15 +128,24 @@ Editor.prototype.drawGrid = function() {
 };
 
 Editor.prototype.mouseDown = function(point, buttons) {
-	if (buttons === MOUSE_RIGHT) {
+	if (buttons == MOUSE_RIGHT) {
 		// Camera pan on right click
 		this.currentTool = new CameraPanTool(this.worldCenter);
 		this.currentTool.mouseDown(this.viewportToWorld(point));
-	} else if(buttons === MOUSE_LEFT) {
+	} else if(buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
-		this.currentTool = new SetCellTool(this.doc, SETCELL_EMPTY);
-		this.currentTool.mouseDown(this.viewportToWorld(point));
-		this.draw();
+		if (this.mode == MODE_TILES_EMPTY) {
+			this.currentTool = new SetCellTool(this.doc, SETCELL_EMPTY);
+		} else if (this.mode == MODE_TILES_SOLID) {
+			this.currentTool = new SetCellTool(this.doc, SETCELL_SOLID);
+		} else if (this.mode == MODE_TILES_DIAGONAL) {
+			this.currentTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
+		}
+		
+		if (this.currentTool !== null) {
+			this.currentTool.mouseDown(this.viewportToWorld(point));
+			this.draw();
+		}
 	}
 };
 

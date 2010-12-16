@@ -1,0 +1,15 @@
+////////////////////////////////////////////////////////////////////////////////
+// class Document
+////////////////////////////////////////////////////////////////////////////////
+
+function Document() {
+	this.world = new World();
+}
+
+Document.prototype.setCell = function(x, y, type) {
+	this.world.setCell(x, y, type);
+};
+
+Document.prototype.draw = function(c) {
+	this.world.draw(c);
+};

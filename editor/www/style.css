@@ -1,4 +1,5 @@
 body {
+	cursor: default;
 	color: black;
 	background: #7F7F7F;
 	overflow: hidden; /* canvas overflows in firefox */
@@ -37,7 +38,6 @@ body {
 
 #toolbar a {
 	color: black;
-	cursor: pointer;
 	text-decoration: none;
 	border: 1px solid #535353;
 	display: inline-block;
