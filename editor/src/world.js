@@ -173,11 +173,9 @@ World.prototype.setCell = function(x, y, type) {
 		this.sectors = new Array(this.size.x * this.size.y);
 
 		// Fill in the new sectors from the old sectors
-		for (var dy = 0, i = 0; dy < this.size.y; dy++)
-		{
+		for (var dy = 0, i = 0; dy < this.size.y; dy++) {
 			var oldY = (this.offset.y + dy) - oldOffset.y;
-			for (var dx = 0; dx < this.size.x; dx++, i++)
-			{
+			for (var dx = 0; dx < this.size.x; dx++, i++) {
 				var oldX = (this.offset.x + dx) - oldOffset.x;
 				if (oldX >= 0 && oldY >= 0 && oldX < oldSize.x && oldY < oldSize.y) {
 					this.sectors[i] = oldSectors[oldX + oldY * oldSize.x];

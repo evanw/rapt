@@ -19,7 +19,7 @@ Edge.prototype.squaredDistanceToPoint = function(point) {
 };
 
 Edge.prototype.pointBehindEdge = function(point) {
-	return point.sub(this.start).dot(this.end.sub(this.start)) < 0;
+	return point.sub(this.start).dot(this.end.sub(this.start).flip()) < 0;
 };
 
 Edge.prototype.flip = function() {
@@ -35,12 +35,14 @@ Edge.prototype.draw = function(c) {
 	c.moveTo(this.start.x, this.start.y);
 	c.lineTo(this.end.x, this.end.y);
 
-	// Draw the normal
-	var average = this.start.add(this.end).div(2);
-	var normal = this.start.sub(this.end).flip();
-	var tip = average.add(normal.mul(0.1 / normal.length()));
-	c.moveTo(average.x, average.y);
-	c.lineTo(tip.x, tip.y);
+	// Draw the direction indicators
+	var normal = this.end.sub(this.start).flip().unit();
+	for(var i = 1, num = 10; i < num - 1; i++) {
+		var fraction = i / (num - 1);
+		var start = this.start.mul(fraction).add(this.end.mul(1 - fraction));
+		c.moveTo(start.x, start.y);
+		c.lineTo(start.x - normal.x * 0.1, start.y - normal.y * 0.1);
+	}
 
 	c.stroke();
 };

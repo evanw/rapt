@@ -1,5 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // class MacroCommand
+//
+// This is a group of commands that are all undone and redone at once.  For
+// example, most text editors group adjacent character insert commands so that
+// when you undo, the entire run of character insertions is done at once.
 ////////////////////////////////////////////////////////////////////////////////
 
 function MacroCommand() {
@@ -20,6 +24,9 @@ MacroCommand.prototype.redo = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // class UndoStack
+//
+// This class is based off QUndoStack from the Qt framework:
+// http://doc.qt.nokia.com/stable/qundostack.html
 ////////////////////////////////////////////////////////////////////////////////
 
 function UndoStack() {
@@ -31,7 +38,15 @@ function UndoStack() {
 
 UndoStack.prototype._push = function(command) {
 	if (this.macros.length == 0) {
+		// Remove all commands after our position in the undo buffer (these are
+		// ones we have undone, and once we do something else we shouldn't be able
+		// to redo these anymore)
 		this.commands = this.commands.slice(0, this.currentIndex);
+		
+		// If we got to the current position by undoing from a clean state, set
+		// the clean state to invalid because we won't be able to get there again
+		if (this.cleanIndex > this.currentIndex) this.cleanIndex = -1;
+		
 		this.commands.push(command);
 		this.currentIndex++;
 	} else {
@@ -81,7 +96,7 @@ UndoStack.prototype.setClean = function() {
 };
 
 UndoStack.prototype.clear = function() {
-	this.macros.clear();
-	this.commands.clear();
+	this.macros = [];
+	this.commands = [];
 	this.currentIndex = this.cleanIndex = 0;
 };
