@@ -114,7 +114,7 @@ $(document).keydown(function(e) {
 			editor.redo();
 			e.preventDefault();
 		} else if(e.which == 'S'.charCodeAt(0)) {
-			// editor.save();
+			editor.save();
 			e.preventDefault();
 		}
 	}

@@ -12,7 +12,7 @@ CameraPanTool.prototype.mouseDown = function(point) {
 };
 
 CameraPanTool.prototype.mouseMoved = function(point) {
-	// Cannot set this.worldCenter because that wouldn't modify the original object
+	// Cannot set this.worldCenter directly because that wouldn't modify the original object
 	this.worldCenter.x -= point.x - this.oldPoint.x;
 	this.worldCenter.y -= point.y - this.oldPoint.y;
 };
@@ -120,5 +120,34 @@ PlaceDoorTool.prototype.draw = function(c) {
 			this.edge.draw(c);
 			this.edge.flip();
 		}
+	}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class SelectionTool
+////////////////////////////////////////////////////////////////////////////////
+
+function SelectionTool() {
+	this.start = this.end = null;
+}
+
+SelectionTool.prototype.mouseDown = function(point) {
+	this.start = this.end = point;
+};
+
+SelectionTool.prototype.mouseMoved = function(point) {
+	this.end = point;
+};
+
+SelectionTool.prototype.mouseUp = function(point) {
+	this.start = this.end = null;
+};
+
+SelectionTool.prototype.draw = function(c) {
+	if (this.start != null) {
+		c.fillStyle = 'rgba(0, 0, 0, 0.1)';
+		c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+		c.fillRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
+		c.strokeRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
 	}
 };

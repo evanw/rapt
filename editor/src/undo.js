@@ -1,5 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // class MacroCommand
+//
+// This is a group of commands that are all undone and redone at once.  For
+// example, most text editors group adjacent character insert commands so that
+// when you undo, the entire run of character insertions is done at once.
 ////////////////////////////////////////////////////////////////////////////////
 
 function MacroCommand() {
@@ -20,6 +24,9 @@ MacroCommand.prototype.redo = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // class UndoStack
+//
+// This class is based off QUndoStack from the Qt framework:
+// http://doc.qt.nokia.com/stable/qundostack.html
 ////////////////////////////////////////////////////////////////////////////////
 
 function UndoStack() {
@@ -89,7 +96,7 @@ UndoStack.prototype.setClean = function() {
 };
 
 UndoStack.prototype.clear = function() {
-	this.macros.clear();
-	this.commands.clear();
+	this.macros = [];
+	this.commands = [];
 	this.currentIndex = this.cleanIndex = 0;
 };

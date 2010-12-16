@@ -67,6 +67,12 @@ Editor.prototype.setMode = function(mode) {
 	case MODE_WALLS_ONEWAY:
 		this.selectedTool = new PlaceDoorTool(this.doc, true);
 		break;
+	case MODE_OTHER_SELECT:
+		this.selectedTool = new SelectionTool();
+		break;
+	default:
+		this.selectedTool = null;
+		break;
 	}
 };
 
@@ -118,7 +124,7 @@ Editor.prototype.drawGrid = function() {
 	var maxX = Math.ceil(max.x / nextResolution) * nextResolution;
 	var maxY = Math.ceil(max.y / nextResolution) * nextResolution;
 
-	// Draw the lines
+	// Draw the solid
 	var x, y;
 	c.strokeStyle = 'rgba(0, 0, 0, 0.2)';
 	c.beginPath();
@@ -131,7 +137,9 @@ Editor.prototype.drawGrid = function() {
 		c.lineTo(maxX, y);
 	}
 	c.stroke();
-	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.2 * percent * percent) + ')';
+	
+	// Draw the fading lines (need to use toFixed() so the negative exponent doesn't show up for small numbers)
+	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.2 * percent * percent).toFixed(5) + ')';
 	c.beginPath();
 	for (x = minX + currentResolution; x <= maxX; x += 2 * currentResolution) {
 		c.moveTo(x, minY);
@@ -201,4 +209,7 @@ Editor.prototype.undo = function() {
 Editor.prototype.redo = function() {
 	this.doc.undoStack.redo();
 	this.draw();
+};
+
+Editor.prototype.save = function() {
 };
