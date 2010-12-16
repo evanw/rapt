@@ -11,13 +11,16 @@ CameraPanTool.prototype.mouseDown = function(point) {
 	this.oldPoint = point;
 };
 
-CameraPanTool.prototype.mouseDragged = function(point) {
+CameraPanTool.prototype.mouseMoved = function(point) {
 	// Cannot set this.worldCenter because that wouldn't modify the original object
 	this.worldCenter.x -= point.x - this.oldPoint.x;
 	this.worldCenter.y -= point.y - this.oldPoint.y;
 };
 
 CameraPanTool.prototype.mouseUp = function(point) {
+};
+
+CameraPanTool.prototype.draw = function(c) {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,14 +34,16 @@ var SETCELL_DIAGONAL = 2;
 function SetCellTool(doc, mode) {
 	this.doc = doc;
 	this.mode = mode;
+	this.dragging = false;
 }
 
 SetCellTool.prototype.mouseDown = function(point) {
 	this.doc.undoStack.beginMacro();
-	this.mouseDragged(point);
+	this.dragging = true;
+	this.mouseMoved(point);
 };
 
-SetCellTool.prototype.mouseDragged = function(point) {
+SetCellTool.prototype.mouseMoved = function(point) {
 	var cellX = Math.floor(point.x);
 	var cellY = Math.floor(point.y);
 	var cellType;
@@ -53,12 +58,16 @@ SetCellTool.prototype.mouseDragged = function(point) {
 	} else {
 		cellType = (this.mode == SETCELL_EMPTY) ? CELL_EMPTY : CELL_SOLID;
 	}
-
-	this.doc.setCell(cellX, cellY, cellType);
+	
+	if (this.dragging) this.doc.setCell(cellX, cellY, cellType);
 };
 
 SetCellTool.prototype.mouseUp = function(point) {
 	this.doc.undoStack.endMacro();
+	this.dragging = false;
+};
+
+SetCellTool.prototype.draw = function(c) {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,11 +81,12 @@ function PlaceDoorTool(doc, isOneWay) {
 }
 
 PlaceDoorTool.prototype.mouseDown = function(point) {
-	this.mouseDragged(point);
-	this.doc.addPlaceable(new Door(this.isOneWay, this.edge.start, this.edge.end));
+	this.mouseMoved(point);
+	this.doc.addPlaceable(new Door(this.isOneWay, this.edge));
 };
 
-PlaceDoorTool.prototype.mouseDragged = function(point) {
+PlaceDoorTool.prototype.mouseMoved = function(point) {
+	// Generate all the edges in the cell under point
 	var x = Math.floor(point.x);
 	var y = Math.floor(point.y);
 	var p00 = new Vector(x, y);
@@ -92,9 +102,23 @@ PlaceDoorTool.prototype.mouseDragged = function(point) {
 		new Edge(p11, p01)
 	];
 	
+	// Pick the closest edge facing away from point
 	this.edge = EdgePicker.getClosestEdge(point, edges);
-	if (this.edge.pointBehindEdge(point)) this.edge.flip();
+	if (!this.edge.pointBehindEdge(point)) this.edge.flip();
 };
 
 PlaceDoorTool.prototype.mouseUp = function(point) {
+};
+
+PlaceDoorTool.prototype.draw = function(c) {
+	if (this.edge != null) {
+		c.strokeStyle = 'black';
+		this.edge.draw(c);
+		
+		if (!this.isOneWay) {
+			this.edge.flip();
+			this.edge.draw(c);
+			this.edge.flip();
+		}
+	}
 };

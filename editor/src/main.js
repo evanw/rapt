@@ -25,13 +25,13 @@ function fillHelp() {
 	var ctrl = mac ? '^' : 'Ctrl+';
 	var alt = mac ? '&#x2325;' : 'Alt+';
 	var shift = mac ? '&#x21E7;' : 'Shift+';
-	var command = mac ? '&#x2318;' : 'Win+';
+	var meta = mac ? '&#x2318;' : 'Win+';
 	
 	// Keyboard shortcuts
 	var keys = [
-		'Save', (mac ? command : ctrl) + 'S',
-		'Undo', (mac ? command : ctrl) + 'Z',
-		'Redo', mac ? command + shift + 'Z' : ctrl + 'Y',
+		'Save', (mac ? meta : ctrl) + 'S',
+		'Undo', (mac ? meta : ctrl) + 'Z',
+		'Redo', mac ? meta + shift + 'Z' : ctrl + 'Y',
 		'---', '---',
 		'Pan camera', 'Right-drag',
 		'Zoom camera', 'Scrollwheel'
@@ -81,9 +81,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	$(canvas).mousemove(function(e) {
-		if (buttons !== 0) {
-			editor.mouseMoved(mousePoint(e), buttons);
-		}
+		editor.mouseMoved(mousePoint(e), buttons);
 		e.preventDefault();
 	});
 	$(canvas).mouseup(function(e) {

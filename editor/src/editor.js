@@ -41,15 +41,33 @@ var MODE_OTHER_HELP = 18;
 function Editor(canvas) {
 	this.canvas = canvas;
 	this.c = canvas.getContext('2d');
-	this.mode = MODE_TILES_EMPTY;
 	this.worldCenter = new Vector(0, 0);
 	this.worldScale = 50;
-	this.currentTool = null;
+	this.activeTool = null;
 	this.doc = new Document();
+	this.setMode(MODE_TILES_EMPTY);
 }
 
 Editor.prototype.setMode = function(mode) {
 	this.mode = mode;
+	
+	switch (mode) {
+	case MODE_TILES_EMPTY:
+		this.selectedTool = new SetCellTool(this.doc, SETCELL_EMPTY);
+		break;
+	case MODE_TILES_SOLID:
+		this.selectedTool = new SetCellTool(this.doc, SETCELL_SOLID);
+		break;
+	case MODE_TILES_DIAGONAL:
+		this.selectedTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
+		break;
+	case MODE_WALLS_NORMAL:
+		this.selectedTool = new PlaceDoorTool(this.doc, false);
+		break;
+	case MODE_WALLS_ONEWAY:
+		this.selectedTool = new PlaceDoorTool(this.doc, true);
+		break;
+	}
 };
 
 Editor.prototype.resize = function(width, height) {
@@ -77,6 +95,8 @@ Editor.prototype.draw = function() {
 	// Render the view
 	this.doc.world.draw(c);
 	this.drawGrid();
+	if (this.activeTool != null) this.activeTool.draw(c);
+	else if(this.selectedTool != null) this.selectedTool.draw(c);
 	
 	c.restore();
 };
@@ -100,28 +120,24 @@ Editor.prototype.drawGrid = function() {
 
 	// Draw the lines
 	var x, y;
-	c.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+	c.strokeStyle = 'rgba(0, 0, 0, 0.2)';
 	c.beginPath();
-	for (x = minX; x <= maxX; x += 2 * currentResolution)
-	{
+	for (x = minX; x <= maxX; x += 2 * currentResolution) {
 		c.moveTo(x, minY);
 		c.lineTo(x, maxY);
 	}
-	for (y = minY; y <= maxY; y += 2 * currentResolution)
-	{
+	for (y = minY; y <= maxY; y += 2 * currentResolution) {
 		c.moveTo(minX, y);
 		c.lineTo(maxX, y);
 	}
 	c.stroke();
-	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.25 * percent * percent) + ')';
+	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.2 * percent * percent) + ')';
 	c.beginPath();
-	for (x = minX + currentResolution; x <= maxX; x += 2 * currentResolution)
-	{
+	for (x = minX + currentResolution; x <= maxX; x += 2 * currentResolution) {
 		c.moveTo(x, minY);
 		c.lineTo(x, maxY);
 	}
-	for (y = minY + currentResolution; y <= maxY; y += 2 * currentResolution)
-	{
+	for (y = minY + currentResolution; y <= maxY; y += 2 * currentResolution) {
 		c.moveTo(minX, y);
 		c.lineTo(maxX, y);
 	}
@@ -131,44 +147,37 @@ Editor.prototype.drawGrid = function() {
 Editor.prototype.mouseDown = function(point, buttons) {
 	if (buttons == MOUSE_RIGHT) {
 		// Camera pan on right click
-		this.currentTool = new CameraPanTool(this.worldCenter);
-		this.currentTool.mouseDown(this.viewportToWorld(point));
+		this.activeTool = new CameraPanTool(this.worldCenter);
+		this.activeTool.mouseDown(this.viewportToWorld(point));
 	} else if(buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
-		if (this.mode == MODE_TILES_EMPTY) {
-			this.currentTool = new SetCellTool(this.doc, SETCELL_EMPTY);
-		} else if (this.mode == MODE_TILES_SOLID) {
-			this.currentTool = new SetCellTool(this.doc, SETCELL_SOLID);
-		} else if (this.mode == MODE_TILES_DIAGONAL) {
-			this.currentTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
-		} else if (this.mode == MODE_WALLS_NORMAL) {
-			this.currentTool = new PlaceDoorTool(this.doc, false);
-		} else if (this.mode == MODE_WALLS_ONEWAY) {
-			this.currentTool = new PlaceDoorTool(this.doc, true);
-		}
+		this.activeTool = this.selectedTool;
 		
-		if (this.currentTool !== null) {
-			// This may be necessary if we get a mousedown event without a mouseup event
+		if (this.activeTool != null) {
+			// Need to clear macro stack here if we get a mousedown event without a mouseup event
 			this.doc.undoStack.endAllMacros();
-			
-			this.currentTool.mouseDown(this.viewportToWorld(point));
-			this.draw();
+			this.activeTool.mouseDown(this.viewportToWorld(point));
 		}
 	}
+	this.draw();
 };
 
 Editor.prototype.mouseMoved = function(point, buttons) {
-	if (this.currentTool !== null) {
-		this.currentTool.mouseDragged(this.viewportToWorld(point));
-		this.draw();
+	if (this.activeTool != null) {
+		this.activeTool.mouseMoved(this.viewportToWorld(point));
 	}
+	if (this.selectedTool != null) {
+		this.selectedTool.mouseMoved(this.viewportToWorld(point));
+	}
+	this.draw();
 };
 
 Editor.prototype.mouseUp = function(point, buttons) {
-	if (this.currentTool !== null) {
-		this.currentTool.mouseUp(this.viewportToWorld(point));
+	if (this.activeTool != null) {
+		this.activeTool.mouseUp(this.viewportToWorld(point));
 	}
-	this.currentTool = null;
+	this.activeTool = null;
+	this.draw();
 };
 
 Editor.prototype.mouseWheel = function(deltaX, deltaY) {

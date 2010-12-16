@@ -31,7 +31,15 @@ function UndoStack() {
 
 UndoStack.prototype._push = function(command) {
 	if (this.macros.length == 0) {
+		// Remove all commands after our position in the undo buffer (these are
+		// ones we have undone, and once we do something else we shouldn't be able
+		// to redo these anymore)
 		this.commands = this.commands.slice(0, this.currentIndex);
+		
+		// If we got to the current position by undoing from a clean state, set
+		// the clean state to invalid because we won't be able to get there again
+		if (this.cleanIndex > this.currentIndex) this.cleanIndex = -1;
+		
 		this.commands.push(command);
 		this.currentIndex++;
 	} else {

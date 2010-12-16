@@ -2,16 +2,17 @@
 // class Door
 ////////////////////////////////////////////////////////////////////////////////
 
-function Door(isOneWay, start, end) {
+function Door(isOneWay, edge) {
 	this.isOneWay = isOneWay;
-	this.start = start;
-	this.end = end;
+	this.edge = edge;
 }
 
 Door.prototype.draw = function(c) {
 	c.strokeStyle = 'black';
-	c.beginPath();
-	c.moveTo(this.start.x, this.start.y);
-	c.lineTo(this.end.x, this.end.y);
-	c.stroke();
+	this.edge.draw(c);
+	if (!this.isOneWay) {
+		this.edge.flip();
+		this.edge.draw(c);
+		this.edge.flip();
+	}
 };
