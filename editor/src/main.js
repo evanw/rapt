@@ -20,12 +20,14 @@ function mousePoint(e) {
 }
 
 function fillHelp() {
+	// Platform specific modifier keys
 	var mac = (navigator.platform.indexOf('Mac') != -1);
 	var ctrl = mac ? '^' : 'Ctrl+';
 	var alt = mac ? '&#x2325;' : 'Alt+';
 	var shift = mac ? '&#x21E7;' : 'Shift+';
 	var command = mac ? '&#x2318;' : 'Win+';
 	
+	// Keyboard shortcuts
 	var keys = [
 		'Save', (mac ? command : ctrl) + 'S',
 		'Undo', (mac ? command : ctrl) + 'Z',
@@ -35,6 +37,7 @@ function fillHelp() {
 		'Zoom camera', 'Scrollwheel'
 	];
 	
+	// Generate keyboard shortcut html
 	var html = '<table>';
 	for (var i = 0; i < keys.length; i += 2) {
 		html += '<tr><td>' + keys[i].replace('---', '<hr>') + '</td><td>' + keys[i + 1].replace('---', '<hr>') + '</td></tr>';

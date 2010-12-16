@@ -31,7 +31,8 @@ var MODE_ELEMENTS_SIGN = 15;
 
 // Other
 var MODE_OTHER_ENEMIES = 16;
-var MODE_OTHER_HELP = 17;
+var MODE_OTHER_SELECT = 17;
+var MODE_OTHER_HELP = 18;
 
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
@@ -99,7 +100,7 @@ Editor.prototype.drawGrid = function() {
 
 	// Draw the lines
 	var x, y;
-	c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+	c.strokeStyle = 'rgba(0, 0, 0, 0.25)';
 	c.beginPath();
 	for (x = minX; x <= maxX; x += 2 * currentResolution)
 	{
@@ -112,7 +113,7 @@ Editor.prototype.drawGrid = function() {
 		c.lineTo(maxX, y);
 	}
 	c.stroke();
-	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.5 * percent * percent) + ')';
+	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.25 * percent * percent) + ')';
 	c.beginPath();
 	for (x = minX + currentResolution; x <= maxX; x += 2 * currentResolution)
 	{
@@ -140,6 +141,10 @@ Editor.prototype.mouseDown = function(point, buttons) {
 			this.currentTool = new SetCellTool(this.doc, SETCELL_SOLID);
 		} else if (this.mode == MODE_TILES_DIAGONAL) {
 			this.currentTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
+		} else if (this.mode == MODE_WALLS_NORMAL) {
+			this.currentTool = new PlaceDoorTool(this.doc, false);
+		} else if (this.mode == MODE_WALLS_ONEWAY) {
+			this.currentTool = new PlaceDoorTool(this.doc, true);
 		}
 		
 		if (this.currentTool !== null) {

@@ -60,3 +60,41 @@ SetCellTool.prototype.mouseDragged = function(point) {
 SetCellTool.prototype.mouseUp = function(point) {
 	this.doc.undoStack.endMacro();
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class PlaceDoorTool
+////////////////////////////////////////////////////////////////////////////////
+
+function PlaceDoorTool(doc, isOneWay) {
+	this.doc = doc;
+	this.isOneWay = isOneWay;
+	this.edge = null;
+}
+
+PlaceDoorTool.prototype.mouseDown = function(point) {
+	this.mouseDragged(point);
+	this.doc.addPlaceable(new Door(this.isOneWay, this.edge.start, this.edge.end));
+};
+
+PlaceDoorTool.prototype.mouseDragged = function(point) {
+	var x = Math.floor(point.x);
+	var y = Math.floor(point.y);
+	var p00 = new Vector(x, y);
+	var p10 = new Vector(x + 1, y);
+	var p01 = new Vector(x, y + 1);
+	var p11 = new Vector(x + 1, y + 1);
+	var edges = [
+		new Edge(p00, p10),
+		new Edge(p01, p00),
+		new Edge(p00, p11),
+		new Edge(p10, p01),
+		new Edge(p10, p11),
+		new Edge(p11, p01)
+	];
+	
+	this.edge = EdgePicker.getClosestEdge(point, edges);
+	if (this.edge.pointBehindEdge(point)) this.edge.flip();
+};
+
+PlaceDoorTool.prototype.mouseUp = function(point) {
+};

@@ -42,7 +42,7 @@ body {
 	border: 1px solid #535353;
 	display: inline-block;
 	line-height: 20px;
-	padding: 0 10px;
+	padding: 0 9px;
 	background: #EFEFEF;
 	background: -moz-linear-gradient(white, #B7B7B7);
 	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#B7B7B7));

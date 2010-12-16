@@ -117,6 +117,7 @@ function World() {
 	this.offset = new Vector(0, 0); // This is in sectors, not cells
 	this.size = new Vector(0, 0); // This is in sectors, not cells
 	this.sectors = [];
+	this.placeables = [];
 }
 
 World.prototype.draw = function(c) {
@@ -127,13 +128,21 @@ World.prototype.draw = function(c) {
 			this.sectors[i].draw(c);
 		}
 	}
+	for (var p = 0; p < this.placeables.length; p++) {
+		this.placeables[p].draw(c);
+	}
+};
+
+World.prototype.containsSectorPoint = function(sectorX, sectorY) {
+	return sectorX >= this.offset.x && sectorX < this.offset.x + this.size.x &&
+		sectorY >= this.offset.y && sectorY < this.offset.y + this.size.y;
 };
 
 World.prototype.getCell = function(x, y) {
 	var sectorX = Math.floor(x / SECTOR_SIZE);
 	var sectorY = Math.floor(y / SECTOR_SIZE);
 	
-	if (sectorX >= this.offset.x && sectorX < this.offset.x + this.size.x && sectorY >= this.offset.y && sectorY < this.offset.y + this.size.y) {
+	if (this.containsSectorPoint(sectorX, sectorY)) {
 		return this.sectors[(sectorX - this.offset.x) + (sectorY - this.offset.y) * this.size.x].getCell(x, y);
 	} else {
 		return CELL_SOLID;
@@ -150,7 +159,7 @@ World.prototype.setCell = function(x, y, type) {
 		this.sectors.push(new Sector(sectorX, sectorY));
 		this.offset = new Vector(sectorX, sectorY);
 		this.size = new Vector(1, 1);
-	} else if (sectorX < this.offset.x || sectorX >= this.offset.x + this.size.x || sectorY < this.offset.y || sectorY >= this.offset.y + this.size.y) {
+	} else if (!this.containsSectorPoint(sectorX, sectorY)) {
 		// Save the old sectors
 		var oldOffset = this.offset;
 		var oldSize = this.size;
@@ -180,4 +189,16 @@ World.prototype.setCell = function(x, y, type) {
 	}
 
 	this.sectors[(sectorX - this.offset.x) + (sectorY - this.offset.y) * this.size.x].setCell(x, y, type);
+};
+
+World.prototype.addPlaceable = function(placeable) {
+	this.placeables.push(placeable);
+};
+
+World.prototype.removePlaceable = function(placeable) {
+	for (var i = 0; i < this.placeables.length; i++) {
+		if (this.placeables[i] == placeable) {
+			this.placeables.splice(i--, 1);
+		}
+	}
 };

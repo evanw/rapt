@@ -17,3 +17,20 @@ SetCellCommand.prototype.undo = function() {
 SetCellCommand.prototype.redo = function() {
 	this.world.setCell(this.x, this.y, this.type);
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class AddPlaceableCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function AddPlaceableCommand(world, placeable) {
+	this.world = world;
+	this.placeable = placeable;
+}
+
+AddPlaceableCommand.prototype.undo = function() {
+	this.world.removePlaceable(this.placeable);
+};
+
+AddPlaceableCommand.prototype.redo = function() {
+	this.world.addPlaceable(this.placeable);
+};
