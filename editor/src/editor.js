@@ -74,7 +74,7 @@ Editor.prototype.draw = function() {
 	c.lineWidth = 1 / this.worldScale;
 	
 	// Render the view
-	this.doc.draw(c);
+	this.doc.world.draw(c);
 	this.drawGrid();
 	
 	c.restore();
@@ -143,6 +143,9 @@ Editor.prototype.mouseDown = function(point, buttons) {
 		}
 		
 		if (this.currentTool !== null) {
+			// This may be necessary if we get a mousedown event without a mouseup event
+			this.doc.undoStack.endAllMacros();
+			
 			this.currentTool.mouseDown(this.viewportToWorld(point));
 			this.draw();
 		}
@@ -174,4 +177,14 @@ Editor.prototype.viewportToWorld = function(viewportPoint) {
 	var x = (viewportPoint.x - this.canvas.width / 2) / this.worldScale + this.worldCenter.x;
 	var y = (this.canvas.height / 2 - viewportPoint.y) / this.worldScale + this.worldCenter.y;
 	return new Vector(x, y);
+};
+
+Editor.prototype.undo = function() {
+	this.doc.undoStack.undo();
+	this.draw();
+};
+
+Editor.prototype.redo = function() {
+	this.doc.undoStack.redo();
+	this.draw();
 };

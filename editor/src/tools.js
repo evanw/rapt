@@ -34,6 +34,7 @@ function SetCellTool(doc, mode) {
 }
 
 SetCellTool.prototype.mouseDown = function(point) {
+	this.doc.undoStack.beginMacro();
 	this.mouseDragged(point);
 };
 
@@ -57,4 +58,5 @@ SetCellTool.prototype.mouseDragged = function(point) {
 };
 
 SetCellTool.prototype.mouseUp = function(point) {
+	this.doc.undoStack.endMacro();
 };

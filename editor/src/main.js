@@ -57,3 +57,16 @@ $(window).resize(function() {
 $(document).bind('contextmenu', function(e) {
 	e.preventDefault();
 });
+
+$(document).keydown(function(e) {
+	if (e.ctrlKey || e.metaKey) {
+		if (e.which == 'Z'.charCodeAt(0)) {
+			if (e.shiftKey) editor.redo();
+			else editor.undo();
+			e.preventDefault();
+		} else if (e.which == 'Y'.charCodeAt(0)) {
+			editor.redo();
+			e.preventDefault();
+		}
+	}
+});

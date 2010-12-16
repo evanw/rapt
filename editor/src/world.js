@@ -97,6 +97,12 @@ Sector.prototype.isSolid = function() {
 	return true;
 };
 
+Sector.prototype.getCell = function(x, y, type) {
+	x -= this.offset.x * SECTOR_SIZE;
+	y -= this.offset.y * SECTOR_SIZE;
+	return this.cells[x + y * SECTOR_SIZE].type;
+};
+
 Sector.prototype.setCell = function(x, y, type) {
 	x -= this.offset.x * SECTOR_SIZE;
 	y -= this.offset.y * SECTOR_SIZE;
@@ -120,6 +126,17 @@ World.prototype.draw = function(c) {
 		for (var x = 0; x < this.size.x; x++, i++) {
 			this.sectors[i].draw(c);
 		}
+	}
+};
+
+World.prototype.getCell = function(x, y) {
+	var sectorX = Math.floor(x / SECTOR_SIZE);
+	var sectorY = Math.floor(y / SECTOR_SIZE);
+	
+	if (sectorX >= this.offset.x && sectorX < this.offset.x + this.size.x && sectorY >= this.offset.y && sectorY < this.offset.y + this.size.y) {
+		return this.sectors[(sectorX - this.offset.x) + (sectorY - this.offset.y) * this.size.x].getCell(x, y);
+	} else {
+		return CELL_SOLID;
 	}
 };
 

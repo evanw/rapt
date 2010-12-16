@@ -4,12 +4,9 @@
 
 function Document() {
 	this.world = new World();
+	this.undoStack = new UndoStack();
 }
 
 Document.prototype.setCell = function(x, y, type) {
-	this.world.setCell(x, y, type);
-};
-
-Document.prototype.draw = function(c) {
-	this.world.draw(c);
+	this.undoStack.push(new SetCellCommand(this.world, x, y, type));
 };
