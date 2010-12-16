@@ -12,45 +12,48 @@ function mousePoint(e) {
 }
 
 $(document).ready(function() {
+	// Add an action to each toolbar button
 	$('#toolbar .section a').each(function(index) {
 		$(this).click(function(e) {
-			editor.setMode(index);
+			editor.setMode(eval(this.id));
 			$('.current').removeClass('current');
 			$(this).addClass('current');
 		});
 	});
 	
+	// Connect the canvas and the editor
 	var canvas = $('#canvas')[0];
 	editor = new Editor(canvas);
 	resizeEditor();
 	
+	// Connect canvas events to editor events
 	$(canvas).mousedown(function(e) {
-		editor.mouseDown(mousePoint(e));
 		buttons |= (1 << e.which);
+		editor.mouseDown(mousePoint(e), buttons);
 		e.preventDefault();
 	});
-
 	$(canvas).mousemove(function(e) {
 		if (buttons !== 0) {
-			editor.mouseDragged(mousePoint(e));
+			editor.mouseMoved(mousePoint(e), buttons);
 		}
 		e.preventDefault();
 	});
-
 	$(canvas).mouseup(function(e) {
-		editor.mouseUp(mousePoint(e));
 		buttons &= ~(1 << e.which);
+		editor.mouseUp(mousePoint(e), buttons);
 		e.preventDefault();
 	});
-
 	$(canvas).mousewheel(function(e, delta, deltaX, deltaY) {
 		editor.mouseWheel(deltaX, deltaY);
-		if (buttons !== 0) {
-			editor.mouseDragged(mousePoint(e));
-		}
+		editor.mouseMoved(mousePoint(e));
+		e.preventDefault();
 	});
 });
 
 $(window).resize(function() {
 	resizeEditor();
+});
+
+$(document).bind('contextmenu', function(e) {
+	e.preventDefault();
 });
