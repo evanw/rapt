@@ -31,7 +31,7 @@ function fillHelp() {
 	var keys = [
 		'Save', (mac ? meta : ctrl) + 'S',
 		'Undo', (mac ? meta : ctrl) + 'Z',
-		'Redo', mac ? meta + shift + 'Z' : ctrl + 'Y',
+		'Redo', mac ? shift + meta + 'Z' : ctrl + 'Y',
 		'---', '---',
 		'Pan camera', 'Right-drag',
 		'Zoom camera', 'Scrollwheel'

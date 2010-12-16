@@ -44,6 +44,7 @@ function Editor(canvas) {
 	this.worldCenter = new Vector(0, 0);
 	this.worldScale = 50;
 	this.activeTool = null;
+	this.selection = [];
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
 }
@@ -68,7 +69,7 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new PlaceDoorTool(this.doc, true);
 		break;
 	case MODE_OTHER_SELECT:
-		this.selectedTool = new SelectionTool();
+		this.selectedTool = new SelectionTool(this);
 		break;
 	default:
 		this.selectedTool = null;
@@ -101,6 +102,15 @@ Editor.prototype.draw = function() {
 	// Render the view
 	this.doc.world.draw(c);
 	this.drawGrid();
+	
+	// Render the selection
+	c.fillStyle = 'rgba(0, 0, 0, 0.1)';
+	c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+	for (var p = 0; p < this.selection.length; p++) {
+		this.selection[p].drawSelection(c);
+	}
+	
+	// Let the tool draw overlays if needed
 	if (this.activeTool != null) this.activeTool.draw(c);
 	else if(this.selectedTool != null) this.selectedTool.draw(c);
 	

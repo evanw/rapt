@@ -127,7 +127,8 @@ PlaceDoorTool.prototype.draw = function(c) {
 // class SelectionTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function SelectionTool() {
+function SelectionTool(editor) {
+	this.editor = editor;
 	this.start = this.end = null;
 }
 
@@ -137,6 +138,17 @@ SelectionTool.prototype.mouseDown = function(point) {
 
 SelectionTool.prototype.mouseMoved = function(point) {
 	this.end = point;
+	if (this.start != null) {
+		var selectionRect = new Rectangle(this.start, this.end);
+		var placeables = this.editor.doc.world.placeables;
+		this.editor.selection = [];
+		for (var i = 0; i < placeables.length; i++) {
+			var p = placeables[i];
+			if (p.touchesSelection(selectionRect)) {
+				this.editor.selection.push(p);
+			}
+		}
+	}
 };
 
 SelectionTool.prototype.mouseUp = function(point) {
