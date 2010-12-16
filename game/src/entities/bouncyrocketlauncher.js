@@ -9,9 +9,76 @@ var BOUNCY_LAUNCHER_RANGE = 8;
 BouncyRocketLauncher.extends(SpawningEnemy);
 
 function BouncyRocketLauncher(center, target) { 
-     SpawningEnemy.prototype.constructor.call(this, ENEMY_BOUNCY_ROCKET_LAUNCHER, center, BOUNCY_LAUNCHER_WIDTH, BOUNCY_LAUNCHER_HEIGHT, 0, BOUNCY_LAUNCHER_SHOOT_FREQ, 0);
-     this.target = target;
-     this.canFire = true;
+    SpawningEnemy.prototype.constructor.call(this, ENEMY_BOUNCY_ROCKET_LAUNCHER, center, BOUNCY_LAUNCHER_WIDTH, BOUNCY_LAUNCHER_HEIGHT, 0, BOUNCY_LAUNCHER_SHOOT_FREQ, 0);
+    this.target = target;
+    this.canFire = true;
+    this.angle = 0;
+
+    this.bodySprite = new Sprite();
+    if (this.target === gameState.playerA) {
+        this.bodySprite.drawGeometry = function(c) {
+            // End of gun
+            c.strokeStyle = 'black';
+            c.beginPath();
+            c.moveTo(0, -0.1);
+            c.lineTo(-0.3, -0.1);
+            c.lineTo(-0.3, 0.1);
+            c.lineTo(0, 0 + 0.1);
+            c.stroke();
+
+            // Main body
+            c.fillStyle = 'red';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.fill();
+            c.fillStyle = 'blue';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI);
+            c.fill();
+
+            c.strokeStyle = 'black';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.stroke();
+            
+            c.beginPath();
+            c.moveTo(0.1, -0.18);
+            c.lineTo(0.1, 0.18);
+            c.stroke();
+        }
+    } else {
+        this.bodySprite.drawGeometry = function(c) {
+            // End of gun
+            c.strokeStyle = 'black';
+            c.beginPath();
+            c.moveTo(0, -0.1);
+            c.lineTo(-0.3, -0.1);
+            c.lineTo(-0.3, 0.1);
+            c.lineTo(0, 0 + 0.1);
+            c.stroke();
+
+            // Main body
+            c.fillStyle = 'blue';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.fill();
+            c.fillStyle = 'red';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI);
+            c.fill();
+
+            c.strokeStyle = 'black';
+            c.beginPath();
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.stroke();
+
+            c.fillStyle = 'black';
+            c.beginPath();
+            c.moveTo(0.1, -0.18);
+            c.lineTo(0.1, 0.18);
+            c.stroke();
+        }
+    }
 }
 
 BouncyRocketLauncher.prototype.setTarget = function(player) { this.target = player; }
@@ -40,12 +107,12 @@ BouncyRocketLauncher.prototype.spawn = function() {
 
 BouncyRocketLauncher.prototype.afterTick = function(seconds) {
     var position = this.getCenter();
-    //if (!target.isDead()) {
-    //    bodySprite.SetAngle((position - target->GetCenter()).Atan2() * (180 / M_PI));
-    //}
-    //bodySprite.SetOffsetBeforeRotation(position.x, position.y);
+    if (!this.target.isDead()) {
+        this.bodySprite.angle = (position.sub(this.target.getCenter())).atan2();
+    }
+    this.bodySprite.offsetBeforeRotation = position;
 }
 
 BouncyRocketLauncher.prototype.draw = function(c) {
-    this.getShape().draw(c);
+    this.bodySprite.draw(c);
 }

@@ -104,7 +104,7 @@ Enemy.prototype.accelerate = function(accel, seconds) {
 };
 
 Enemy.prototype.avoidSpawnForce = function() {
-    var relSpawnPosition = gameState.spawnPoint.sub(this.getCenter());
+    var relSpawnPosition = gameState.getSpawnPoint().sub(this.getCenter());
     var radius = this.getShape().radius;
     var distance = relSpawnPosition.length() - radius;
 

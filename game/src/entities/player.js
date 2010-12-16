@@ -227,7 +227,7 @@ Player.prototype.collideWithOtherPlayer = function() {
 		if(this.getCenter().sub(otherPlayer.getCenter()).length() < 1 &&
 			this.crouchTimer > 1 && otherPlayer.crouchTimer > 1)
 		{
-			gameState.spawnPoint = otherPlayer.getCenter();
+			gameState.setSpawnPoint(otherPlayer.getCenter());
 		}
 	}
 };
@@ -255,7 +255,7 @@ Player.prototype.tickDeath = function(seconds) {
 	// if we're dead, interpolate back to the spawn point
 	if(this.isDead()) {
 		// smoothly interpolate the position of death to the spawn point (speeding up at the beginning and slowing down at the end)
-		var destination = gameState.spawnPoint;
+		var destination = gameState.getSpawnPoint();
 		var percent = (this.timeSinceDeath - PAUSE_AFTER_DEATH) / RESPAWN_INTERPOLATION_TIME;
 		percent = Math.max(0, Math.min(1, percent));
 		percent = 0.5 - 0.5 * Math.cos(percent * Math.PI);

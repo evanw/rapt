@@ -1,5 +1,8 @@
 #require <game.js>
 
+var ESCAPE_KEY = 27;
+var SPACEBAR = 32;
+
 // module Main
 (function(){
 	var canvas;
@@ -10,7 +13,8 @@
 	function tick() {
 		var currentTime = new Date();
 		var seconds = (currentTime - lastTime) / 1000;
-		if(seconds > 0 && seconds < 1) currentScreen.tick(seconds); // if the computer goes to sleep, act like the game was paused
+        // if the computer goes to sleep, act like the game was paused
+		if (seconds > 0 && seconds < 1) currentScreen.tick(seconds); 
 		currentScreen.draw(context);
 		lastTime = currentTime;
 	}
@@ -33,6 +37,19 @@
 	});
 
 	$(document).keydown(function(e) {
+        if (e.which === SPACEBAR) {
+            if (currentScreen.gameStatus === GAME_LOST) {
+                // if the level is being restarted, change the screen to a new Game
+                changeScreen(new Game());
+            } else if (currentScreen.gameStatus === GAME_WON) {
+                // if the user is going to the next level, load the next level using the level select page
+                changeScreen(new Game());
+            }
+        } else if (e.which === ESCAPE_KEY) {
+            // escape returns the player to the level select page
+            window.location = "http://raptgame.com";
+        }
+
         currentScreen.keyDown(e.which);
         // prevents default behaviors like scrolling up/down (F keys start at 112)
         if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
