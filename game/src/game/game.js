@@ -14,7 +14,14 @@ var keyMapPlayerB = {
 	65: 'leftKey',   // a key
 	68: 'rightKey'   // d key
 };
+var keyMapGame = {
+    27: 'menuKey',      // esc key
+    32: 'nextLevelKey', // spacebar
+    75: 'killKey'       // k key
+};
 var gameScale = 50;
+var GAME_WIN_TEXT = "You won!  Hit SPACE to play the next level or ESC for the level selection menu.";
+var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new level.";
 
 Game.extends(Screen);
 
@@ -87,6 +94,21 @@ Game.prototype.draw = function(c) {
 	this.camera.draw(c, this);
 	c.restore();
 
+    if (gameState.gameStatus === GAME_WON) {
+        // draw winning text
+        c.font = '14px Arial, sans-serif';
+        c.fillStyle = 'rgb(5, 175, 5)';
+        c.textAlign = 'center';
+        c.fillText(GAME_WIN_TEXT, this.width / 2, this.height / 2);
+    } else if (gameState.gameStatus === GAME_LOST) {
+        // draw losing text
+        c.font = '14px Arial, sans-serif';
+        c.fillStyle = 'red';
+        c.textAlign = 'center';
+        c.fillText(GAME_LOSS_TEXT, this.width / 2, this.height / 2);
+    }
+
+
 	// draw the fps counter
 	c.font = '10px Arial, sans-serif';
 	c.fillStyle = 'black';
@@ -95,11 +117,13 @@ Game.prototype.draw = function(c) {
 };
 
 Game.prototype.keyDown = function(key) {
-	if(key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = true;
-	if(key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = true;
+    if (key in keyMapGame) gameState[keyMapGame[key]] = true;
+	if (key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = true;
+	if (key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = true;
 };
 
 Game.prototype.keyUp = function(key) {
-	if(key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = false;
-	if(key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = false;
+    if (key in keyMapGame) gameState[keyMapGame[key]] = true;
+	if (key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = false;
+	if (key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = false;
 };

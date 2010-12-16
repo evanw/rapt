@@ -33,12 +33,13 @@
 	});
 
 	$(document).keydown(function(e) {
-		currentScreen.keyDown(e.which);
-		if(e.modifiers === 0) e.preventDefault();
+        currentScreen.keyDown(e.which);
+        // prevents default behaviors like scrolling up/down (F keys start at 112)
+        if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
 	});
 
 	$(document).keyup(function(e) {
 		currentScreen.keyUp(e.which);
-		if(e.modifiers === 0) e.preventDefault();
+        if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
 	});
 })();
