@@ -10,18 +10,20 @@ body {
 	top: 0;
 	left: 0;
 	right: 0;
-	background: #B7B7B7;
+	background: #A7A7A7;
 	background: -moz-linear-gradient(#C7C7C7, #979797);
 	background: -webkit-gradient(linear, left top, left bottom, from(#C7C7C7), to(#979797));
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	-o-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 	border-bottom: 1px solid #3F3F3F;
-	padding: 0 0 13px 15px;
+	padding: 13px 0 0 15px;
 	z-index: 1;
 }
 
 #toolbar .section {
-	margin: 13px 15px 0 0;
+	margin: 0 15px 13px 0;
 	float: left;
 }
 
@@ -44,6 +46,8 @@ body {
 	background: #EFEFEF;
 	background: -moz-linear-gradient(white, #B7B7B7);
 	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#B7B7B7));
+	box-shadow: 0 1px 0 #BFBFBF;
+	-o-box-shadow: 0 1px 0 #BFBFBF;
 	-moz-box-shadow: 0 1px 0 #BFBFBF;
 	-webkit-box-shadow: 0 1px 0 #BFBFBF;
 	text-shadow: 0 1px 0 #E7E7E7;
@@ -52,6 +56,8 @@ body {
 }
 
 #toolbar a.first {
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 	-moz-border-radius-topleft: 5px;
 	-moz-border-radius-bottomleft: 5px;
 	-webkit-border-top-left-radius: 5px;
@@ -59,6 +65,8 @@ body {
 }
 
 #toolbar a.last {
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 	-moz-border-radius-topright: 5px;
 	-moz-border-radius-bottomright: 5px;
 	-webkit-border-top-right-radius: 5px;
@@ -72,6 +80,8 @@ body {
 	border-color: #1F1F1F;
 	background: #7F7F7F;
 	text-shadow: 0 1px 0 black;
+	box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
+	-o-box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
 	-moz-box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
 	-webkit-box-shadow: inset 0 2px 4px #1F1F1F, 0 1px 0 #BFBFBF;
 }

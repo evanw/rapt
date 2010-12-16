@@ -29,19 +29,25 @@ $(document).ready(function() {
 		buttons |= (1 << e.which);
 		e.preventDefault();
 	});
+
 	$(canvas).mousemove(function(e) {
 		if (buttons !== 0) {
 			editor.mouseDragged(mousePoint(e));
 		}
 		e.preventDefault();
 	});
+
 	$(canvas).mouseup(function(e) {
 		editor.mouseUp(mousePoint(e));
 		buttons &= ~(1 << e.which);
 		e.preventDefault();
 	});
+
 	$(canvas).mousewheel(function(e, delta, deltaX, deltaY) {
 		editor.mouseWheel(deltaX, deltaY);
+		if (buttons !== 0) {
+			editor.mouseDragged(mousePoint(e));
+		}
 	});
 });
 

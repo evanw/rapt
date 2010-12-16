@@ -33,8 +33,7 @@ function Editor(canvas) {
 	this.mode = MODE_TILES_EMPTY;
 	this.worldCenter = new Vector(0, 0);
 	this.worldScale = 50;
-	
-	this.currentTool = new CameraPanTool(this.worldCenter);
+	this.currentTool = null;
 }
 
 Editor.prototype.setMode = function(mode) {
@@ -113,9 +112,8 @@ Editor.prototype.drawGrid = function() {
 };
 
 Editor.prototype.mouseDown = function(point) {
-	if (this.currentTool !== null) {
-		this.currentTool.mouseDown(this.viewportToWorld(point));
-	}
+	this.currentTool = new CameraPanTool(this.worldCenter);
+	this.currentTool.mouseDown(this.viewportToWorld(point));
 };
 
 Editor.prototype.mouseDragged = function(point) {
@@ -126,9 +124,8 @@ Editor.prototype.mouseDragged = function(point) {
 };
 
 Editor.prototype.mouseUp = function(point) {
-	if (this.currentTool !== null) {
-		this.currentTool.mouseUp(this.viewportToWorld(point));
-	}
+	this.currentTool.mouseUp(this.viewportToWorld(point));
+	this.currentTool = null;
 };
 
 Editor.prototype.mouseWheel = function(deltaX, deltaY) {
