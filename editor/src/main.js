@@ -2,7 +2,15 @@ var editor = null;
 var buttons = 0;
 
 function resizeEditor() {
-	editor.resize($(window).width(), $(window).height() - $('#toolbar').outerHeight());
+	var toolbarHeight = $('#toolbar').outerHeight();
+	var helpPanelWidth = 0;
+	
+	if (editor.mode == MODE_OTHER_HELP) {
+		helpPanelWidth = $('#help').outerWidth();
+		$('#help').css({ top: toolbarHeight + 'px' });
+	}
+	
+	editor.resize($(window).width() - helpPanelWidth, $(window).height() - toolbarHeight);
 	editor.draw();
 }
 
@@ -11,13 +19,50 @@ function mousePoint(e) {
 	return new Vector(e.pageX - offset.left, e.pageY - offset.top);
 }
 
+function fillHelp() {
+	var mac = (navigator.platform.indexOf('Mac') != -1);
+	var ctrl = mac ? '^' : 'Ctrl+';
+	var alt = mac ? '&#x2325;' : 'Alt+';
+	var shift = mac ? '&#x21E7;' : 'Shift+';
+	var command = mac ? '&#x2318;' : 'Win+';
+	
+	var keys = [
+		'Save', (mac ? command : ctrl) + 'S',
+		'Undo', (mac ? command : ctrl) + 'Z',
+		'Redo', mac ? command + shift + 'Z' : ctrl + 'Y',
+		'---', '---',
+		'Pan camera', 'Right-drag',
+		'Zoom camera', 'Scrollwheel'
+	];
+	
+	var html = '<table>';
+	for (var i = 0; i < keys.length; i += 2) {
+		html += '<tr><td>' + keys[i].replace('---', '<hr>') + '</td><td>' + keys[i + 1].replace('---', '<hr>') + '</td></tr>';
+	}
+	$('#help').html(html + '</table>');
+}
+
 $(document).ready(function() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').each(function(index) {
-		$(this).click(function(e) {
-			editor.setMode(eval(this.id));
+		$(this).mousedown(function(e) {
+			// Update the editor mode
+			var oldMode = editor.mode;
+			var mode = eval(this.id);
+			editor.setMode(mode);
 			$('.current').removeClass('current');
 			$(this).addClass('current');
+			e.preventDefault();
+			
+			// Show or hide the help panel
+			if (mode == MODE_OTHER_HELP) {
+				$('#help').css({ display: 'block' });
+				resizeEditor();
+				fillHelp();
+			} else if(oldMode == MODE_OTHER_HELP) {
+				$('#help').hide();
+				resizeEditor();
+			}
 		});
 	});
 	
@@ -66,6 +111,9 @@ $(document).keydown(function(e) {
 			e.preventDefault();
 		} else if (e.which == 'Y'.charCodeAt(0)) {
 			editor.redo();
+			e.preventDefault();
+		} else if(e.which == 'S'.charCodeAt(0)) {
+			// editor.save();
 			e.preventDefault();
 		}
 	}

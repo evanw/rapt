@@ -95,6 +95,43 @@ body {
 	text-shadow: 0 1px 0 #9F9F9F;
 }
 
+#help {
+	display: none;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 200px;
+	padding: 15px 20px;
+	background: #EFEFEF;
+	border-left: 1px solid #3F3F3F;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	-o-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	overflow: auto;
+}
+
+#help table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#help td {
+	width: 50%;
+	padding: 0;
+}
+
+#help td + td {
+	text-align: right;
+}
+
+#help hr {
+	border: none;
+	height: 1px;
+	background: #BFBFBF;
+	margin: 10px 0;
+}
+
 #canvas {
 	position: absolute;
 	left: 0;
