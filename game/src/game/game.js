@@ -42,18 +42,18 @@ function Game() {
 
 	gameState = new GameState();
 
-    // The following enemies haven't been drawn yet, or the drawing should be changed
-    gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
-    gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
-    gameState.addEnemy(new GoldenCog(new Vector(14.5, 0.5)));
-    gameState.addEnemy(new GoldenCog(new Vector(0.5, 12.5)));
-    gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
+    // TODO: Headache graphics
+    //gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
     // Riot bullets maybe should be changed?
     //gameState.addEnemy(new RiotGun(new Vector(5.5, 2.5), Math.PI * 0.55));
 
     // The following enemies are done!
-    //gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
-    //gameState.addEnemy(new BouncyRocketLauncher(new Vector(8.5, 0.5), gameState.playerA));
+    gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
+    gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
+    gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
+    gameState.addEnemy(new BouncyRocketLauncher(new Vector(8.5, 0.5), gameState.playerA));
+    gameState.addEnemy(new GoldenCog(new Vector(14.5, 0.5)));
+    gameState.addEnemy(new GoldenCog(new Vector(0.5, 12.5)));
     //gameState.addEnemy(new MultiGun(new Vector(0.7, 5.5)));
     //gameState.addEnemy(new ShockHawk(new Vector(5.3, 10.5), gameState.playerB));
     //gameState.addEnemy(new SpikeBall(new Vector(5.3, 8.5)));
