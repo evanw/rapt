@@ -18,3 +18,11 @@ Document.prototype.addPlaceable = function(placeable) {
 Document.prototype.removePlaceable = function(placeable) {
 	this.undoStack.push(new RemovePlaceableCommand(this.world, placeable));
 };
+
+Document.prototype.setSelection = function(selection) {
+	this.undoStack.push(new SetSelectionCommand(this.world, selection));
+};
+
+Document.prototype.moveSelection = function(delta) {
+	this.undoStack.push(new MoveSelectionCommand(this.world, delta));
+};

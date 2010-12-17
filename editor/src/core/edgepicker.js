@@ -37,7 +37,7 @@ Edge.prototype.draw = function(c) {
 
 	// Draw the direction indicators
 	var normal = this.end.sub(this.start).flip().unit();
-	for(var i = 1, num = 10; i < num - 1; i++) {
+	for (var i = 1, num = 10; i < num - 1; i++) {
 		var fraction = i / (num - 1);
 		var start = this.start.mul(fraction).add(this.end.mul(1 - fraction));
 		c.moveTo(start.x, start.y);

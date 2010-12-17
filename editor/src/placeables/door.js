@@ -5,6 +5,10 @@
 function Door(isOneWay, edge) {
 	this.isOneWay = isOneWay;
 	this.edge = edge;
+	this.selected = false;
+	this.resetAnchor();
+	this.offsetToStart = edge.start.sub(this.anchor);
+	this.offsetToEnd = edge.end.sub(this.anchor);
 }
 
 Door.prototype.draw = function(c) {
@@ -28,8 +32,23 @@ Door.prototype.drawSelection = function(c) {
 	c.stroke();
 };
 
-Door.prototype.touchesSelection = function(selectionRect) {
+Door.prototype.touchesRect = function(rect) {
 	// Test if the bounding boxes intersect and the box actually lies across the line
-	return (selectionRect.intersectsRect(new Rectangle(this.edge.start, this.edge.end))
-		&& selectionRect.intersectsEdge(this.edge));
+	return (rect.intersectsRect(new Rectangle(this.edge.start, this.edge.end))
+		&& rect.intersectsEdge(this.edge));
+};
+
+Door.prototype.getAnchor = function() {
+	return this.anchor;
+};
+
+Door.prototype.setAnchor = function(anchor) {
+	var floorAnchor = new Vector(Math.floor(anchor.x + 0.5), Math.floor(anchor.y + 0.5));
+	this.anchor = anchor;
+	this.edge.start = floorAnchor.add(this.offsetToStart);
+	this.edge.end = floorAnchor.add(this.offsetToEnd);
+};
+
+Door.prototype.resetAnchor = function() {
+	this.anchor = new Vector(Math.min(this.edge.start.x, this.edge.end.x), Math.min(this.edge.start.y, this.edge.end.y));
 };

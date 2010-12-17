@@ -19,6 +19,24 @@ SetCellCommand.prototype.redo = function() {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// class SetSelectionCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function SetSelectionCommand(world, selection) {
+	this.world = world;
+	this.oldSelection = world.getSelection();
+	this.selection = selection;
+}
+
+SetSelectionCommand.prototype.undo = function() {
+	this.world.setSelection(this.oldSelection);
+};
+
+SetSelectionCommand.prototype.redo = function() {
+	this.world.setSelection(this.selection);
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // class AddPlaceableCommand
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -50,4 +68,30 @@ RemovePlaceableCommand.prototype.undo = function() {
 
 RemovePlaceableCommand.prototype.redo = function() {
 	this.world.removePlaceable(this.placeable);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class MoveSelectionCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function MoveSelectionCommand(world, delta) {
+	this.world = world;
+	this.delta = delta;
+	this.oldAnchors = [];
+	this.selection = world.getSelection();
+	for (var i = 0; i < this.selection.length; i++) {
+		this.oldAnchors.push(this.selection[i].getAnchor());
+	}
+};
+
+MoveSelectionCommand.prototype.undo = function() {
+	for (var i = 0; i < this.selection.length; i++) {
+		this.selection[i].setAnchor(this.oldAnchors[i]);
+	}
+};
+
+MoveSelectionCommand.prototype.redo = function() {
+	for (var i = 0; i < this.selection.length; i++) {
+		this.selection[i].setAnchor(this.oldAnchors[i].add(this.delta));
+	}
 };

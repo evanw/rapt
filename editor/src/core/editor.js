@@ -30,8 +30,8 @@ var MODE_ELEMENTS_COG = 14;
 var MODE_ELEMENTS_SIGN = 15;
 
 // Other
-var MODE_OTHER_ENEMIES = 16;
-var MODE_OTHER_SELECT = 17;
+var MODE_OTHER_SELECT = 16;
+var MODE_OTHER_ENEMIES = 17;
 var MODE_OTHER_HELP = 18;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,6 @@ function Editor(canvas) {
 	this.worldCenter = new Vector(0, 0);
 	this.worldScale = 50;
 	this.activeTool = null;
-	this.selection = [];
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
 }
@@ -69,7 +68,7 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new PlaceDoorTool(this.doc, true);
 		break;
 	case MODE_OTHER_SELECT:
-		this.selectedTool = new SelectionTool(this);
+		this.selectedTool = new SelectionTool(this.doc);
 		break;
 	default:
 		this.selectedTool = null;
@@ -103,16 +102,9 @@ Editor.prototype.draw = function() {
 	this.doc.world.draw(c);
 	this.drawGrid();
 	
-	// Render the selection
-	c.fillStyle = 'rgba(0, 0, 0, 0.1)';
-	c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-	for (var p = 0; p < this.selection.length; p++) {
-		this.selection[p].drawSelection(c);
-	}
-	
 	// Let the tool draw overlays if needed
 	if (this.activeTool != null) this.activeTool.draw(c);
-	else if(this.selectedTool != null) this.selectedTool.draw(c);
+	else if (this.selectedTool != null) this.selectedTool.draw(c);
 	
 	c.restore();
 };
@@ -167,7 +159,7 @@ Editor.prototype.mouseDown = function(point, buttons) {
 		// Camera pan on right click
 		this.activeTool = new CameraPanTool(this.worldCenter);
 		this.activeTool.mouseDown(this.viewportToWorld(point));
-	} else if(buttons == MOUSE_LEFT) {
+	} else if (buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
 		this.activeTool = this.selectedTool;
 		
@@ -225,11 +217,11 @@ Editor.prototype.save = function() {
 };
 
 Editor.prototype.deleteSeleciton = function() {
+	var selection = this.doc.world.getSelection();
 	this.doc.undoStack.beginMacro();
-	for (var i = 0; i < this.selection.length; i++) {
-		this.doc.removePlaceable(this.selection[i]);
+	for (var i = 0; i < selection.length; i++) {
+		this.doc.removePlaceable(selection[i]);
 	}
 	this.doc.undoStack.endMacro();
-	this.selection = [];
 	this.draw();
 };

@@ -64,7 +64,7 @@ $(document).ready(function() {
 				$('#help').css({ display: 'block' });
 				resizeEditor();
 				fillHelp();
-			} else if(oldMode == MODE_OTHER_HELP) {
+			} else if (oldMode == MODE_OTHER_HELP) {
 				$('#help').hide();
 				resizeEditor();
 			}

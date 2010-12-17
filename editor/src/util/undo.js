@@ -72,7 +72,7 @@ UndoStack.prototype.beginMacro = function() {
 };
 
 UndoStack.prototype.endMacro = function() {
-	this._push(this.macros.pop());
+	if (this.macros.length > 0) this._push(this.macros.pop());
 };
 
 UndoStack.prototype.endAllMacros = function() {

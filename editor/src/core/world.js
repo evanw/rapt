@@ -121,15 +121,29 @@ function World() {
 }
 
 World.prototype.draw = function(c) {
+	var x, y, i;
+	
+	// Draw the level itself
 	c.strokeStyle = '#BFBFBF';
 	c.fillStyle = '#BFBFBF';
-	for (var y = 0, i = 0; y < this.size.y; y++) {
-		for (var x = 0; x < this.size.x; x++, i++) {
+	for (y = 0, i = 0; y < this.size.y; y++) {
+		for (x = 0; x < this.size.x; x++, i++) {
 			this.sectors[i].draw(c);
 		}
 	}
-	for (var p = 0; p < this.placeables.length; p++) {
-		this.placeables[p].draw(c);
+	
+	// Draw placeables (doors, enemies, etc...)
+	for (i = 0; i < this.placeables.length; i++) {
+		this.placeables[i].draw(c);
+	}
+	
+	// Draw selections around selected placeables
+	c.fillStyle = 'rgba(0, 0, 0, 0.1)';
+	c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+	for (i = 0; i < this.placeables.length; i++) {
+		if (this.placeables[i].selected) {
+			this.placeables[i].drawSelection(c);
+		}
 	}
 };
 
@@ -197,6 +211,39 @@ World.prototype.removePlaceable = function(placeable) {
 	for (var i = 0; i < this.placeables.length; i++) {
 		if (this.placeables[i] == placeable) {
 			this.placeables.splice(i--, 1);
+		}
+	}
+};
+
+World.prototype.getSelection = function() {
+	var selection = [];
+	for (var i = 0; i < this.placeables.length; i++) {
+		if (this.placeables[i].selected) {
+			selection.push(this.placeables[i]);
+		}
+	}
+	return selection;
+};
+
+World.prototype.selectionInRect = function(rect) {
+	var selection = [];
+	for (var i = 0; i < this.placeables.length; i++) {
+		if (this.placeables[i].touchesRect(rect)) {
+			selection.push(this.placeables[i]);
+		}
+	}
+	return selection;
+};
+
+World.prototype.setSelection = function(selection) {
+	for (var i = 0; i < this.placeables.length; i++) {
+		var p = this.placeables[i];
+		p.selected = false;
+		for (var j = 0; j < selection.length; j++) {
+			if (selection[j] == p) {
+				p.selected = true;
+				break;
+			}
 		}
 	}
 };

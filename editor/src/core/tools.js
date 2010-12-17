@@ -127,42 +127,67 @@ PlaceDoorTool.prototype.draw = function(c) {
 // class SelectionTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function SelectionTool(editor) {
-	this.editor = editor;
+var SELECTION_MODE_NONE = 0;
+var SELECTION_MODE_SELECT = 1;
+var SELECTION_MODE_MOVE = 2;
+
+function SelectionTool(doc) {
+	this.doc = doc;
+	this.mode = SELECTION_MODE_NONE;
 	this.start = this.end = null;
 }
 
-SelectionTool.prototype.getSelection = function(start, end) {
-	var selectionRect = new Rectangle(start, end);
-	var placeables = this.editor.doc.world.placeables;
-	var selection = [];
-	for (var i = 0; i < placeables.length; i++) {
-		var p = placeables[i];
-		if (p.touchesSelection(selectionRect)) {
-			selection.push(p);
+SelectionTool.prototype.mouseDown = function(point) {
+	// Check if we clicked on an existing selection
+	var clickedOnSelection = false;
+	var padding = new Vector(0.2, 0.2);
+	var selection = this.doc.world.getSelection();
+	var selectionUnderMouse = this.doc.world.selectionInRect(new Rectangle(point.sub(padding), point.add(padding)));
+	for (var i = 0; i < selectionUnderMouse.length; i++) {
+		for (var j = 0; j < selection.length; j++) {
+			if (selectionUnderMouse[i] == selection[j]) {
+				clickedOnSelection = true;
+				break;
+			}
 		}
 	}
-	return selection;
-};
-
-SelectionTool.prototype.mouseDown = function(point) {
-	this.start = this.end = point;
-	this.mouseMoved(point);
+	
+	// If we clicked on an existing selection, move it around instead
+	this.doc.undoStack.beginMacro();
+	if (clickedOnSelection) {
+		this.mode = SELECTION_MODE_MOVE;
+		this.start = point;
+	} else {
+		this.mode = SELECTION_MODE_SELECT;
+		this.start = this.end = point;
+		this.mouseMoved(point);
+	}
 };
 
 SelectionTool.prototype.mouseMoved = function(point) {
 	this.end = point;
-	if (this.start != null) {
-		this.editor.selection = this.getSelection(this.start, this.end);
+	if (this.mode == SELECTION_MODE_SELECT) {
+		this.doc.setSelection(this.doc.world.selectionInRect(new Rectangle(this.start, this.end)));
+	} else if (this.mode == SELECTION_MODE_MOVE) {
+		this.doc.moveSelection(point.sub(this.start));
+		this.start = point;
 	}
 };
 
 SelectionTool.prototype.mouseUp = function(point) {
-	this.start = this.end = null;
+	if (this.mode == SELECTION_MODE_MOVE) {
+		// Reset all anchors, needed for placeables that lock to the grid (walls/doors)
+		var selection = this.doc.world.getSelection();
+		for (var i = 0; i < selection.length; i++) {
+			selection[i].resetAnchor();
+		}
+	}
+	this.mode = SELECTION_MODE_NONE;
+	this.doc.undoStack.endMacro();
 };
 
 SelectionTool.prototype.draw = function(c) {
-	if (this.start != null) {
+	if (this.mode == SELECTION_MODE_SELECT) {
 		c.fillStyle = 'rgba(0, 0, 0, 0.1)';
 		c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
 		c.fillRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
