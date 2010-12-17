@@ -252,3 +252,27 @@ SetPlayerGoalTool.prototype.mouseUp = function(point) {
 
 SetPlayerGoalTool.prototype.draw = function(c) {
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class PlaceCogTool
+////////////////////////////////////////////////////////////////////////////////
+
+function PlaceCogTool(doc) {
+	this.doc = doc;
+	this.point = null;
+}
+
+PlaceCogTool.prototype.mouseDown = function(point) {
+	this.mouseMoved(point);
+	this.doc.addPlaceable(new Cog(this.point));
+};
+
+PlaceCogTool.prototype.mouseMoved = function(point) {
+	this.point = point;
+};
+
+PlaceCogTool.prototype.mouseUp = function(point) {
+};
+
+PlaceCogTool.prototype.draw = function(c) {
+};

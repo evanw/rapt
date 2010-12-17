@@ -76,6 +76,9 @@ Editor.prototype.setMode = function(mode) {
 	case MODE_ELEMENTS_GOAL:
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
+	case MODE_ELEMENTS_COG:
+		this.selectedTool = new PlaceCogTool(this.doc);
+		break;
 	default:
 		this.selectedTool = null;
 		break;

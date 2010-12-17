@@ -53,3 +53,47 @@ Sprites.drawGoal = function(c, point, time) {
 		c.fill();
 	}
 };
+
+Sprites.drawCog = function(c, x, y, radius) {
+	var innerRadius = radius * 0.2;
+	var spokeRadius = radius * 0.8;
+	var spokeWidth1 = radius * 0.2;
+	var spokeWidth2 = radius * 0.075;
+	var numVertices = 64;
+	var numTeeth = 10;
+	var numSpokes = 5;
+	var i, angle, sin, cos, r;
+	
+	c.fillStyle = 'rgb(255, 245, 0)';
+	
+	// Draw the rim with the teeth
+	c.beginPath();
+	for (i = 0; i <= numVertices; i++) {
+		angle = (i + 0.25) / numVertices * (Math.PI * 2);
+		sin = Math.sin(angle);
+		cos = Math.cos(angle);
+		r = radius * (1 + Math.cos(angle * numTeeth) * 0.1);
+		c.lineTo(x + cos * r, y + sin * r);
+	}
+	for (i = 0; i <= numVertices; i++) {
+		angle = (-i + 0.25) / numVertices * (Math.PI * 2);
+		sin = Math.sin(angle);
+		cos = Math.cos(angle);
+		r = radius * 0.7;
+		c.lineTo(x + cos * r, y + sin * r);
+	}
+	c.fill();
+	
+	// Draw the spokes
+	for (i = 0; i < numSpokes; i++) {
+		angle = i / numSpokes * (Math.PI * 2);
+		sin = Math.sin(angle);
+		cos = Math.cos(angle);
+		c.beginPath();
+		c.lineTo(x + sin * spokeWidth1, y - cos * spokeWidth1);
+		c.lineTo(x - sin * spokeWidth1, y + cos * spokeWidth1);
+		c.lineTo(x + cos * spokeRadius - sin * spokeWidth2, y + sin * spokeRadius + cos * spokeWidth2);
+		c.lineTo(x + cos * spokeRadius + sin * spokeWidth2, y + sin * spokeRadius - cos * spokeWidth2);
+		c.fill();
+	}
+};
