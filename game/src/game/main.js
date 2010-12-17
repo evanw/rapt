@@ -9,14 +9,25 @@ var SPACEBAR = 32;
 	var context;
 	var lastTime;
 	var currentScreen;
+    var currentHash;
 
 	function tick() {
-		var currentTime = new Date();
-		var seconds = (currentTime - lastTime) / 1000;
-        // if the computer goes to sleep, act like the game was paused
-		if (seconds > 0 && seconds < 1) currentScreen.tick(seconds); 
-		currentScreen.draw(context);
-		lastTime = currentTime;
+        // TODO: Fix
+        // Poll for hash changes
+        if (currentHash !== location.hash && currentHash.length > location.hash.length) {
+            $('#canvas').show();
+            changeScreen(new Game());
+        }
+
+        // Draw the screen if the canvas is shown
+        if (canvas.currentScreen) {
+            var currentTime = new Date();
+            var seconds = (currentTime - lastTime) / 1000;
+            // if the computer goes to sleep, act like the game was paused
+            if (seconds > 0 && seconds < 1) currentScreen.tick(seconds); 
+            currentScreen.draw(context);
+            lastTime = currentTime;
+        }
 	}
 
 	function changeScreen(newScreen) {
@@ -26,6 +37,14 @@ var SPACEBAR = 32;
 	}
 
 	$(document).ready(function() {
+        // first set up the level menu links
+        $('#levels').hide();
+        $('p#level').click(function() {
+            location.hash = location.hash + "/" + $(this).text().replace(/ /g, '-') + "/";
+        });
+        currentHash = location.hash;
+
+        // then set up the canvas
 		canvas = $('#canvas')[0];
 		canvas.width = 800;
 		canvas.height = 600;
@@ -47,7 +66,13 @@ var SPACEBAR = 32;
             }
         } else if (e.which === ESCAPE_KEY) {
             // escape returns the player to the level select page
-            window.location = "http://raptgame.com";
+            // Assumes URL in format #/[User]/[Level]
+            //location.hash = location.hash.split("/", 2)[1];
+
+            $('#levels').show();
+            canvas.currentScreen = null;
+            $('#canvas').hide();
+            location.hash = "#/Evan/HunterFood".split("/", 2)[1];
         }
 
         currentScreen.keyDown(e.which);

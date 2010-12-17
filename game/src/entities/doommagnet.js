@@ -43,7 +43,7 @@ function DoomMagnet(center) {
         c.lineTo(outerRadius + length, outerRadius);
         c.lineTo(outerRadius + length, innerRadius);
 
-        c.arc(outerRadius, 0, innerRadius, 0.5 * Math.PI, 1.5 * Math.PI);
+        c.arc(outerRadius, 0, innerRadius, 0.5 * Math.PI, 1.5 * Math.PI, false);
         c.lineTo(outerRadius + length, -innerRadius);
         c.lineTo(outerRadius + length, -outerRadius);
         c.lineTo(outerRadius, -outerRadius);
@@ -51,7 +51,7 @@ function DoomMagnet(center) {
 
         // other prong
         c.beginPath();
-        c.arc(-outerRadius, 0, outerRadius, 1.5 * Math.PI, 2.5 * Math.PI);
+        c.arc(-outerRadius, 0, outerRadius, 1.5 * Math.PI, 2.5 * Math.PI, false);
         c.lineTo(-outerRadius - length, outerRadius);
         c.lineTo(-outerRadius - length, innerRadius);
 

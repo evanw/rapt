@@ -29,16 +29,16 @@ function BouncyRocketLauncher(center, target) {
             // Main body
             c.fillStyle = 'red';
             c.beginPath();
-            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
             c.fill();
             c.fillStyle = 'blue';
             c.beginPath();
-            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI);
+            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
             c.fill();
 
             c.strokeStyle = 'black';
             c.beginPath();
-            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
             c.stroke();
             
             c.beginPath();
@@ -60,16 +60,16 @@ function BouncyRocketLauncher(center, target) {
             // Main body
             c.fillStyle = 'blue';
             c.beginPath();
-            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
             c.fill();
             c.fillStyle = 'red';
             c.beginPath();
-            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI);
+            c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
             c.fill();
 
             c.strokeStyle = 'black';
             c.beginPath();
-            c.arc(0, 0, 0.2, 0, 2 * Math.PI);
+            c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
             c.stroke();
 
             c.fillStyle = 'black';

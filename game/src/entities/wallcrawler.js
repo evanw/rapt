@@ -20,18 +20,18 @@ function WallCrawler(center, direction) {
         var space = 0.15;
 		c.fillStyle = 'black';
 		c.strokeStyle = 'black';
-		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.25 + space, Math.PI * 0.75 - space); c.stroke();
-		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.75 + space, Math.PI * 1.25 - space); c.stroke();
-		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.25 + space, Math.PI * 1.75 - space); c.stroke();
-		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.75 + space, Math.PI * 2.25 - space); c.stroke();
-		c.beginPath(); c.arc(0, 0, 0.15, 0, 2*Math.PI); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.25 + space, Math.PI * 0.75 - space, false); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.75 + space, Math.PI * 1.25 - space, false); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.25 + space, Math.PI * 1.75 - space, false); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.75 + space, Math.PI * 2.25 - space, false); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.15, 0, 2*Math.PI, false); c.stroke();
         c.beginPath();
         c.moveTo(0.15, 0); c.lineTo(0.25, 0);
         c.moveTo(0, 0.15); c.lineTo(0, 0.25);
         c.moveTo(-0.15, 0); c.lineTo(-0.25, 0);
         c.moveTo(0, -0.15); c.lineTo(0, -0.25);
 		c.stroke();
-		c.beginPath(); c.arc(0, 0, 0.05, 0, 2*Math.PI); c.fill();
+		c.beginPath(); c.arc(0, 0, 0.05, 0, 2*Math.PI, false); c.fill();
 	};
 }
 
@@ -71,10 +71,5 @@ WallCrawler.prototype.afterTick = function(seconds) {
 };
 
 WallCrawler.prototype.draw = function(c) {
-    /*var pos = this.getCenter();
-    c.strokeStyle = 'blue';
-    c.beginPath();
-    c.arc(pos.x, pos.y, WHEELIGATOR_RADIUS, 0, Math.PI * 2, false);
-    c.stroke();*/
 	this.bodySprite.draw(c);
 };

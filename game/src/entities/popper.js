@@ -57,8 +57,8 @@ function createPopperSprites() {
 		c.stroke();
 
 		c.beginPath();
-		c.arc(-0.075, 0, 0.04, 0, 2*Math.PI);
-		c.arc(0.075, 0, 0.04, 0, 2*Math.PI);
+		c.arc(-0.075, 0, 0.04, 0, 2*Math.PI, false);
+		c.arc(0.075, 0, 0.04, 0, 2*Math.PI, false);
 		c.fill();
 	};
 

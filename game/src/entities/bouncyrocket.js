@@ -19,7 +19,7 @@ function drawBouncyRocket(c, isBlue) {
 
 	c.fillStyle = isBlue ? 'red' : 'blue';
 	c.beginPath();
-	c.arc(-ROCKET_RADIUS, 0, size, -Math.PI / 2, Math.PI / 2);
+	c.arc(-ROCKET_RADIUS, 0, size, -Math.PI / 2, Math.PI / 2, false);
 	c.closePath();
 	c.fill();
 	c.stroke();

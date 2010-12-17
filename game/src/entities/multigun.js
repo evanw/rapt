@@ -76,23 +76,23 @@ MultiGun.prototype.draw = function(c) {
         var angle = (this.redGun.sub(this.getCenter())).atan2();
         c.fillStyle = "rgb(205, 0, 0)";
         c.beginPath();
-		c.arc(this.redGun.x, this.redGun.y, 0.1, angle, angle + Math.PI);
+		c.arc(this.redGun.x, this.redGun.y, 0.1, angle, angle + Math.PI, false);
         c.fill();
         c.fillStyle = "rgb(0, 0, 255)";
         c.beginPath();
-		c.arc(this.blueGun.x, this.blueGun.y, 0.1, angle + Math.PI, angle + 2 * Math.PI);
+		c.arc(this.blueGun.x, this.blueGun.y, 0.1, angle + Math.PI, angle + 2 * Math.PI, false);
         c.fill();
     } else {
         if (!gameState.playerA.isDead()) {
             c.fillStyle = "rgb(205, 0, 0)";
             c.beginPath();
-            c.arc(this.redGun.x, this.redGun.y, 0.1, 0, 2 * Math.PI);
+            c.arc(this.redGun.x, this.redGun.y, 0.1, 0, 2 * Math.PI, false);
             c.fill();
         }
         if(!gameState.playerB.isDead()) {
             c.fillStyle = "rgb(0, 0, 255)";
             c.beginPath();
-            c.arc(this.blueGun.x, this.blueGun.y, 0.1, 0, 2 * Math.PI);
+            c.arc(this.blueGun.x, this.blueGun.y, 0.1, 0, 2 * Math.PI, false);
             c.fill();
         }
     }

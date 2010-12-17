@@ -58,7 +58,7 @@ Bomber.prototype.draw = function(c) {
 	c.lineTo(pos.x + 0.1, pos.y + 0.05);
 	c.lineTo(pos.x + 0.25, pos.y - 0.1);
 	c.lineTo(pos.x + 0.25, pos.y - 0.2);
-	c.arc(pos.x, pos.y - BOMBER_HEIGHT * 0.5, BOMB_RADIUS, 0, Math.PI);
+	c.arc(pos.x, pos.y - BOMBER_HEIGHT * 0.5, BOMB_RADIUS, 0, Math.PI, false);
 	c.lineTo(pos.x - 0.25, pos.y - 0.2);
 	c.moveTo(pos.x - 0.1, pos.y + 0.05);
 	c.lineTo(pos.x - 0.2, pos.y + 0.15);
@@ -68,6 +68,6 @@ Bomber.prototype.draw = function(c) {
 
 	c.fillStyle = 'black';
 	c.beginPath();
-	c.arc(pos.x, pos.y - BOMBER_HEIGHT * 0.5, BOMB_RADIUS * this.getReloadPercentage(), 0, 2*Math.PI);
+	c.arc(pos.x, pos.y - BOMBER_HEIGHT * 0.5, BOMB_RADIUS * this.getReloadPercentage(), 0, 2*Math.PI, false);
 	c.fill();
 };

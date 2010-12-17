@@ -30,7 +30,7 @@ function Hunter(center) {
 	this.sprites = [new Sprite(), new Sprite(), new Sprite()];
 	this.sprites[HUNTER_BODY].drawGeometry = function(c) {
 		c.beginPath();
-		c.arc(0, 0, 0.1, 0, 2*Math.PI);
+		c.arc(0, 0, 0.1, 0, 2*Math.PI, false);
 		c.stroke();
 	};
 	this.sprites[HUNTER_CLAW1].drawGeometry = this.sprites[HUNTER_CLAW2].drawGeometry = function(c) {
@@ -146,22 +146,22 @@ Hunter.prototype.draw = function(c) {
         if(this.state == STATE_RED) {
 			c.fillStyle = 'red';
 			c.beginPath();
-			c.arc(eye.x, eye.y, 0.1, 0, 2*Math.PI);
+			c.arc(eye.x, eye.y, 0.1, 0, 2*Math.PI, false);
 			c.fill();
         } else if(this.state == STATE_BLUE) {
 			c.fillStyle = 'blue';
 			c.beginPath();
-			c.arc(eye.x, eye.y, 0.1, 0, 2*Math.PI);
+			c.arc(eye.x, eye.y, 0.1, 0, 2*Math.PI, false);
 			c.fill();
         } else {
 			c.fillStyle = 'red';
 			c.beginPath();
-			c.arc(eye.x, eye.y, 0.1, angle, angle + Math.PI);
+			c.arc(eye.x, eye.y, 0.1, angle, angle + Math.PI, false);
 			c.fill();
 
 			c.fillStyle = 'blue';
 			c.beginPath();
-			c.arc(eye.x, eye.y, 0.1, angle + Math.PI, angle + 2*Math.PI);
+			c.arc(eye.x, eye.y, 0.1, angle + Math.PI, angle + 2*Math.PI, false);
 			c.fill();
 
 			c.beginPath();
