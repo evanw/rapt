@@ -60,10 +60,7 @@ var SPACEBAR = 32;
 	$(document).ready(function() {
         // first set up the level menu links
         $('#levels').hide();
-        $('p#level').click(function() {
-            location.hash = location.hash + $(this).text().replace(/ /g, '-') + "/";
-        });
-        // Pretend we're playing a real level
+        // Pretend we're playing a real level already
         location.hash = '#/Evan/Level-0/';
         currentHash = location.hash;
 
@@ -84,17 +81,14 @@ var SPACEBAR = 32;
                 if (currentScreen.gameStatus === GAME_LOST) {
                     // if the level is being restarted, change the screen to a new Game
                     changeScreen(new Game());
-                    return;
                 } else if (currentScreen.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
                     changeScreen(new Game());
-                    return;
                 }
             } else if (e.which === ESCAPE_KEY) {
                 // escape returns the player to the level select page
                 // Assumes URL in format #/[User]/[Level]
                 location.hash = "/" + location.hash.split("/", 2)[1] + "/";
-
                 showLevelScreen();
                 return;
             }
