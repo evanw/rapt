@@ -79,7 +79,7 @@ Sprites.drawCog = function(c, x, y, radius) {
 		angle = (-i + 0.25) / numVertices * (Math.PI * 2);
 		sin = Math.sin(angle);
 		cos = Math.cos(angle);
-		r = radius * 0.7;
+		r = radius * 0.65;
 		c.lineTo(x + cos * r, y + sin * r);
 	}
 	c.fill();

@@ -118,6 +118,9 @@ $(document).keydown(function(e) {
 		} else if (e.which == 'S'.charCodeAt(0)) {
 			editor.save();
 			e.preventDefault();
+		} else if (e.which == 'A'.charCodeAt(0)) {
+			editor.selectAll();
+			e.preventDefault();
 		}
 	} else if (e.which == 8 /*BACKSPACE*/) {
 		editor.deleteSeleciton();

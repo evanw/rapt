@@ -234,3 +234,13 @@ Editor.prototype.deleteSeleciton = function() {
 	this.doc.undoStack.endMacro();
 	this.draw();
 };
+
+Editor.prototype.selectAll = function() {
+	var selection = [];
+	var placeables = this.doc.world.placeables;
+	for (var i = 0; i < placeables.length; i++) {
+		selection.push(placeables[i]);
+	}
+	this.doc.setSelection(selection);
+	this.draw();
+};
