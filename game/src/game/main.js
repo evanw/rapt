@@ -10,6 +10,7 @@ var SPACEBAR = 32;
 	var lastTime;
 	var currentScreen;
     var currentHash;
+    var levels = new Array();
 
 	function tick() {
         // Poll for hash changes
@@ -57,11 +58,28 @@ var SPACEBAR = 32;
 		currentScreen.resize(canvas.width, canvas.height);
 	}
 
+    function getLevels() {
+        // Boop boop, pretend we are getting levels from the server
+        levels.push('#/Evan/Level-1/');
+        levels.push('#/Evan/Level-2/');
+        levels.push('#/Evan/Hunter-Food/');
+
+        // Add the levels to the DOM
+        for (var i = 0; i < levels.length; ++i) {
+            var levelsDiv = $('#levels');
+
+            console.log("<a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a>");
+            levelsDiv.append("<a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a>");
+            levelsDiv.append("</br>");
+        }
+    }
+
 	$(document).ready(function() {
         // first set up the level menu links
         $('#levels').hide();
         // Pretend we're playing a real level already
-        location.hash = '#/Evan/Level-0/';
+        getLevels();
+        location.hash = levels[0];
         currentHash = location.hash;
 
         // then set up the canvas
@@ -83,6 +101,21 @@ var SPACEBAR = 32;
                     changeScreen(new Game());
                 } else if (currentScreen.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
+                    for (var i = 0; i < levels.length; ++i) {
+                        if (levels[i] === location.hash) {
+                            if (i < levels.length - 1) {
+                                // go to the next level on the list
+                                location.hash = levels[i + 1];
+                                // Don't return because we want to prevent default
+                                break;
+                            } else {
+                                // return to menu screen if it was the last level
+                                location.hash = "/" + location.hash.split("/", 2)[1] + "/";
+                                showLevelScreen();
+                                return;
+                            }
+                        }
+                    }
                     changeScreen(new Game());
                 }
             } else if (e.which === ESCAPE_KEY) {
