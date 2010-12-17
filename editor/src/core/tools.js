@@ -194,3 +194,61 @@ SelectionTool.prototype.draw = function(c) {
 		c.strokeRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
 	}
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class SetPlayerStartTool
+////////////////////////////////////////////////////////////////////////////////
+
+function SetPlayerStartTool(doc) {
+	this.doc = doc;
+	this.dragging = false;
+}
+
+SetPlayerStartTool.prototype.mouseDown = function(point) {
+	this.dragging = true;
+	this.doc.undoStack.beginMacro();
+	this.mouseMoved(point);
+};
+
+SetPlayerStartTool.prototype.mouseMoved = function(point) {
+	if (this.dragging) {
+		this.doc.setPlayerStart(new Vector(Math.floor(point.x), Math.floor(point.y)));
+	}
+};
+
+SetPlayerStartTool.prototype.mouseUp = function(point) {
+	this.dragging = false;
+	this.doc.undoStack.endMacro();
+};
+
+SetPlayerStartTool.prototype.draw = function(c) {
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class SetPlayerGoalTool
+////////////////////////////////////////////////////////////////////////////////
+
+function SetPlayerGoalTool(doc) {
+	this.doc = doc;
+	this.dragging = false;
+}
+
+SetPlayerGoalTool.prototype.mouseDown = function(point) {
+	this.dragging = true;
+	this.doc.undoStack.beginMacro();
+	this.mouseMoved(point);
+};
+
+SetPlayerGoalTool.prototype.mouseMoved = function(point) {
+	if (this.dragging) {
+		this.doc.setPlayerGoal(new Vector(Math.floor(point.x), Math.floor(point.y)));
+	}
+};
+
+SetPlayerGoalTool.prototype.mouseUp = function(point) {
+	this.dragging = false;
+	this.doc.undoStack.endMacro();
+};
+
+SetPlayerGoalTool.prototype.draw = function(c) {
+};

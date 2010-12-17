@@ -70,6 +70,12 @@ Editor.prototype.setMode = function(mode) {
 	case MODE_OTHER_SELECT:
 		this.selectedTool = new SelectionTool(this.doc);
 		break;
+	case MODE_ELEMENTS_START:
+		this.selectedTool = new SetPlayerStartTool(this.doc);
+		break;
+	case MODE_ELEMENTS_GOAL:
+		this.selectedTool = new SetPlayerGoalTool(this.doc);
+		break;
 	default:
 		this.selectedTool = null;
 		break;

@@ -26,3 +26,11 @@ Document.prototype.setSelection = function(selection) {
 Document.prototype.moveSelection = function(delta) {
 	this.undoStack.push(new MoveSelectionCommand(this.world, delta));
 };
+
+Document.prototype.setPlayerStart = function(playerStart) {
+	this.undoStack.push(new SetPlayerStartCommand(this.world, playerStart));
+};
+
+Document.prototype.setPlayerGoal = function(playerGoal) {
+	this.undoStack.push(new SetPlayerGoalCommand(this.world, playerGoal));
+};

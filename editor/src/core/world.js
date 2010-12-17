@@ -118,6 +118,14 @@ function World() {
 	this.size = new Vector(0, 0); // This is in sectors, not cells
 	this.sectors = [];
 	this.placeables = [];
+	
+	// Set up initial level
+	this.playerStart = new Vector(-2, 0);
+	this.playerGoal = new Vector(1, 0);
+	this.setCell(-2, 0, CELL_EMPTY);
+	this.setCell(-1, 0, CELL_EMPTY);
+	this.setCell(0, 0, CELL_EMPTY);
+	this.setCell(1, 0, CELL_EMPTY);
 }
 
 World.prototype.draw = function(c) {
@@ -131,6 +139,9 @@ World.prototype.draw = function(c) {
 			this.sectors[i].draw(c);
 		}
 	}
+	
+	Sprites.drawGoal(c, this.playerGoal.add(new Vector(0.5, 0.5)), 0.6);
+	Sprites.drawSpawnPoint(c, this.playerStart.add(new Vector(0.5, 0.5)));
 	
 	// Draw placeables (doors, enemies, etc...)
 	for (i = 0; i < this.placeables.length; i++) {

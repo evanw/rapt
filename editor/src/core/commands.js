@@ -18,6 +18,13 @@ SetCellCommand.prototype.redo = function() {
 	this.world.setCell(this.x, this.y, this.type);
 };
 
+SetCellCommand.prototype.mergeWith = function(command) {
+	if (command instanceof SetCellCommand && this.x == command.x && this.y == command.y && this.type == command.type) {
+		return true;
+	}
+	return false;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // class SetSelectionCommand
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,8 +43,6 @@ SetSelectionCommand.prototype.redo = function() {
 	this.world.setSelection(this.selection);
 };
 
-// Merge adjacent SetSelectionCommands so an entire selection
-// set operation only adds one SetSelectionCommand
 SetSelectionCommand.prototype.mergeWith = function(command) {
 	if (command instanceof SetSelectionCommand) {
 		this.selection = command.selection;
@@ -106,11 +111,61 @@ MoveSelectionCommand.prototype.redo = function() {
 	}
 };
 
-// Merge adjacent MoveSelectionCommands so an entire selection
-// move operation only adds one MoveSelectionCommand
 MoveSelectionCommand.prototype.mergeWith = function(command) {
 	if (command instanceof MoveSelectionCommand) {
 		this.delta = this.delta.add(command.delta);
+		return true;
+	}
+	return false;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class SetPlayerStartCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function SetPlayerStartCommand(world, playerStart) {
+	this.world = world;
+	this.playerStart = playerStart;
+	this.oldPlayerStart = world.playerStart;
+}
+
+SetPlayerStartCommand.prototype.undo = function() {
+	this.world.playerStart = this.oldPlayerStart;
+};
+
+SetPlayerStartCommand.prototype.redo = function() {
+	this.world.playerStart = this.playerStart;
+};
+
+SetPlayerStartCommand.prototype.mergeWith = function(command) {
+	if (command instanceof SetPlayerStartCommand) {
+		this.playerStart = command.playerStart;
+		return true;
+	}
+	return false;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class SetPlayerGoalCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function SetPlayerGoalCommand(world, playerGoal) {
+	this.world = world;
+	this.playerGoal = playerGoal;
+	this.oldPlayerGoal = world.playerGoal;
+}
+
+SetPlayerGoalCommand.prototype.undo = function() {
+	this.world.playerGoal = this.oldPlayerGoal;
+};
+
+SetPlayerGoalCommand.prototype.redo = function() {
+	this.world.playerGoal = this.playerGoal;
+};
+
+SetPlayerGoalCommand.prototype.mergeWith = function(command) {
+	if (command instanceof SetPlayerGoalCommand) {
+		this.playerGoal = command.playerGoal;
 		return true;
 	}
 	return false;
