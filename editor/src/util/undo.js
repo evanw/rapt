@@ -50,7 +50,19 @@ UndoStack.prototype._push = function(command) {
 		this.commands.push(command);
 		this.currentIndex++;
 	} else {
-		this.macros[this.macros.length - 1].commands.push(command);
+		// Merge adjacent commands together in the same macro by calling mergeWith()
+		// on the previous command and passing it the next command.  If it returns
+		// true, the information from the next command has been merged with the
+		// previous command and we can forget about the next command (so we return
+		// instead of pushing it).
+		var commands = this.macros[this.macros.length - 1].commands;
+		if (commands.length > 0) {
+			var prevCommand = commands[commands.length - 1];
+			if ('mergeWith' in prevCommand && prevCommand.mergeWith(command)) {
+				return;
+			}
+		}
+		commands.push(command);
 	}
 };
 
