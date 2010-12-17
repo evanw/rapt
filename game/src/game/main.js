@@ -12,15 +12,14 @@ var SPACEBAR = 32;
     var currentHash;
 
 	function tick() {
-        // TODO: Fix
         // Poll for hash changes
-        if (currentHash !== location.hash && currentHash.length > location.hash.length) {
-            $('#canvas').show();
-            changeScreen(new Game());
+        if (currentHash !== location.hash) {
+            currentHash = location.hash;
+            processHash(currentHash);
         }
 
         // Draw the screen if the canvas is shown
-        if (canvas.currentScreen) {
+        if (currentScreen !== null) {
             var currentTime = new Date();
             var seconds = (currentTime - lastTime) / 1000;
             // if the computer goes to sleep, act like the game was paused
@@ -29,6 +28,28 @@ var SPACEBAR = 32;
             lastTime = currentTime;
         }
 	}
+
+    function processHash(hash) {
+        if (hash.split('/').length === 3) {
+            // #/[User]/
+            showLevelScreen();
+        } else if (hash.split('/').length === 4) {
+            // #/[User]/[Level]/
+            showGameScreen();
+        }
+    }
+
+    function showLevelScreen() {
+        $('#canvas').hide();
+        $('#levels').show();
+        currentScreen = null;
+    }
+
+    function showGameScreen() {
+        $('#levels').hide();
+        $('#canvas').show();
+        changeScreen(new Game());
+    }
 
 	function changeScreen(newScreen) {
 		Particle.reset();
@@ -40,8 +61,10 @@ var SPACEBAR = 32;
         // first set up the level menu links
         $('#levels').hide();
         $('p#level').click(function() {
-            location.hash = location.hash + "/" + $(this).text().replace(/ /g, '-') + "/";
+            location.hash = location.hash + $(this).text().replace(/ /g, '-') + "/";
         });
+        // Pretend we're playing a real level
+        location.hash = '#/Evan/Level-0/';
         currentHash = location.hash;
 
         // then set up the canvas
@@ -56,32 +79,36 @@ var SPACEBAR = 32;
 	});
 
 	$(document).keydown(function(e) {
-        if (e.which === SPACEBAR) {
-            if (currentScreen.gameStatus === GAME_LOST) {
-                // if the level is being restarted, change the screen to a new Game
-                changeScreen(new Game());
-            } else if (currentScreen.gameStatus === GAME_WON) {
-                // if the user is going to the next level, load the next level using the level select page
-                changeScreen(new Game());
+        if (currentScreen !== null) {
+            if (e.which === SPACEBAR) {
+                if (currentScreen.gameStatus === GAME_LOST) {
+                    // if the level is being restarted, change the screen to a new Game
+                    changeScreen(new Game());
+                    return;
+                } else if (currentScreen.gameStatus === GAME_WON) {
+                    // if the user is going to the next level, load the next level using the level select page
+                    changeScreen(new Game());
+                    return;
+                }
+            } else if (e.which === ESCAPE_KEY) {
+                // escape returns the player to the level select page
+                // Assumes URL in format #/[User]/[Level]
+                location.hash = "/" + location.hash.split("/", 2)[1] + "/";
+
+                showLevelScreen();
+                return;
             }
-        } else if (e.which === ESCAPE_KEY) {
-            // escape returns the player to the level select page
-            // Assumes URL in format #/[User]/[Level]
-            //location.hash = location.hash.split("/", 2)[1];
 
-            $('#levels').show();
-            canvas.currentScreen = null;
-            $('#canvas').hide();
-            location.hash = "#/Evan/HunterFood".split("/", 2)[1];
+            currentScreen.keyDown(e.which);
+            // prevents default behaviors like scrolling up/down (F keys start at 112)
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
         }
-
-        currentScreen.keyDown(e.which);
-        // prevents default behaviors like scrolling up/down (F keys start at 112)
-        if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
 	});
 
 	$(document).keyup(function(e) {
-		currentScreen.keyUp(e.which);
-        if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
+        if (currentScreen !== null) {
+            currentScreen.keyUp(e.which);
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
+        }
 	});
 })();
