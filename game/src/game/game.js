@@ -42,6 +42,25 @@ function Game() {
 
 	gameState = new GameState();
 
+    // Add doors and doorbells
+    gameState.addDoor(2, 0, 2, 1, TWO_WAY, EDGE_NEUTRAL);
+    gameState.addDoor(0, 1, 1, 1, ONE_WAY, EDGE_RED);
+    gameState.addDoor(2, 0, 3, 1, TWO_WAY, EDGE_BLUE);
+    // Close the doors
+    gameState.getDoor(0).act(DOORBELL_CLOSE, true, false);
+    gameState.getDoor(2).act(DOORBELL_CLOSE, true, false);
+
+    var button0 = new Doorbell(new Vector(0.5, 3.5), DOORBELL_OPEN, true);
+    var button1 = new Doorbell(new Vector(0.5, 1.5), DOORBELL_TOGGLE, true);
+    var button2 = new Doorbell(new Vector(4.5, 0.5), DOORBELL_CLOSE, true);
+    button0.addDoor(0);
+    button1.addDoor(1);
+    button2.addDoor(1);
+    button2.addDoor(2);
+    gameState.addEnemy(button0);
+    gameState.addEnemy(button1);
+    gameState.addEnemy(button2);
+
     // TODO: Headache graphics
     //gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
     // Riot bullets maybe should be changed?
@@ -50,7 +69,7 @@ function Game() {
     // The following enemies are done!
     gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
     gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
-    gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
+    //gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
     gameState.addEnemy(new BouncyRocketLauncher(new Vector(8.5, 0.5), gameState.playerA));
     gameState.addEnemy(new GoldenCog(new Vector(14.5, 0.5)));
     gameState.addEnemy(new GoldenCog(new Vector(0.5, 12.5)));

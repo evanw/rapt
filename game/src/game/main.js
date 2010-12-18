@@ -68,7 +68,6 @@ var SPACEBAR = 32;
         for (var i = 0; i < levels.length; ++i) {
             var levelsDiv = $('#levels');
 
-            console.log("<a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a>");
             levelsDiv.append("<a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a>");
             levelsDiv.append("</br>");
         }
