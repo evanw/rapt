@@ -28,22 +28,30 @@ Edge.prototype.blocksColor = function(entityColor) {
 	return false;
 }
 
+Edge.prototype.getStart = function() {
+    return this.segment.start;
+}
+
+Edge.prototype.getEnd = function() {
+    return this.segment.end;
+}
+
 Edge.prototype.getOrientation = function() {
 	return Edge.getOrientation(this.segment.normal);
 }
 
 Edge.getOrientation = function(normal) {
-	if(normal.x > 0.9) return EDGE_LEFT;
-	if(normal.x < -0.9) return EDGE_RIGHT;
-	if(normal.y < 0) return EDGE_CEILING;
+	if (normal.x > 0.9) return EDGE_LEFT;
+	if (normal.x < -0.9) return EDGE_RIGHT;
+	if (normal.y < 0) return EDGE_CEILING;
 	return EDGE_FLOOR;
 }
 
 Edge.prototype.draw = function(c) {
 	switch(this.color) {
-		case EDGE_NEUTRAL: c.strokeColor = 'black'; break;
-		case EDGE_RED: c.strokeColor = '#C00000'; break;
-		case EDGE_BLUE: c.strokeColor = '#0000D2'; break;
+		case EDGE_NEUTRAL: c.strokeStyle = 'black'; break;
+		case EDGE_RED: c.strokeStyle = '#C00000'; break;
+		case EDGE_BLUE: c.strokeStyle = '#0000D2'; break;
 	}
 	this.segment.draw(c);
 

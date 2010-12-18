@@ -13,10 +13,12 @@ var STAT_NUM_COGS = 5;
 // class GameState
 function GameState() {
 	this.world = new World(50, 50);
-	this.playerA = new Player(this.world.getSpawnPoint(), PLAYER_COLOR_RED);
-	this.playerB = new Player(this.world.getSpawnPoint(), PLAYER_COLOR_BLUE);
+    // Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
+	this.playerA = new Player(this.world.getSpawnPoint(), EDGE_RED);
+	this.playerB = new Player(this.world.getSpawnPoint(), EDGE_BLUE);
 	this.spawnPointParticleTimer = 0;
     this.enemies = [];
+    this.doors = [];
     this.timeSinceStart = 0;
 
     // keys (will be set automatically)
@@ -81,6 +83,75 @@ GameState.prototype.addEnemy = function(enemy, spawnerPosition) {
 
     // now we can add the enemy to the list
     this.enemies.push(enemy);
+}
+
+GameState.prototype.clearDoors = function() {
+    this.doors = [];
+}
+
+GameState.prototype.addDoor = function(startX, startY, endX, endY, type, color) {
+    var firstCellX, firstCellY, secondCellX, secondCellY;
+    // left wall
+    if (startY + 1 == endY && startX == endX) {
+        firstCellX = startX;
+        firstCellY = startY;
+        secondCellX = startX - 1;
+        secondCellY = startY;
+    }
+    // right wall
+    else if (startY - 1 == endY && startX == endX) {
+        firstCellX = startX - 1;
+        firstCellY = endY;
+        secondCellX = startX;
+        secondCellY = endY;
+    }
+    // ceiling
+    else if (startX + 1 == endX && startY == endY) {
+        firstCellX = startX;
+        firstCellY = startY - 1;
+        secondCellX = startX;
+        secondCellY = startY;
+    }
+    // floor
+    else if (startX - 1 == endX && startY == endY) {
+        firstCellX = endX;
+        firstCellY = startY;
+        secondCellX = endX;
+        secondCellY = startY - 1;
+    }
+    //diagonal
+    else {
+        firstCellX = secondCellX = startX < endX ? startX : endX;
+        firstCellY = secondCellY = startY < endY ? startY : endY;
+    }
+
+    if (type === ONE_WAY) {
+        this.doors.push(new Door(new Edge(new Vector(startX, startY), new Vector(endX, endY), color), firstCellX, firstCellY,
+                                null, 0, 0));
+    } else {
+        this.doors.push(new Door(new Edge(new Vector(startX, startY), new Vector(endX, endY), color), firstCellX, firstCellY,
+                        new Edge(new Vector(endX, endY), new Vector(startX, startY), color), secondCellX, secondCellY));
+    }
+}
+
+GameState.prototype.getDoor = function(doorIndex) {
+     return this.doors[doorIndex];
+}
+
+// Kill all entities that intersect a given edge
+GameState.prototype.killAll = function(edge) {
+    for (var i = 0; i < 2; ++i) {
+        if (CollisionDetector.intersectEntitySegment(this.getPlayer(i), edge.segment)) {
+            this.getPlayer(i).setDead(true);
+        }
+    }
+
+    for (var i = 0; i < this.enemies.length; ++i) {
+        var enemy = this.enemies[i];
+        if (enemy.canCollide() && CollisionDetector.intersectEntitySegment(enemy, edge.segment)) {
+            enemy.setDead(true);
+        }
+    }
 }
 
 GameState.prototype.tick = function(seconds) {

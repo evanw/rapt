@@ -15,16 +15,17 @@ function Doorbell(center, behavior, visible) {
     Enemy.prototype.constructor.call(this, ENEMY_DOORBELL, 1);
     this.hitBox = AABB.makeAABB(center, DOORBELL_WIDTH, DOORBELL_HEIGHT);
     this.rotationPercent = 1;
-    this.restingAngle = randInRange(0, 2*M_PI);
+    this.restingAngle = randInRange(0, 2 * Math.PI);
     this.behavior = behavior;
     this.visible = visible;
     this.triggeredLastTick = false;
     this.triggeredThisTick = false;
+    this.doors = [];
 }
 
 Doorbell.prototype.getShape = function() { return this.hitBox; }
 
-//Doorbell.prototype.addDoor = function(doorIndex) { doors.push(doorIndex); }
+Doorbell.prototype.addDoor = function(doorIndex) { this.doors.push(doorIndex); }
 
 Doorbell.prototype.canCollide = function() { return false; }
 
@@ -45,10 +46,9 @@ Doorbell.prototype.reactToPlayer = function(player) {
         return;
     }
 
-    // TODO: Once we have doors
-    //for (list<int>::iterator it = doors.begin(); it != doors.end(); it++) {
-    //    gameState->GetDoor(*it)->Act(behavior, *gameState, false, true);
-    //}
+    for (var i = 0; i < this.doors.length; ++i) {
+        gameState.getDoor(this.doors[i]).act(this.behavior, false, true);
+    }
 
     for (var i = 0; i < 50; ++i) {
         var rotationAngle = randInRange(0, 2 * Math.PI);

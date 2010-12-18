@@ -27,10 +27,6 @@ var PLAYER_STATE_CLAMBER = 2;
 var PLAYER_STATE_LEFT_WALL = 3;
 var PLAYER_STATE_RIGHT_WALL = 4;
 
-// enum PlayerColor
-var PLAYER_COLOR_RED = 0;
-var PLAYER_COLOR_BLUE = 1;
-
 var runningKeyframes = [
 	new Keyframe(0, -5 / 50).add(5, -10).add(65, -55, 20, 40).add(-20, -30, -30, 10),
 	new Keyframe(0, -2 / 50).add(5, -10).add(35, -25, 0, 30).add(18, -110, 0, 20),
