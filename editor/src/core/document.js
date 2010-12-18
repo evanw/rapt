@@ -20,7 +20,29 @@ Document.prototype.removePlaceable = function(placeable) {
 };
 
 Document.prototype.setSelection = function(selection) {
-	this.undoStack.push(new SetSelectionCommand(this.world, selection));
+	// Compare oldSelection and selection
+	var oldSelection = this.world.getSelection();
+	var sameSelection = (oldSelection.length == selection.length);
+	if (sameSelection) {
+		for (var i = 0; i < oldSelection.length; i++) {
+			var found = false;
+			for (var j = 0; j < selection.length; j++) {
+				if (oldSelection[i] == selection[j]) {
+					found = true;
+					break;
+				}
+			}
+			if (found == false) {
+				sameSelection = false;
+				break;
+			}
+		}
+	}
+	
+	// Only change the selection if oldSelection and selection are different
+	if (!sameSelection) {
+		this.undoStack.push(new SetSelectionCommand(this.world, selection));
+	}
 };
 
 Document.prototype.moveSelection = function(delta) {

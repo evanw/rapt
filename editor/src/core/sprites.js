@@ -97,3 +97,139 @@ Sprites.drawCog = function(c, x, y, radius) {
 		c.fill();
 	}
 };
+
+Sprites.drawBomber = function(c, reloadPercentage) {
+	var bomberHeight = 0.4;
+	var bombRadius = 0.15;
+	
+	// Bomber body
+	c.strokeStyle = 'black';
+	c.beginPath();
+	c.moveTo(-0.25, -0.2);
+	c.lineTo(-0.25, -0.1);
+	c.lineTo(-0.1, 0.05);
+	c.lineTo(0.1, 0.05);
+	c.lineTo(0.25, -0.1);
+	c.lineTo(0.25, -0.2);
+	c.arc(0, -bomberHeight * 0.5, bombRadius, 0, Math.PI, false);
+	c.lineTo(-0.25, -0.2);
+	c.moveTo(-0.1, 0.05);
+	c.lineTo(-0.2, 0.15);
+	c.moveTo(0.1, 0.05);
+	c.lineTo(0.2, 0.15);
+	c.stroke();
+
+	// Growing bomb about to be dropped
+	c.fillStyle = 'black';
+	c.beginPath();
+	c.arc(0, -bomberHeight * 0.5, bombRadius * reloadPercentage, 0, 2 * Math.PI, false);
+	c.fill();
+};
+
+Sprites.drawBouncyRocketLauncher = function(c) {
+   // End of gun
+   c.strokeStyle = 'black';
+   c.beginPath();
+   c.moveTo(0, -0.1);
+   c.lineTo(-0.3, -0.1);
+   c.lineTo(-0.3, 0.1);
+   c.lineTo(0, 0 + 0.1);
+   c.stroke();
+
+   // Main body
+   c.fillStyle = 'blue';
+   c.beginPath();
+   c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
+   c.fill();
+   c.fillStyle = 'red';
+   c.beginPath();
+   c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
+   c.fill();
+
+	// Line circling the two colors
+   c.strokeStyle = 'black';
+   c.beginPath();
+   c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
+   c.stroke();
+
+	// Line separating the two colors
+   c.fillStyle = 'black';
+   c.beginPath();
+   c.moveTo(0.1, -0.18);
+   c.lineTo(0.1, 0.18);
+   c.stroke();
+};
+
+Sprites.drawDoomMagnet = function(c) {
+	var length = 0.15;
+	var outerRadius = 0.15;
+	var innerRadius = 0.05;
+
+	for (var scale = -1; scale <= 1; scale += 2) {
+		// Draw red tips
+		c.fillStyle = 'red';
+		c.beginPath();
+		c.moveTo(-outerRadius - length, scale * innerRadius);
+		c.lineTo(-outerRadius - length, scale * outerRadius);
+		c.lineTo(-outerRadius - length + (outerRadius - innerRadius), scale * outerRadius);
+		c.lineTo(-outerRadius - length + (outerRadius - innerRadius), scale * innerRadius);
+		c.fill();
+
+		// Draw blue tips
+		c.fillStyle = 'blue';
+		c.beginPath();
+		c.moveTo(outerRadius + length, scale * innerRadius);
+		c.lineTo(outerRadius + length, scale * outerRadius);
+		c.lineTo(outerRadius + length - (outerRadius - innerRadius), scale * outerRadius);
+		c.lineTo(outerRadius + length - (outerRadius - innerRadius), scale * innerRadius);
+		c.fill();
+	}
+	c.strokeStyle = 'black';
+
+	// Draw one prong of the magnet
+	c.beginPath();
+	c.arc(outerRadius, 0, outerRadius, 1.5 * Math.PI, 0.5 * Math.PI, true);
+	c.lineTo(outerRadius + length, outerRadius);
+	c.lineTo(outerRadius + length, innerRadius);
+
+	c.arc(outerRadius, 0, innerRadius, 0.5 * Math.PI, 1.5 * Math.PI, false);
+	c.lineTo(outerRadius + length, -innerRadius);
+	c.lineTo(outerRadius + length, -outerRadius);
+	c.lineTo(outerRadius, -outerRadius);
+	c.stroke();
+
+	// Draw other prong
+	c.beginPath();
+	c.arc(-outerRadius, 0, outerRadius, 1.5 * Math.PI, 2.5 * Math.PI, false);
+	c.lineTo(-outerRadius - length, outerRadius);
+	c.lineTo(-outerRadius - length, innerRadius);
+
+	c.arc(-outerRadius, 0, innerRadius, 2.5 * Math.PI, 1.5 * Math.PI, true);
+	c.lineTo(-outerRadius - length, -innerRadius);
+	c.lineTo(-outerRadius - length, -outerRadius);
+	c.lineTo(-outerRadius, -outerRadius);
+	c.stroke();
+};
+
+Sprites.drawGrenadier = function(c) {
+	var barrelLength = 0.25;
+	var outerRadius = 0.25;
+	var innerRadius = 0.175;
+
+	c.fillStyle = 'red';
+	c.strokeStyle = 'black';
+	c.beginPath();
+	c.moveTo(-outerRadius, -barrelLength);
+	c.lineTo(-innerRadius, -barrelLength);
+	c.lineTo(-innerRadius, -0.02);
+	c.lineTo(0, innerRadius);
+	c.lineTo(innerRadius, -0.02);
+	c.lineTo(innerRadius, -barrelLength);
+	c.lineTo(outerRadius, -barrelLength);
+	c.lineTo(outerRadius, 0);
+	c.lineTo(0, outerRadius + 0.02);
+	c.lineTo(-outerRadius, 0);
+	c.closePath();
+	c.fill();
+	c.stroke();
+};

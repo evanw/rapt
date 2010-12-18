@@ -3,15 +3,42 @@ var buttons = 0;
 
 function resizeEditor() {
 	var toolbarHeight = $('#toolbar').outerHeight();
-	var helpPanelWidth = 0;
+	var sidebarWidth = 0;
 	
 	if (editor.mode == MODE_OTHER_HELP) {
-		helpPanelWidth = $('#help').outerWidth();
 		$('#help').css({ top: toolbarHeight + 'px' });
+		sidebarWidth = $('#help').outerWidth();
 	}
 	
-	editor.resize($(window).width() - helpPanelWidth, $(window).height() - toolbarHeight);
+	if (editor.mode == MODE_OTHER_ENEMIES) {
+		$('#enemies').css({ top: toolbarHeight + 'px' });
+		sidebarWidth = $('#enemies').outerWidth();
+	}
+	
+	editor.resize($(window).width() - sidebarWidth, $(window).height() - toolbarHeight);
 	editor.draw();
+}
+
+function showOrHidePanels(mode, oldMode) {
+	// Show or hide the help panel
+	if (mode == MODE_OTHER_HELP) {
+		$('#help').show();
+		resizeEditor();
+		fillHelp();
+	} else if (oldMode == MODE_OTHER_HELP) {
+		$('#help').hide();
+		resizeEditor();
+	}
+	
+	// Show or hide the enemies panel
+	if (mode == MODE_OTHER_ENEMIES) {
+		$('#enemies').show();
+		resizeEditor();
+		fillEnemies();
+	} else if (oldMode == MODE_OTHER_ENEMIES) {
+		$('#enemies').hide();
+		resizeEditor();
+	}
 }
 
 function mousePoint(e) {
@@ -47,28 +74,48 @@ function fillHelp() {
 	$('#help').html(html + '</table>');
 }
 
+function fillEnemies() {
+	// Create a <canvas> for each enemy
+	var html = '';
+	var i;
+	for (i = 0; i < enemies.length; i++) {
+		html += '<div class="enemy"><canvas id="enemy' + i + '"></canvas>' + enemies[i].name + '</div>';
+	}
+	$('#enemies').html(html);
+	$('.enemy:first-child').addClass('selected');
+	
+	// Draw each enemy on their <canvas>
+	for (i = 0; i < enemies.length; i++) {
+		var p = $('#enemy' + i)[0];
+		p.width = 50;
+		p.height = 60;
+		
+		var c = p.getContext('2d');
+		c.translate(25, 30);
+		c.scale(50, -50);
+		c.lineWidth = 1 / 50;
+		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawin, just used to make sure sprites specify colors
+		enemies[i].draw(c);
+	}
+	
+	// Add an action to each enemy button
+	$('#enemies .enemy').mousedown(function(e) {
+		$('.selected').removeClass('selected');
+		$(this).addClass('selected');
+		e.preventDefault();
+	});
+}
+
 $(document).ready(function() {
 	// Add an action to each toolbar button
-	$('#toolbar .section a').each(function(index) {
-		$(this).mousedown(function(e) {
-			// Update the editor mode
-			var oldMode = editor.mode;
-			var mode = eval(this.id);
-			editor.setMode(mode);
-			$('.current').removeClass('current');
-			$(this).addClass('current');
-			e.preventDefault();
-			
-			// Show or hide the help panel
-			if (mode == MODE_OTHER_HELP) {
-				$('#help').css({ display: 'block' });
-				resizeEditor();
-				fillHelp();
-			} else if (oldMode == MODE_OTHER_HELP) {
-				$('#help').hide();
-				resizeEditor();
-			}
-		});
+	$('#toolbar .section a').mousedown(function(e) {
+		var oldMode = editor.mode;
+		var mode = eval(this.id);
+		editor.setMode(mode);
+		$('.current').removeClass('current');
+		$(this).addClass('current');
+		e.preventDefault();
+		showOrHidePanels(mode, oldMode);
 	});
 	
 	// Connect the canvas and the editor

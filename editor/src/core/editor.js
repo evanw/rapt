@@ -34,6 +34,30 @@ var MODE_OTHER_SELECT = 16;
 var MODE_OTHER_ENEMIES = 17;
 var MODE_OTHER_HELP = 18;
 
+var enemies = [
+	{ name: 'Bomber', draw: function(c) { Sprites.drawBomber(c, 0.7); } },
+	{ name: 'Bouncy Rockets', draw: function(c) { Sprites.drawBouncyRocketLauncher(c); } },
+	{ name: 'Corrosion Cloud', draw: function(c) {} },
+	{ name: 'Doom Magnet', draw: function(c) { Sprites.drawDoomMagnet(c); } },
+	{ name: 'Grenadier', draw: function(c) { Sprites.drawGrenadier(c); } },
+	{ name: 'Headache', draw: function(c) {} },
+	{ name: 'Hunter', draw: function(c) {} },
+	{ name: 'Multi-Gun', draw: function(c) {} },
+	{ name: 'Popper', draw: function(c) {} },
+	{ name: 'Riot Gun', draw: function(c) {} },
+	{ name: 'Rocket Spider', draw: function(c) {} },
+	{ name: 'Shock Hawk', draw: function(c) {} },
+	{ name: 'Spike Ball', draw: function(c) {} },
+	{ name: 'Stalacbat', draw: function(c) {} },
+	{ name: 'Wall Avoider', draw: function(c) {} },
+	{ name: 'Wall Crawler', draw: function(c) {} },
+	{ name: 'Wheeligator', draw: function(c) {} }
+];
+
+function createNewEnemy(point) {
+	return new Cog(point);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +70,15 @@ function Editor(canvas) {
 	this.activeTool = null;
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
+	
+	this.doc.world.playerStart = new Vector(-2, -1);
+	this.doc.world.playerGoal = new Vector(1, -1);
+	this.doc.world.setCell(-2, -1, CELL_EMPTY);
+	this.doc.world.setCell(-2, 0, CELL_EMPTY);
+	this.doc.world.setCell(-1, 0, CELL_EMPTY);
+	this.doc.world.setCell(0, 0, CELL_EMPTY);
+	this.doc.world.setCell(1, 0, CELL_EMPTY);
+	this.doc.world.setCell(1, -1, CELL_EMPTY);
 }
 
 Editor.prototype.setMode = function(mode) {
@@ -77,7 +110,10 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
 	case MODE_ELEMENTS_COG:
-		this.selectedTool = new PlaceCogTool(this.doc);
+		this.selectedTool = new AddPlaceableTool(this.doc, function(point) { return new Cog(point); });
+		break;
+	case MODE_OTHER_ENEMIES:
+		this.selectedTool = new AddPlaceableTool(this.doc, createNewEnemy);
 		break;
 	default:
 		this.selectedTool = null;

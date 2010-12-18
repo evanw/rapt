@@ -254,25 +254,26 @@ SetPlayerGoalTool.prototype.draw = function(c) {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// class PlaceCogTool
+// class AddPlaceableTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function PlaceCogTool(doc) {
+function AddPlaceableTool(doc, factoryFunc) {
 	this.doc = doc;
+	this.factoryFunc = factoryFunc;
 	this.point = null;
 }
 
-PlaceCogTool.prototype.mouseDown = function(point) {
+AddPlaceableTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(new Cog(this.point));
+	this.doc.addPlaceable(this.factoryFunc(this.point));
 };
 
-PlaceCogTool.prototype.mouseMoved = function(point) {
+AddPlaceableTool.prototype.mouseMoved = function(point) {
 	this.point = point;
 };
 
-PlaceCogTool.prototype.mouseUp = function(point) {
+AddPlaceableTool.prototype.mouseUp = function(point) {
 };
 
-PlaceCogTool.prototype.draw = function(c) {
+AddPlaceableTool.prototype.draw = function(c) {
 };

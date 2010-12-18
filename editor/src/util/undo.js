@@ -37,6 +37,11 @@ function UndoStack() {
 }
 
 UndoStack.prototype._push = function(command) {
+	// Only push the macro if it's non-empty, otherwise it leads to weird behavior
+	if (command instanceof MacroCommand && command.commands.length == 0) {
+		return;
+	}
+	
 	if (this.macros.length == 0) {
 		// Remove all commands after our position in the undo buffer (these are
 		// ones we have undone, and once we do something else we shouldn't be able
@@ -62,6 +67,7 @@ UndoStack.prototype._push = function(command) {
 				return;
 			}
 		}
+		
 		commands.push(command);
 	}
 };

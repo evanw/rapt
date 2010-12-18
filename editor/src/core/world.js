@@ -118,14 +118,8 @@ function World() {
 	this.size = new Vector(0, 0); // This is in sectors, not cells
 	this.sectors = [];
 	this.placeables = [];
-	
-	// Set up initial level
-	this.playerStart = new Vector(-2, 0);
-	this.playerGoal = new Vector(1, 0);
-	this.setCell(-2, 0, CELL_EMPTY);
-	this.setCell(-1, 0, CELL_EMPTY);
-	this.setCell(0, 0, CELL_EMPTY);
-	this.setCell(1, 0, CELL_EMPTY);
+	this.playerStart = new Vector(0, 0);
+	this.playerGoal = new Vector(0, 0);
 }
 
 World.prototype.draw = function(c) {
