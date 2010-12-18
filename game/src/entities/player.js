@@ -220,8 +220,8 @@ Player.prototype.collideWithOtherPlayer = function() {
 		}
 
         // Change the spawn point if the players are within 1 unit and we have waited for at least 1 second
-		if(this.getCenter().sub(otherPlayer.getCenter()).length() < 1 &&
-			this.crouchTimer > 1 && otherPlayer.crouchTimer > 1)
+		if(this.getCenter().sub(otherPlayer.getCenter()).lengthSquared() < 1 &&
+			this.crouchTimer > 1 && otherPlayer.crouchTimer > this.crouchTimer)
 		{
 			gameState.setSpawnPoint(otherPlayer.getCenter());
 		}

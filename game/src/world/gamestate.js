@@ -17,6 +17,7 @@ function GameState() {
 	this.playerA = new Player(this.world.getSpawnPoint(), EDGE_RED);
 	this.playerB = new Player(this.world.getSpawnPoint(), EDGE_BLUE);
 	this.spawnPointParticleTimer = 0;
+    this.spawnPointOffset = new Vector(0, 0);
     this.enemies = [];
     this.doors = [];
     this.timeSinceStart = 0;
@@ -41,7 +42,13 @@ GameState.prototype.getSpawnPoint = function() {
 }
 
 GameState.prototype.setSpawnPoint = function(point) {
-    this.world.setSpawnPoint(point);
+    this.world.setSpawnPoint(point.x, point.y);
+    
+    // offset to keep spawn point from drawing below ground
+    this.spawnPointOffset.y = 0.125;
+
+    // prevents slipping?
+    this.world.spawnPoint.y += 0.01;
 }
 
 GameState.prototype.gameWon = function() {
@@ -232,7 +239,7 @@ function drawGoal(c, point, time) {
 
 GameState.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 	this.world.draw(c, xmin, ymin, xmax, ymax);
-	drawSpawnPoint(c, this.world.getSpawnPoint());
+	drawSpawnPoint(c, this.world.getSpawnPoint().add(this.spawnPointOffset));
 	drawGoal(c, this.world.getGoal(), this.timeSinceStart);
 	this.playerA.draw(c);
 	this.playerB.draw(c);

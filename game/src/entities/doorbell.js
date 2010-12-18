@@ -8,6 +8,8 @@ var DOORBELL_TOGGLE = 2;
 
 var DOORBELL_WIDTH = 0.4;
 var DOORBELL_HEIGHT = 0.4;
+var DOORBELL_RADIUS = 0.1;
+var DOORBELL_SLICES = 3;
 
 Doorbell.extends(Enemy);
 
@@ -60,5 +62,23 @@ Doorbell.prototype.reactToPlayer = function(player) {
 }
 
 Doorbell.prototype.draw = function(c) {
-    this.getShape().draw(c);
+    if (this.visible) {
+        var pos = this.getCenter();
+        var startingAngle = this.restingAngle + (2 * Math.PI / 3) / (this.rotationPercent + 0.1);
+
+        c.fillStyle = 'white';
+        c.strokeStyle = 'black';
+        c.beginPath();
+        c.arc(pos.x, pos.y, DOORBELL_RADIUS, 0, 2 * Math.PI, false);
+        c.fill();
+        c.stroke();
+
+        c.beginPath();
+        for (var i = 0; i < DOORBELL_SLICES; ++i) {
+            c.moveTo(pos.x, pos.y);
+            var nextPos = pos.add(Vector.fromAngle(startingAngle + (i - 0.5) * (2 * Math.PI / DOORBELL_SLICES)).mul(DOORBELL_RADIUS));
+            c.lineTo(nextPos.x, nextPos.y);
+        }
+        c.stroke();
+    }
 }

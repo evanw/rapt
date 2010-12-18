@@ -163,9 +163,8 @@ World.prototype.getHeight = function() {
     return this.height;
 }
 
-
 World.prototype.setSpawnPoint = function(cellX, cellY) {
-    this.spawnPoint = new Vector(cellX + 0.5, cellY + 0.5);
+    this.spawnPoint = new Vector(cellX, cellY);
 }
 
 World.prototype.setGoal = function(cellX, cellY) {
