@@ -9,14 +9,19 @@ function randInRange(min, max) {
 
 function dashedLine(c, start, end) {
 	var dir = end.sub(start);
-	var n = Math.ceil(dir.length() * 10);
+	var n = dir.length() * 10;
 	dir = dir.div(n);
 	c.beginPath();
-	for (var i = 0; i < n; i += 2) {
+	for (var i = 0; i + 1 < n; i += 2) {
 		c.moveTo(start.x, start.y);
 		start = start.add(dir);
 		c.lineTo(start.x, start.y);
 		start = start.add(dir);
+	}
+	if (i < n) {
+		c.moveTo(start.x, start.y);
+		start = start.add(dir.mul(n - i));
+		c.lineTo(start.x, start.y);
 	}
 	c.stroke();
 }

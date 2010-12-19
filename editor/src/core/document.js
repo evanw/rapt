@@ -17,6 +17,21 @@ Document.prototype.addPlaceable = function(placeable) {
 
 Document.prototype.removePlaceable = function(placeable) {
 	this.undoStack.push(new RemovePlaceableCommand(this.world, placeable));
+	
+	// Also remove all links with deleted buttons and doors
+	if (placeable instanceof Button || placeable instanceof Door) {
+		var deadLinks = [];
+		var i;
+		for (i = 0; i < this.world.placeables.length; i++) {
+			var link = this.world.placeables[i];
+			if (link instanceof Link && (link.button == placeable || link.door == placeable)) {
+				deadLinks.push(link);
+			}
+		}
+		for (i = 0; i < deadLinks.length; i++) {
+			this.undoStack.push(new RemovePlaceableCommand(this.world, deadLinks[i]));
+		}
+	}
 };
 
 Document.prototype.setSelection = function(selection) {

@@ -303,3 +303,73 @@ AddPlaceableTool.prototype.draw = function(c) {
 		this.placeableTemplate.clone(this.point).draw(c, 0.5);
 	}
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class LinkButtonToDoorTool
+////////////////////////////////////////////////////////////////////////////////
+
+var LINK_MODE_HOVER = 0;
+var LINK_MODE_BUTTON_TO_DOOR = 1;
+var LINK_MODE_DOOR_TO_BUTTON = 2;
+
+function LinkButtonToDoorTool(doc) {
+	this.doc = doc;
+	this.button = null;
+	this.door = null;
+	this.point = null;
+	this.isButtonCloser = false;
+	this.mode = LINK_MODE_HOVER;
+}
+
+LinkButtonToDoorTool.prototype.mouseDown = function(point) {
+	this.mouseMoved(point);
+	if (this.button != null && this.door != null) {
+		this.mode = this.isButtonCloser ? LINK_MODE_BUTTON_TO_DOOR : LINK_MODE_DOOR_TO_BUTTON;
+	} else {
+		this.mode = LINK_MODE_HOVER;
+	}
+};
+
+LinkButtonToDoorTool.prototype.mouseMoved = function(point) {
+	if (this.mode != LINK_MODE_BUTTON_TO_DOOR) {
+		this.button = this.doc.world.closestPlaceableOfType(point, Button);
+	}
+	if (this.mode != LINK_MODE_DOOR_TO_BUTTON) {
+		this.door = this.doc.world.closestPlaceableOfType(point, Door);
+	}
+	if (this.button != null && this.door != null) {
+		this.isButtonCloser = (this.button.getCenter().sub(point).length() < this.door.getCenter().sub(point).length());
+	}
+	this.point = point;
+};
+
+LinkButtonToDoorTool.prototype.mouseUp = function(point) {
+	if (this.mode != LINK_MODE_HOVER) {
+		// Check if this link already exists
+		var linkAlreadyExists = false;
+		var placeables = this.doc.world.placeables;
+		for (var i = 0; i < placeables.length; i++) {
+			if (placeables[i] instanceof Link && placeables[i].button == this.button && placeables[i].door == this.door) {
+				linkAlreadyExists = true;
+				break;
+			}
+		}
+		
+		// Only add the new link if it doesn't already exist
+		if (!linkAlreadyExists) this.doc.addPlaceable(new Link(this.button, this.door));
+		this.mode = LINK_MODE_HOVER;
+	}
+};
+
+LinkButtonToDoorTool.prototype.draw = function(c) {
+	if (this.point != null) {
+		c.strokeStyle = rgba(0, 0, 0, 0.5);
+		if (this.mode != LINK_MODE_HOVER) {
+			dashedLine(c, this.button.getCenter(), this.door.getCenter());
+		} else if (this.button != null && (this.door == null || this.isButtonCloser)) {
+			dashedLine(c, this.button.getCenter(), this.point);
+		} else if (this.door != null) {
+			dashedLine(c, this.door.getCenter(), this.point);
+		}
+	}
+};

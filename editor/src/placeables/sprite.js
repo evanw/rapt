@@ -36,3 +36,7 @@ Sprite.prototype.resetAnchor = function() {
 Sprite.prototype.clone = function(newAnchor) {
 	return new Sprite(this.radius, this.drawFunc, newAnchor);
 };
+
+Sprite.prototype.getCenter = function() {
+	return this.anchor;
+};

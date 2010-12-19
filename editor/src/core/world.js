@@ -243,6 +243,22 @@ World.prototype.removePlaceable = function(placeable) {
 	}
 };
 
+World.prototype.closestPlaceableOfType = function(point, type) {
+	var minDist = Number.MAX_VALUE;
+	var placeable = null;
+	for (var i = 0; i < this.placeables.length; i++) {
+		var p = this.placeables[i];
+		if (!(p instanceof type)) continue;
+		var anchor = p.getAnchor();
+		var dist = anchor.sub(point).length();
+		if (dist < minDist) {
+			placeable = p;
+			minDist = dist;
+		}
+	}
+	return placeable;
+};
+
 World.prototype.getSelection = function() {
 	var selection = [];
 	for (var i = 0; i < this.placeables.length; i++) {

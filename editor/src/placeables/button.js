@@ -19,13 +19,13 @@ Button.prototype.draw = function(c, alpha) {
 	c.fillStyle = rgba(0, 0, 0, alpha || 1);
 	c.scale(1 / 150, -1 / 150);
 	c.font = '15px "Lucida Grande", Helvetica, Arial, sans-serif';
-	c.fillText(text, -c.measureText(text).width / 2, 40);
+	c.fillText(text, -c.measureText(text).width / 2, 35);
 	c.restore();
 };
 
 Button.prototype.drawSelection = function(c) {
 	c.beginPath();
-	c.arc(this.anchor.x, this.anchor.y, 0.21, 0, Math.PI * 2, false);
+	c.arc(this.anchor.x, this.anchor.y, 0.3, 0, Math.PI * 2, false);
 	c.closePath();
 	c.fill();
 	c.stroke();
@@ -48,4 +48,8 @@ Button.prototype.resetAnchor = function() {
 
 Button.prototype.clone = function(newAnchor) {
 	return new Button(newAnchor, this.type);
+};
+
+Button.prototype.getCenter = function() {
+	return this.anchor;
 };

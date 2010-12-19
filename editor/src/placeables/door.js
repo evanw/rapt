@@ -57,3 +57,7 @@ Door.prototype.setAnchor = function(anchor) {
 Door.prototype.resetAnchor = function() {
 	this.anchor = new Vector(Math.min(this.edge.start.x, this.edge.end.x), Math.min(this.edge.start.y, this.edge.end.y));
 };
+
+Door.prototype.getCenter = function() {
+	return this.edge.start.add(this.edge.end).div(2);
+};

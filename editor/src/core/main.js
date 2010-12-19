@@ -24,7 +24,7 @@ function resizeEditor() {
 	editor.draw();
 }
 
-function showOrHidePanels(mode, oldMode) {
+function showOrHidePanels(mode) {
 	// Show or hide the help panel
 	if (mode == MODE_OTHER_HELP) {
 		$('#help').show();
@@ -68,6 +68,7 @@ function fillHelp() {
 		'Save', (mac ? meta : ctrl) + 'S',
 		'Undo', (mac ? meta : ctrl) + 'Z',
 		'Redo', mac ? shift + meta + 'Z' : ctrl + 'Y',
+		'Select all', (mac ? meta : ctrl) + 'A',
 		'Delete selection', backspace,
 		'---', '---',
 		'Pan camera', 'Right-drag',
@@ -138,7 +139,7 @@ function fillWalls() {
 	
 	// Create a <canvas> for each door tool
 	gen.addHeader('Doors');
-	gen.addInfo('Create doors by linking buttons to walls');
+	gen.addInfo('Create doors by linking walls and buttons');
 	for (i = 9; i < 11; i++) {
 		gen.addCell('<div class="cell" id="door' + i + '"><canvas id="door' + i + '-canvas" width="80" height="60"></canvas>' + buttons.shift() + '</div>');
 	}
@@ -201,13 +202,12 @@ function fillWalls() {
 $(document).ready(function() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').mousedown(function(e) {
-		var oldMode = editor.mode;
 		var mode = eval(this.id);
 		editor.setMode(mode);
 		$('.toolbar-current').removeClass('toolbar-current');
 		$(this).addClass('toolbar-current');
 		e.preventDefault();
-		showOrHidePanels(mode, oldMode);
+		showOrHidePanels(mode);
 	});
 	
 	// Connect the canvas and the editor
