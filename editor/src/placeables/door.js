@@ -6,8 +6,9 @@ var DOOR_COLOR_BLUE = 2;
 // class Door
 ////////////////////////////////////////////////////////////////////////////////
 
-function Door(isOneWay, color, edge) {
+function Door(isOneWay, isInitiallyOpen, color, edge) {
 	this.isOneWay = isOneWay;
+	this.isInitiallyOpen = isInitiallyOpen;
 	this.edge = edge;
 	this.color = color;
 	this.selected = false;
@@ -18,11 +19,20 @@ function Door(isOneWay, color, edge) {
 
 Door.prototype.draw = function(c, alpha) {
 	c.strokeStyle = rgba(255 * (this.color == DOOR_COLOR_RED), 0, 255 * (this.color == DOOR_COLOR_BLUE), alpha || 1);
-	this.edge.draw(c);
-	if (!this.isOneWay) {
-		this.edge.flip();
+	if (this.isInitiallyOpen) {
+		this.edge.drawOpen(c);
+		if (!this.isOneWay) {
+			this.edge.flip();
+			this.edge.drawOpen(c);
+			this.edge.flip();
+		}
+	} else {
 		this.edge.draw(c);
-		this.edge.flip();
+		if (!this.isOneWay) {
+			this.edge.flip();
+			this.edge.draw(c);
+			this.edge.flip();
+		}
 	}
 };
 

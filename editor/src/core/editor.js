@@ -119,11 +119,13 @@ Editor.prototype.setSidePanelTool = function() {
 	} else if (this.mode == MODE_OTHER_WALLS_BUTTONS) {
 		// TODO: constants for these
 		if (this.selectedWall < 6) {
-			this.selectedTool = new PlaceDoorTool(this.doc, (this.selectedWall & 1), Math.floor(this.selectedWall / 2));
+			this.selectedTool = new PlaceDoorTool(this.doc, (this.selectedWall & 1), false, Math.floor(this.selectedWall / 2));
 		} else if (this.selectedWall < 9) {
 			this.selectedTool = new AddPlaceableTool(this.doc, new Button(null, this.selectedWall - 6));
 		} else if (this.selectedWall == 9) {
 			this.selectedTool = new LinkButtonToDoorTool(this.doc);
+		} else if (this.selectedWall == 10) {
+			this.selectedTool = new ToggleInitiallyOpenTool(this.doc);
 		} else {
 			this.selectedTool = null;
 		}

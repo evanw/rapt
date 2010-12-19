@@ -71,3 +71,7 @@ Document.prototype.setPlayerStart = function(playerStart) {
 Document.prototype.setPlayerGoal = function(playerGoal) {
 	this.undoStack.push(new SetPlayerGoalCommand(this.world, playerGoal));
 };
+
+Document.prototype.toggleInitiallyOpen = function(door) {
+	this.undoStack.push(new ToggleInitiallyOpenCommand(door));
+};

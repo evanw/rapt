@@ -132,7 +132,7 @@ function fillWalls() {
 	// Create a <canvas> for each button type
 	gen.addHeader('Buttons');
 	gen.addInfo('Buttons open and close linked doors');
-	var buttons = [ 'Open', 'Close', 'Toggle', 'Link', 'Initially Open' ];
+	var buttons = [ 'Open', 'Close', 'Toggle', 'Link', 'Set Initially Open' ];
 	for (i = 6; i < 9; i++) {
 		gen.addCell('<div class="cell" id="button' + i + '"><canvas id="button' + i + '-canvas" width="80" height="60"></canvas>' + buttons.shift() + '</div>');
 	}
@@ -153,7 +153,7 @@ function fillWalls() {
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
-		new Door(i & 1, Math.floor(i / 2), new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+		new Door(i & 1, false, Math.floor(i / 2), new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
 	}
 	
 	// Draw each button on its <canvas>
@@ -182,10 +182,10 @@ function fillWalls() {
 			c.translate(0.3, -0.2);
 			
 			// Draw door
-			new Door(true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
+			new Door(true, false, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
 		} else {
 			// Draw initially open door
-			new Door(true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+			new Door(true, true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
 		}
 	}
 	

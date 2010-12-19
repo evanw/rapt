@@ -170,3 +170,20 @@ SetPlayerGoalCommand.prototype.mergeWith = function(command) {
 	}
 	return false;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class ToggleInitiallyOpenCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function ToggleInitiallyOpenCommand(door) {
+	this.door = door;
+	this.isInitiallyOpen = door.isInitiallyOpen;
+}
+
+ToggleInitiallyOpenCommand.prototype.undo = function() {
+	this.door.isInitiallyOpen = this.isInitiallyOpen;
+};
+
+ToggleInitiallyOpenCommand.prototype.redo = function() {
+	this.door.isInitiallyOpen = !this.isInitiallyOpen;
+};

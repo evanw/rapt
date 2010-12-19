@@ -92,16 +92,17 @@ SetCellTool.prototype.draw = function(c) {
 // class PlaceDoorTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function PlaceDoorTool(doc, isOneWay, color) {
+function PlaceDoorTool(doc, isOneWay, isInitiallyOpen, color) {
 	this.doc = doc;
 	this.isOneWay = isOneWay;
+	this.isInitiallyOpen = isInitiallyOpen;
 	this.color = color;
 	this.edge = null;
 }
 
 PlaceDoorTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(new Door(this.isOneWay, this.color, this.edge));
+	this.doc.addPlaceable(new Door(this.isOneWay, this.isInitiallyOpen, this.color, this.edge));
 };
 
 PlaceDoorTool.prototype.mouseMoved = function(point) {
@@ -131,7 +132,7 @@ PlaceDoorTool.prototype.mouseUp = function(point) {
 
 PlaceDoorTool.prototype.draw = function(c) {
 	if (this.edge != null) {
-		var door = new Door(this.isOneWay, this.color, this.edge);
+		var door = new Door(this.isOneWay, false, this.color, this.edge);
 		door.draw(c, 0.5);
 	}
 };
@@ -371,5 +372,36 @@ LinkButtonToDoorTool.prototype.draw = function(c) {
 		} else if (this.door != null) {
 			dashedLine(c, this.door.getCenter(), this.point);
 		}
+	}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// class ToggleInitiallyOpenTool
+////////////////////////////////////////////////////////////////////////////////
+
+function ToggleInitiallyOpenTool(doc) {
+	this.doc = doc;
+	this.door = null;
+	this.point = null;
+}
+
+ToggleInitiallyOpenTool.prototype.mouseDown = function(point) {
+	this.mouseMoved(point);
+	if (this.door != null) {
+		this.doc.toggleInitiallyOpen(this.door);
+	}
+};
+
+ToggleInitiallyOpenTool.prototype.mouseMoved = function(point) {
+	this.door = this.doc.world.closestPlaceableOfType(point, Door);
+	this.point = point;
+};
+
+ToggleInitiallyOpenTool.prototype.mouseUp = function(point) {
+};
+
+ToggleInitiallyOpenTool.prototype.draw = function(c) {
+	if (this.point != null && this.door != null) {
+		dashedLine(c, this.door.getCenter(), this.point);
 	}
 };

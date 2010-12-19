@@ -249,8 +249,7 @@ World.prototype.closestPlaceableOfType = function(point, type) {
 	for (var i = 0; i < this.placeables.length; i++) {
 		var p = this.placeables[i];
 		if (!(p instanceof type)) continue;
-		var anchor = p.getAnchor();
-		var dist = anchor.sub(point).length();
+		var dist = p.getCenter().sub(point).length();
 		if (dist < minDist) {
 			placeable = p;
 			minDist = dist;

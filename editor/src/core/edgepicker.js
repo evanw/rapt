@@ -28,22 +28,35 @@ Edge.prototype.flip = function() {
 	this.end = temp;
 };
 
-Edge.prototype.draw = function(c) {
-	c.beginPath();
+Edge.prototype.pointAlongLine = function(fraction) {
+	return this.start.mul(1 - fraction).add(this.end.mul(fraction));
+};
 
-	// Draw the edge
-	c.moveTo(this.start.x, this.start.y);
-	c.lineTo(this.end.x, this.end.y);
-
-	// Draw the direction indicators
+Edge.prototype.drawDirectionIndicators = function(c, isInitiallyOpen) {
 	var normal = this.end.sub(this.start).flip().unit();
 	for (var i = 1, num = 10; i < num - 1; i++) {
-		var fraction = i / (num - 1);
-		var start = this.start.mul(fraction).add(this.end.mul(1 - fraction));
-		c.moveTo(start.x, start.y);
-		c.lineTo(start.x - normal.x * 0.1, start.y - normal.y * 0.1);
+		var point = this.pointAlongLine(i / (num - 1));
+		var d = isInitiallyOpen ? 0.05 : 0;
+		c.moveTo(point.x - normal.x * d, point.y - normal.y * d);
+		c.lineTo(point.x - normal.x * 0.1, point.y - normal.y * 0.1);
 	}
+};
 
+Edge.prototype.draw = function(c) {
+	c.beginPath();
+	c.moveTo(this.start.x, this.start.y);
+	c.lineTo(this.end.x, this.end.y);
+	this.drawDirectionIndicators(c, false);
+	c.stroke();
+};
+
+Edge.prototype.drawOpen = function(c) {
+	var a = this.pointAlongLine(1 / 9);
+	var b = this.pointAlongLine(8 / 9);
+	c.beginPath();
+	c.moveTo(this.start.x, this.start.y);
+	c.lineTo(this.end.x, this.end.y);
+	this.drawDirectionIndicators(c, true);
 	c.stroke();
 };
 
