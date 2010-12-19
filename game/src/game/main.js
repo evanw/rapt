@@ -42,12 +42,12 @@ var SPACEBAR = 32;
 
     function showLevelScreen() {
         $('#canvas').hide();
-        $('#levels').show();
+        $('#levelScreen').show();
         currentScreen = null;
     }
 
     function showGameScreen() {
-        $('#levels').hide();
+        $('#levelScreen').hide();
         $('#canvas').show();
         changeScreen(new Game());
     }
@@ -64,18 +64,24 @@ var SPACEBAR = 32;
         levels.push('#/Evan/Level-2/');
         levels.push('#/Evan/Hunter-Food/');
 
+        // Add the level screen title to the DOM
+        $('#levelScreen').prepend("<h2>Official Levels</h2>");
+
+        var levelsDiv = $('#levels');
         // Add the levels to the DOM
         for (var i = 0; i < levels.length; ++i) {
-            var levelsDiv = $('#levels');
-
-            levelsDiv.append("<a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a>");
-            levelsDiv.append("</br>");
+            addLevelToDOM(levelsDiv, levels[i]);
         }
+    }
+
+    function addLevelToDOM(parentDiv, hash) {
+        console.log("<div class=\"level\"><a href=\"" + hash + "\">" + hash.split('/')[2] + "</a></div>");
+        parentDiv.append("<div class=\"level\"><a href=\"" + hash + "\">" + hash.split('/')[2] + "</a></div>");
     }
 
 	$(document).ready(function() {
         // first set up the level menu links
-        $('#levels').hide();
+        $('#levelScreen').hide();
         // Pretend we're playing a real level already
         getLevels();
         location.hash = levels[0];
