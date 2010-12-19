@@ -143,8 +143,8 @@ World.prototype.draw = function(c) {
 	}
 	
 	// Draw selections around selected placeables
-	c.fillStyle = 'rgba(0, 0, 0, 0.1)';
-	c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+	c.fillStyle = rgba(0, 0, 0, 0.1);
+	c.strokeStyle = rgba(0, 0, 0, 0.5);
 	for (i = 0; i < this.placeables.length; i++) {
 		if (this.placeables[i].selected) {
 			this.placeables[i].drawSelection(c);

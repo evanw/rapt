@@ -115,7 +115,7 @@ PlaceDoorTool.prototype.mouseUp = function(point) {
 
 PlaceDoorTool.prototype.draw = function(c) {
 	if (this.edge != null) {
-		c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+		c.strokeStyle = rgba(0, 0, 0, 0.5);
 		this.edge.draw(c);
 		
 		if (!this.isOneWay) {
@@ -191,8 +191,8 @@ SelectionTool.prototype.mouseUp = function(point) {
 
 SelectionTool.prototype.draw = function(c) {
 	if (this.mode == SELECTION_MODE_SELECT) {
-		c.fillStyle = 'rgba(0, 0, 0, 0.1)';
-		c.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+		c.fillStyle = rgba(0, 0, 0, 0.1);
+		c.strokeStyle = rgba(0, 0, 0, 0.5);
 		c.fillRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
 		c.strokeRect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
 	}

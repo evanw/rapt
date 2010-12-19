@@ -34,24 +34,31 @@ var MODE_OTHER_SELECT = 16;
 var MODE_OTHER_ENEMIES = 17;
 var MODE_OTHER_HELP = 18;
 
+function todo(c, alpha) {
+	Sprites.drawQuestionMark(c, alpha);
+}
+
 var enemies = [
 	{ name: 'Bomber', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha); }) },
-	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) {}) },
 	{ name: 'Doom Magnet', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha); }) },
-	{ name: 'Headache', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, true); }) },
+	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, false); }) },
+	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, todo) },
+	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, todo) },
+	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha, true); }) },
+	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha, false); }) },
+	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
 	{ name: 'Hunter', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
-	{ name: 'Multi-Gun', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Riot Gun', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Spike Ball', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Wall Crawler', sprite: new Sprite(0.5, function(c, alpha) {}) },
-	{ name: 'Wheeligator', sprite: new Sprite(0.5, function(c, alpha) {}) }
+	{ name: 'Multi-Gun', sprite: new Sprite(0.5, todo) },
+	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
+	{ name: 'Riot Gun', sprite: new Sprite(0.5, todo) },
+	{ name: 'Rocket Spider', sprite: new Sprite(0.5, todo) },
+	{ name: 'Shock Hawk', sprite: new Sprite(0.5, todo) },
+	{ name: 'Spike Ball', sprite: new Sprite(0.5, todo) },
+	{ name: 'Stalacbat', sprite: new Sprite(0.5, todo) },
+	{ name: 'Wall Avoider', sprite: new Sprite(0.5, todo) },
+	{ name: 'Wall Crawler', sprite: new Sprite(0.5, todo) },
+	{ name: 'Wheeligator', sprite: new Sprite(0.5, todo) }
 ];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +73,7 @@ function Editor(canvas) {
 	this.activeTool = null;
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
-	this.selectedSprite = enemies[0].sprite;
+	this.selectedEnemy = 0;
 	this.isMouseOver = false;
 	
 	this.doc.world.playerStart = new Vector(-2, -1);
@@ -111,7 +118,7 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return new Cog(point); });
 		break;
 	case MODE_OTHER_ENEMIES:
-		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return editor.selectedSprite.clone(point); });
+		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return enemies[editor.selectedEnemy].sprite.clone(point); });
 		break;
 	default:
 		this.selectedTool = null;
@@ -170,7 +177,7 @@ Editor.prototype.drawGrid = function() {
 
 	// Draw the solid
 	var x, y;
-	c.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+	c.strokeStyle = rgba(0, 0, 0, 0.2);
 	c.beginPath();
 	for (x = minX; x <= maxX; x += 2 * currentResolution) {
 		c.moveTo(x, minY);
@@ -182,8 +189,8 @@ Editor.prototype.drawGrid = function() {
 	}
 	c.stroke();
 	
-	// Draw the fading lines (need to use toFixed() so the negative exponent doesn't show up for small numbers)
-	c.strokeStyle = 'rgba(0, 0, 0, ' + (0.2 * percent * percent).toFixed(5) + ')';
+	// Draw the fading lines
+	c.strokeStyle = rgba(0, 0, 0, 0.2 * percent * percent);
 	c.beginPath();
 	for (x = minX + currentResolution; x <= maxX; x += 2 * currentResolution) {
 		c.moveTo(x, minY);
@@ -290,5 +297,5 @@ Editor.prototype.selectAll = function() {
 };
 
 Editor.prototype.setSelectedEnemy = function(index) {
-	this.selectedSprite = enemies[index].sprite;
+	this.selectedEnemy = index;
 };

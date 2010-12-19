@@ -6,15 +6,17 @@ function Sprites() {
 }
 
 Sprites.drawSpawnPoint = function(c, alpha, point) {
-	c.strokeStyle = c.fillStyle = 'rgba(255, 255, 255, ' + (alpha * 0.1).toFixed(5) + ')';
+	// Outer bubble
+	c.strokeStyle = c.fillStyle = rgba(255, 255, 255, alpha * 0.1);
 	c.beginPath();
 	c.arc(point.x, point.y, 1, 0, 2 * Math.PI, false);
 	c.stroke();
 	c.fill();
 
+	// Glow from base
 	var gradient = c.createLinearGradient(0, point.y - 0.4, 0, point.y + 0.6);
-	gradient.addColorStop(0, 'rgba(255, 255, 255, ' + (alpha * 0.75).toFixed(5) + ')');
-	gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+	gradient.addColorStop(0, rgba(255, 255, 255, alpha * 0.75));
+	gradient.addColorStop(1, rgba(255, 255, 255, 0));
 	c.fillStyle = gradient;
 	c.beginPath();
 	c.lineTo(point.x - 0.35, point.y + 0.6);
@@ -23,7 +25,8 @@ Sprites.drawSpawnPoint = function(c, alpha, point) {
 	c.lineTo(point.x + 0.35, point.y + 0.6);
 	c.fill();
 
-	c.fillStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	// Black base
+	c.fillStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
 	c.moveTo(point.x - 0.1, point.y - 0.45);
 	c.lineTo(point.x - 0.1, point.y - 0.4);
@@ -39,7 +42,8 @@ Sprites.drawGoal = function(c, alpha, point, time) {
 	percent = (percent - Math.pow(percent, 6)) * 1.72;
 	percent = 1 - percent;
 
-	c.fillStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	// Draw four arrows pointing inwards
+	c.fillStyle = rgba(0, 0, 0, alpha);
 	for (var i = 0; i < 4; ++i) {
 		var angle = i * (2 * Math.PI / 4);
 		var s = Math.sin(angle);
@@ -64,7 +68,7 @@ Sprites.drawCog = function(c, alpha, x, y, radius) {
 	var numSpokes = 5;
 	var i, angle, sin, cos, r;
 	
-	c.fillStyle = 'rgba(255, 255, 0, ' + alpha.toFixed(5) + ')';
+	c.fillStyle = rgba(255, 255, 0, alpha);
 	
 	// Draw the outer rim with teeth
 	c.beginPath();
@@ -100,7 +104,7 @@ Sprites.drawBomber = function(c, alpha, reloadPercentage) {
 	var bombRadius = 0.15;
 	
 	// Bomber body
-	c.strokeStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	c.strokeStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
 	c.moveTo(-0.25, -0.2);
 	c.lineTo(-0.25, -0.1);
@@ -117,16 +121,16 @@ Sprites.drawBomber = function(c, alpha, reloadPercentage) {
 	c.stroke();
 
 	// Growing bomb about to be dropped
-	c.fillStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	c.fillStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
 	c.arc(0, -bomberHeight * 0.5, bombRadius * reloadPercentage, 0, 2 * Math.PI, false);
 	c.fill();
 };
 
-Sprites.drawBouncyRocketLauncher = function(c, alpha) {
+Sprites.drawBouncyRocketLauncher = function(c, alpha, redIsFirst) {
    // End of gun
 	var v = Math.sqrt(0.2*0.2 - 0.1*0.1);
-	c.strokeStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	c.strokeStyle = rgba(0, 0, 0, alpha);
    c.beginPath();
    c.moveTo(-v, -0.1);
    c.lineTo(-0.3, -0.1);
@@ -135,11 +139,11 @@ Sprites.drawBouncyRocketLauncher = function(c, alpha) {
    c.stroke();
 
    // Main body
-   c.fillStyle = 'rgba(0, 0, 255, ' + alpha.toFixed(5) + ')';
+   c.fillStyle = rgba(255 * redIsFirst, 0, 255 * !redIsFirst, alpha);
    c.beginPath();
    c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, true);
    c.fill();
-   c.fillStyle = 'rgba(255, 0, 0, ' + alpha.toFixed(5) + ')';
+   c.fillStyle = rgba(255 * !redIsFirst, 0, 255 * redIsFirst, alpha);
    c.beginPath();
    c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
    c.fill();
@@ -163,7 +167,7 @@ Sprites.drawDoomMagnet = function(c, alpha) {
 
 	for (var scale = -1; scale <= 1; scale += 2) {
 		// Draw red tips
-	   c.fillStyle = 'rgba(0, 0, 255, ' + alpha.toFixed(5) + ')';
+	   c.fillStyle = rgba(0, 0, 255, alpha);
 		c.beginPath();
 		c.moveTo(-outerRadius - length, scale * innerRadius);
 		c.lineTo(-outerRadius - length, scale * outerRadius);
@@ -172,7 +176,7 @@ Sprites.drawDoomMagnet = function(c, alpha) {
 		c.fill();
 
 		// Draw blue tips
-	   c.fillStyle = 'rgba(255, 0, 0, ' + alpha.toFixed(5) + ')';
+	   c.fillStyle = rgba(255, 0, 0, alpha);
 		c.beginPath();
 		c.moveTo(outerRadius + length, scale * innerRadius);
 		c.lineTo(outerRadius + length, scale * outerRadius);
@@ -180,7 +184,7 @@ Sprites.drawDoomMagnet = function(c, alpha) {
 		c.lineTo(outerRadius + length - (outerRadius - innerRadius), scale * innerRadius);
 		c.fill();
 	}
-	c.strokeStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	c.strokeStyle = rgba(0, 0, 0, alpha);
 
 	// Draw one prong of the magnet
 	c.beginPath();
@@ -207,13 +211,14 @@ Sprites.drawDoomMagnet = function(c, alpha) {
 	c.stroke();
 };
 
-Sprites.drawGrenadier = function(c, alpha) {
+Sprites.drawGrenadier = function(c, alpha, isRed) {
 	var barrelLength = 0.25;
 	var outerRadius = 0.25;
 	var innerRadius = 0.175;
 
-	c.fillStyle = 'rgba(255, 0, 0, ' + alpha.toFixed(5) + ')';
-	c.strokeStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	// Draw a 'V' shape
+	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
+	c.strokeStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
 	c.moveTo(-outerRadius, -barrelLength);
 	c.lineTo(-innerRadius, -barrelLength);
@@ -241,11 +246,13 @@ Sprites.drawHunter = function(c, alpha) {
 		c.stroke();
 	}
 	
-	c.strokeStyle = 'rgba(0, 0, 0, ' + alpha.toFixed(5) + ')';
+	// Draw the eye
+	c.strokeStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
 	c.arc(0, -0.2, 0.1, 0, 2*Math.PI, false);
 	c.stroke();
 	
+	// Draw the claws
 	var clawAngle = 0.1;
 	c.save();
 	c.translate(0, -0.2);
@@ -254,5 +261,69 @@ Sprites.drawHunter = function(c, alpha) {
 	c.rotate(2 * clawAngle);
 	c.scale(-1, 1);
 	drawClaw(c);
+	c.restore();
+};
+
+Sprites.drawPopper = function(c, alpha) {
+	function drawLeg(c, x, y, angle1, angle2) {
+		angle1 *= Math.PI / 180;
+		angle2 = angle1 + angle2 * Math.PI / 180;
+		var legLength = 0.3;
+		var kneeX = x + Math.sin(angle1) * legLength;
+		var kneeY = y - Math.cos(angle1) * legLength;
+		
+		// Draw leg with one joint
+		c.beginPath();
+		c.moveTo(x, y);
+		c.lineTo(kneeX, kneeY);
+		c.lineTo(kneeX + Math.sin(angle2) * legLength, kneeY - Math.cos(angle2) * legLength);
+		c.stroke();
+	}
+	
+	function drawBody(c, x, y) {
+		c.save();
+		c.translate(x, y);
+		
+		// Draw shell
+		c.beginPath();
+		c.moveTo(0.2, -0.2);
+		c.lineTo(-0.2, -0.2);
+		c.lineTo(-0.3, 0);
+		c.lineTo(-0.2, 0.2);
+		c.lineTo(0.2, 0.2);
+		c.lineTo(0.3, 0);
+		c.lineTo(0.2, -0.2);
+		c.moveTo(0.15, -0.15);
+		c.lineTo(-0.15, -0.15);
+		c.lineTo(-0.23, 0);
+		c.lineTo(-0.15, 0.15);
+		c.lineTo(0.15, 0.15);
+		c.lineTo(0.23, 0);
+		c.lineTo(0.15, -0.15);
+		c.stroke();
+
+		// Draw eyes
+		c.beginPath();
+		c.arc(-0.075, 0, 0.04, 0, 2*Math.PI, false);
+		c.arc(0.075, 0, 0.04, 0, 2*Math.PI, false);
+		c.fill();
+		
+		c.restore();
+	}
+	
+	c.fillStyle = c.strokeStyle = rgba(0, 0, 0, alpha);
+	drawBody(c, 0, 0.1);
+	drawLeg(c, -0.2, -0.1, -80, 100);
+	drawLeg(c, -0.1, -0.1, -80, 100);
+	drawLeg(c, 0.1, -0.1, 80, -100);
+	drawLeg(c, 0.2, -0.1, 80, -100);
+};
+
+Sprites.drawQuestionMark = function(c, alpha) {
+	c.fillStyle = rgba(0, 0, 0, alpha * 0.25);
+	c.save();
+	c.scale(1 / 50, -1 / 50);
+	c.font = '50px Arial';
+	c.fillText('?', -c.measureText('?').width / 2, 20);
 	c.restore();
 };
