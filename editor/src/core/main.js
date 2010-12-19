@@ -24,7 +24,6 @@ function showOrHidePanels(mode, oldMode) {
 	if (mode == MODE_OTHER_HELP) {
 		$('#help').show();
 		resizeEditor();
-		fillHelp();
 	} else if (oldMode == MODE_OTHER_HELP) {
 		$('#help').hide();
 		resizeEditor();
@@ -34,7 +33,6 @@ function showOrHidePanels(mode, oldMode) {
 	if (mode == MODE_OTHER_ENEMIES) {
 		$('#enemies').show();
 		resizeEditor();
-		fillEnemies();
 	} else if (oldMode == MODE_OTHER_ENEMIES) {
 		$('#enemies').hide();
 		resizeEditor();
@@ -82,7 +80,7 @@ function fillEnemies() {
 		html += '<div class="enemy" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas"></canvas>' + enemies[i].name + '</div>';
 	}
 	$('#enemies').html(html);
-	$('.enemy:first-child').addClass('selected');
+	$('#enemy' + editor.selectedEnemy).addClass('selected');
 	
 	// Draw each enemy on their <canvas>
 	for (i = 0; i < enemies.length; i++) {
@@ -124,6 +122,10 @@ $(document).ready(function() {
 	var canvas = $('#canvas')[0];
 	editor = new Editor(canvas);
 	resizeEditor();
+	
+	// Create HTML content for the sidebars
+	fillHelp();
+	fillEnemies();
 	
 	// Connect canvas events to editor events
 	$(canvas).mousedown(function(e) {
