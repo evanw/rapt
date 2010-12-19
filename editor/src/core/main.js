@@ -15,7 +15,7 @@ function resizeEditor() {
 		sidebarWidth = $('#enemies').outerWidth();
 	}
 
-	if (editor.mode == MODE_OTHER_WALLS) {
+	if (editor.mode == MODE_OTHER_WALLS_BUTTONS) {
 		$('#walls').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#walls').outerWidth();
 	}
@@ -40,7 +40,7 @@ function showOrHidePanels(mode, oldMode) {
 	}
 	
 	// Show or hide the walls panel
-	if (mode == MODE_OTHER_WALLS) {
+	if (mode == MODE_OTHER_WALLS_BUTTONS) {
 		$('#walls').show();
 	} else {
 		$('#walls').hide();
@@ -71,38 +71,34 @@ function fillHelp() {
 		'Delete selection', backspace,
 		'---', '---',
 		'Pan camera', 'Right-drag',
-		'Zoom camera', 'Scrollwheel'
+		'Zoom camera', 'Scrollwheel',
+		'Move selection', 'Left-drag'
 	];
 	
 	// Generate keyboard shortcut html
-	var html = '<table>';
+	var gen = new SidebarGenerator();
 	for (var i = 0; i < keys.length; i++) {
-		if (!(i & 1)) html += '<tr>';
-		html += '<td>' + keys[i].replace('---', '<hr>') + '</td>';
-		if (i & 1) html += '</tr>';
+		gen.addCell(keys[i]);
 	}
-	$('#help').html(html + '</table>');
+	$('#help').html(gen.getHTML());
 }
 
 function fillEnemies() {
+	var gen = new SidebarGenerator();
+	
 	// Create a <canvas> for each enemy
-	var html = '<table>';
 	var i;
+	gen.addHeader('Color-neutral enemies');
 	for (i = 0; i < enemies.length; i++) {
-		if (!(i & 1)) html += '<tr>';
-		html += '<td><div class="enemy" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas"></canvas>' + enemies[i].name + '</div></td>';
-		if (i & 1) html += '</tr>';
+		if (i == 10) gen.addHeader('Color-specific enemies');
+		gen.addCell('<div class="cell" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas" width="80" height="60"></canvas>' + enemies[i].name + '</div>');
 	}
-	$('#enemies').html(html + '</table>');
+	$('#enemies').html(gen.getHTML());
 	$('#enemy' + editor.selectedEnemy).addClass('enemy-current');
 	
 	// Draw each enemy on its <canvas>
 	for (i = 0; i < enemies.length; i++) {
-		var p = $('#enemy' + i + '-canvas')[0];
-		p.width = 80;
-		p.height = 60;
-		
-		var c = p.getContext('2d');
+		var c = $('#enemy' + i + '-canvas')[0].getContext('2d');
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
@@ -111,7 +107,7 @@ function fillEnemies() {
 	}
 	
 	// Add an action to each enemy button
-	$('#enemies .enemy').mousedown(function(e) {
+	$('#enemies .cell').mousedown(function(e) {
 		var selectedEnemy = parseInt(/\d+$/.exec(this.id), 10);
 		editor.setSelectedEnemy(selectedEnemy);
 		$('.enemy-current').removeClass('enemy-current');
@@ -121,35 +117,79 @@ function fillEnemies() {
 }
 
 function fillWalls() {
+	var gen = new SidebarGenerator();
+	
 	// Create a <canvas> for each wall type
-	var html = '<table>';
-	var i;
+	var i, c;
+	gen.addHeader('Walls');
+	gen.addInfo('Colored walls allow only the player of that color to pass through');
 	for (i = 0; i < 6; i++) {
 		var name = (i & 1) ? 'One-way' : 'Normal';
-		if (!(i & 1)) html += '<tr>';
-		html += '<td><div class="wall" id="wall' + i + '"><canvas id="wall' + i + '-canvas"></canvas>' + name + '</div></td>';
-		if (i & 1) html += '</tr>';
+		gen.addCell('<div class="cell" id="wall' + i + '"><canvas id="wall' + i + '-canvas" width="80" height="60"></canvas>' + name + '</div>');
 	}
-	$('#walls').html(html + '</table>');
+	
+	// Create a <canvas> for each button type
+	gen.addHeader('Buttons');
+	gen.addInfo('Buttons open and close linked doors');
+	var buttons = [ 'Open', 'Close', 'Toggle', 'Link', 'Initially Open' ];
+	for (i = 6; i < 9; i++) {
+		gen.addCell('<div class="cell" id="button' + i + '"><canvas id="button' + i + '-canvas" width="80" height="60"></canvas>' + buttons.shift() + '</div>');
+	}
+	
+	// Create a <canvas> for each door tool
+	gen.addHeader('Doors');
+	gen.addInfo('Create doors by linking buttons to walls');
+	for (i = 9; i < 11; i++) {
+		gen.addCell('<div class="cell" id="door' + i + '"><canvas id="door' + i + '-canvas" width="80" height="60"></canvas>' + buttons.shift() + '</div>');
+	}
+	
+	$('#walls').html(gen.getHTML());
 	$('#wall' + editor.selectedEnemy).addClass('wall-current');
 	
 	// Draw each wall on its <canvas>
 	for (i = 0; i < 6; i++) {
-		var p = $('#wall' + i + '-canvas')[0];
-		p.width = 80;
-		p.height = 60;
-		
-		var c = p.getContext('2d');
+		c = $('#wall' + i + '-canvas')[0].getContext('2d');
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
-		
-		c.strokeStyle = 'green';
 		new Door(i & 1, Math.floor(i / 2), new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
 	}
 	
+	// Draw each button on its <canvas>
+	for (i = 6; i < 9; i++) {
+		c = $('#button' + i + '-canvas')[0].getContext('2d');
+		c.translate(40, 30);
+		c.scale(50, -50);
+		c.lineWidth = 1 / 50;
+		Sprites.drawButton(c, 1);
+	}
+	
+	// Draw each button on its <canvas>
+	for (i = 9; i < 11; i++) {
+		c = $('#door' + i + '-canvas')[0].getContext('2d');
+		c.translate(40, 30);
+		c.scale(50, -50);
+		c.lineWidth = 1 / 50;
+		if (i == 9) {
+			// Draw link
+			c.strokeStyle = rgba(0, 0, 0, 0.5);
+			dashedLine(c, new Vector(-0.3, 0.2), new Vector(0.3, 0));
+			
+			// Draw button
+			c.translate(-0.3, 0.2);
+			Sprites.drawButton(c, 1);
+			c.translate(0.3, -0.2);
+			
+			// Draw door
+			new Door(true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
+		} else {
+			// Draw initially open door
+			new Door(true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+		}
+	}
+	
 	// Add an action to each wall button
-	$('#walls .wall').mousedown(function(e) {
+	$('#walls .cell').mousedown(function(e) {
 		var selectedWall = parseInt(/\d+$/.exec(this.id), 10);
 		editor.setSelectedWall(selectedWall);
 		$('.wall-current').removeClass('wall-current');

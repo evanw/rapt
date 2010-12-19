@@ -16,8 +16,8 @@ function Door(isOneWay, color, edge) {
 	this.offsetToEnd = edge.end.sub(this.anchor);
 }
 
-Door.prototype.draw = function(c) {
-	c.strokeStyle = rgba(255 * (this.color == DOOR_COLOR_RED), 0, 255 * (this.color == DOOR_COLOR_BLUE), 1);
+Door.prototype.draw = function(c, alpha) {
+	c.strokeStyle = rgba(255 * (this.color == DOOR_COLOR_RED), 0, 255 * (this.color == DOOR_COLOR_BLUE), alpha || 1);
 	this.edge.draw(c);
 	if (!this.isOneWay) {
 		this.edge.flip();

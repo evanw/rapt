@@ -68,7 +68,7 @@ Sprites.drawGoal = function(c, alpha, point, time) {
 	}
 };
 
-Sprites.drawCog = function(c, alpha, x, y, radius) {
+Sprites.drawCog = function(c, alpha, radius) {
 	var innerRadius = radius * 0.2;
 	var spokeRadius = radius * 0.8;
 	var spokeWidth1 = radius * 0.2;
@@ -87,12 +87,12 @@ Sprites.drawCog = function(c, alpha, x, y, radius) {
 		sin = Math.sin(angle);
 		cos = Math.cos(angle);
 		r = radius * (1 + Math.cos(angle * numTeeth) * 0.1);
-		c.lineTo(x + cos * r, y + sin * r);
+		c.lineTo(cos * r, sin * r);
 	}
 	c.closePath();
 	
 	// Draw the inner rim
-	c.arc(x, y, radius * 0.65, 0, Math.PI * 2, true);
+	c.arc(0, 0, radius * 0.65, 0, Math.PI * 2, true);
 	c.closePath();
 	
 	// Draw the spokes
@@ -100,10 +100,10 @@ Sprites.drawCog = function(c, alpha, x, y, radius) {
 		angle = i / numSpokes * (Math.PI * 2);
 		sin = Math.sin(angle);
 		cos = Math.cos(angle);
-		c.moveTo(x + sin * spokeWidth1, y - cos * spokeWidth1);
-		c.lineTo(x + cos * spokeRadius + sin * spokeWidth2, y + sin * spokeRadius - cos * spokeWidth2);
-		c.lineTo(x + cos * spokeRadius - sin * spokeWidth2, y + sin * spokeRadius + cos * spokeWidth2);
-		c.lineTo(x - sin * spokeWidth1, y + cos * spokeWidth1);
+		c.moveTo(sin * spokeWidth1, -cos * spokeWidth1);
+		c.lineTo(cos * spokeRadius + sin * spokeWidth2, sin * spokeRadius - cos * spokeWidth2);
+		c.lineTo(cos * spokeRadius - sin * spokeWidth2, sin * spokeRadius + cos * spokeWidth2);
+		c.lineTo(-sin * spokeWidth1, cos * spokeWidth1);
 		c.closePath();
 	}
 	c.fill();
@@ -112,6 +112,9 @@ Sprites.drawCog = function(c, alpha, x, y, radius) {
 Sprites.drawBomber = function(c, alpha, reloadPercentage) {
 	var bomberHeight = 0.4;
 	var bombRadius = 0.15;
+	
+	c.save();
+	c.translate(0, 0.05);
 	
 	// Bomber body
 	c.strokeStyle = rgba(0, 0, 0, alpha);
@@ -135,6 +138,8 @@ Sprites.drawBomber = function(c, alpha, reloadPercentage) {
 	c.beginPath();
 	c.arc(0, -bomberHeight * 0.5, bombRadius * reloadPercentage, 0, 2 * Math.PI, false);
 	c.fill();
+	
+	c.restore();
 };
 
 Sprites.drawBouncyRocketLauncher = function(c, alpha, redIsFirst) {
@@ -609,4 +614,24 @@ Sprites.drawSpider = function(c, alpha) {
 	drawLeg(c, w * -0.35, 0, 10, 20, 0.5);
 	
 	c.restore();
+};
+
+Sprites.drawButton = function(c, alpha) {
+	var buttonSlices = 3;
+	var buttonRadius = 0.11;
+	
+   c.fillStyle = rgba(255, 255, 255, alpha);
+   c.strokeStyle = rgba(0, 0, 0, alpha);
+   c.beginPath();
+   c.arc(0, 0, buttonRadius, 0, 2 * Math.PI, false);
+   c.fill();
+   c.stroke();
+
+   c.beginPath();
+   for (var i = 0; i < buttonSlices; i++) {
+       c.moveTo(0, 0);
+       var nextPos = Vector.fromAngle(i * (2 * Math.PI / buttonSlices)).mul(buttonRadius);
+       c.lineTo(nextPos.x, nextPos.y);
+   }
+   c.stroke();
 };
