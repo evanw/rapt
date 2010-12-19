@@ -8,31 +8,23 @@ var MODE_TILES_EMPTY = 0;
 var MODE_TILES_SOLID = 1;
 var MODE_TILES_DIAGONAL = 2;
 
-// Walls
-var MODE_WALLS_NORMAL = 3;
-var MODE_WALLS_ONEWAY = 4;
-
 // Buttons
-var MODE_BUTTONS_OPEN = 5;
-var MODE_BUTTONS_CLOSE = 6;
-var MODE_BUTTONS_TOGGLE = 7;
-var MODE_BUTTONS_LINK = 8;
-
-// Colors
-var MODE_COLORS_RED = 9;
-var MODE_COLORS_BLUE = 10;
-var MODE_COLORS_NEUTRAL = 11;
+var MODE_BUTTONS_OPEN = 3;
+var MODE_BUTTONS_CLOSE = 4;
+var MODE_BUTTONS_TOGGLE = 5;
+var MODE_BUTTONS_LINK = 6;
 
 // Game Elements
-var MODE_ELEMENTS_START = 12;
-var MODE_ELEMENTS_GOAL = 13;
-var MODE_ELEMENTS_COG = 14;
-var MODE_ELEMENTS_SIGN = 15;
+var MODE_ELEMENTS_START = 7;
+var MODE_ELEMENTS_GOAL = 8;
+var MODE_ELEMENTS_COG = 9;
+var MODE_ELEMENTS_SIGN = 10;
 
 // Other
-var MODE_OTHER_SELECT = 16;
-var MODE_OTHER_ENEMIES = 17;
-var MODE_OTHER_HELP = 18;
+var MODE_OTHER_SELECT = 11;
+var MODE_OTHER_ENEMIES = 12;
+var MODE_OTHER_WALLS = 13;
+var MODE_OTHER_HELP = 14;
 
 function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);
@@ -44,7 +36,7 @@ var enemies = [
 	{ name: 'Hunter', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
 	{ name: 'Multi-Gun', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
 	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
-	{ name: 'Riot Gun', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
+	{ name: 'Jet Stream', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
 	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpider(c, alpha); }) },
 	{ name: 'Spike Ball', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
 	{ name: 'Wall Crawler', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },
@@ -78,6 +70,7 @@ function Editor(canvas) {
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
 	this.selectedEnemy = 0;
+	this.selectedWall = 0;
 	this.isMouseOver = false;
 	
 	this.doc.world.playerStart = new Vector(-2, -1);
@@ -103,12 +96,6 @@ Editor.prototype.setMode = function(mode) {
 	case MODE_TILES_DIAGONAL:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
 		break;
-	case MODE_WALLS_NORMAL:
-		this.selectedTool = new PlaceDoorTool(this.doc, false);
-		break;
-	case MODE_WALLS_ONEWAY:
-		this.selectedTool = new PlaceDoorTool(this.doc, true);
-		break;
 	case MODE_OTHER_SELECT:
 		this.selectedTool = new SelectionTool(this.doc);
 		break;
@@ -123,6 +110,9 @@ Editor.prototype.setMode = function(mode) {
 		break;
 	case MODE_OTHER_ENEMIES:
 		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return enemies[editor.selectedEnemy].sprite.clone(point); });
+		break;
+	case MODE_OTHER_WALLS:
+		this.selectedTool = new PlaceDoorTool(this.doc, function(){ return (editor.selectedWall & 1); }, function(){ return Math.floor(editor.selectedWall / 2); });
 		break;
 	default:
 		this.selectedTool = null;
@@ -302,4 +292,8 @@ Editor.prototype.selectAll = function() {
 
 Editor.prototype.setSelectedEnemy = function(index) {
 	this.selectedEnemy = index;
+};
+
+Editor.prototype.setSelectedWall = function(index) {
+	this.selectedWall = index;
 };

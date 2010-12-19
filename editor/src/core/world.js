@@ -66,6 +66,29 @@ Cell.prototype.draw = function(c, x, y) {
 	}
 };
 
+Cell.prototype.flipType = function() {
+	switch (this.type) {
+	case CELL_EMPTY:
+		this.type = CELL_SOLID;
+		break;
+	case CELL_SOLID:
+		this.type = CELL_EMPTY;
+		break;
+	case CELL_CEIL_DIAG_LEFT:
+		this.type = CELL_FLOOR_DIAG_RIGHT;
+		break;
+	case CELL_CEIL_DIAG_RIGHT:
+		this.type = CELL_FLOOR_DIAG_LEFT;
+		break;
+	case CELL_FLOOR_DIAG_LEFT:
+		this.type = CELL_CEIL_DIAG_RIGHT;
+		break;
+	case CELL_FLOOR_DIAG_RIGHT:
+		this.type = CELL_CEIL_DIAG_LEFT;
+		break;
+	}
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // class Sector
 ////////////////////////////////////////////////////////////////////////////////

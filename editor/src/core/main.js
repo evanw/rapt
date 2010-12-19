@@ -14,6 +14,11 @@ function resizeEditor() {
 		$('#enemies').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#enemies').outerWidth();
 	}
+
+	if (editor.mode == MODE_OTHER_WALLS) {
+		$('#walls').css({ top: toolbarHeight + 'px' });
+		sidebarWidth = $('#walls').outerWidth();
+	}
 	
 	editor.resize($(window).width() - sidebarWidth, $(window).height() - toolbarHeight);
 	editor.draw();
@@ -23,20 +28,25 @@ function showOrHidePanels(mode, oldMode) {
 	// Show or hide the help panel
 	if (mode == MODE_OTHER_HELP) {
 		$('#help').show();
-		resizeEditor();
-	} else if (oldMode == MODE_OTHER_HELP) {
+	} else {
 		$('#help').hide();
-		resizeEditor();
 	}
 	
 	// Show or hide the enemies panel
 	if (mode == MODE_OTHER_ENEMIES) {
 		$('#enemies').show();
-		resizeEditor();
-	} else if (oldMode == MODE_OTHER_ENEMIES) {
+	} else {
 		$('#enemies').hide();
-		resizeEditor();
 	}
+	
+	// Show or hide the walls panel
+	if (mode == MODE_OTHER_WALLS) {
+		$('#walls').show();
+	} else {
+		$('#walls').hide();
+	}
+	
+	resizeEditor();
 }
 
 function mousePoint(e) {
@@ -84,9 +94,9 @@ function fillEnemies() {
 		if (i & 1) html += '</tr>';
 	}
 	$('#enemies').html(html + '</table>');
-	$('#enemy' + editor.selectedEnemy).addClass('selected');
+	$('#enemy' + editor.selectedEnemy).addClass('enemy-current');
 	
-	// Draw each enemy on their <canvas>
+	// Draw each enemy on its <canvas>
 	for (i = 0; i < enemies.length; i++) {
 		var p = $('#enemy' + i + '-canvas')[0];
 		p.width = 80;
@@ -104,8 +114,46 @@ function fillEnemies() {
 	$('#enemies .enemy').mousedown(function(e) {
 		var selectedEnemy = parseInt(/\d+$/.exec(this.id), 10);
 		editor.setSelectedEnemy(selectedEnemy);
-		$('.selected').removeClass('selected');
-		$(this).addClass('selected');
+		$('.enemy-current').removeClass('enemy-current');
+		$(this).addClass('enemy-current');
+		e.preventDefault();
+	});
+}
+
+function fillWalls() {
+	// Create a <canvas> for each wall type
+	var html = '<table>';
+	var i;
+	for (i = 0; i < 6; i++) {
+		var name = (i & 1) ? 'One-way' : 'Normal';
+		if (!(i & 1)) html += '<tr>';
+		html += '<td><div class="wall" id="wall' + i + '"><canvas id="wall' + i + '-canvas"></canvas>' + name + '</div></td>';
+		if (i & 1) html += '</tr>';
+	}
+	$('#walls').html(html + '</table>');
+	$('#wall' + editor.selectedEnemy).addClass('wall-current');
+	
+	// Draw each wall on its <canvas>
+	for (i = 0; i < 6; i++) {
+		var p = $('#wall' + i + '-canvas')[0];
+		p.width = 80;
+		p.height = 60;
+		
+		var c = p.getContext('2d');
+		c.translate(40, 30);
+		c.scale(50, -50);
+		c.lineWidth = 1 / 50;
+		
+		c.strokeStyle = 'green';
+		new Door(i & 1, Math.floor(i / 2), new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+	}
+	
+	// Add an action to each wall button
+	$('#walls .wall').mousedown(function(e) {
+		var selectedWall = parseInt(/\d+$/.exec(this.id), 10);
+		editor.setSelectedWall(selectedWall);
+		$('.wall-current').removeClass('wall-current');
+		$(this).addClass('wall-current');
 		e.preventDefault();
 	});
 }
@@ -116,8 +164,8 @@ $(document).ready(function() {
 		var oldMode = editor.mode;
 		var mode = eval(this.id);
 		editor.setMode(mode);
-		$('.current').removeClass('current');
-		$(this).addClass('current');
+		$('.toolbar-current').removeClass('toolbar-current');
+		$(this).addClass('toolbar-current');
 		e.preventDefault();
 		showOrHidePanels(mode, oldMode);
 	});
@@ -128,8 +176,9 @@ $(document).ready(function() {
 	resizeEditor();
 	
 	// Create HTML content for the sidebars
-	fillHelp();
 	fillEnemies();
+	fillWalls();
+	fillHelp();
 	
 	// Connect canvas events to editor events
 	$(canvas).mousedown(function(e) {

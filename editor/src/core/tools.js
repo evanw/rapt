@@ -35,6 +35,9 @@ function SetCellTool(doc, mode) {
 	this.doc = doc;
 	this.mode = mode;
 	this.dragging = false;
+	this.cellX = null;
+	this.cellY = null;
+	this.cellType = null;
 }
 
 SetCellTool.prototype.mouseDown = function(point) {
@@ -44,24 +47,24 @@ SetCellTool.prototype.mouseDown = function(point) {
 };
 
 SetCellTool.prototype.mouseMoved = function(point) {
-	var cellX = Math.floor(point.x);
-	var cellY = Math.floor(point.y);
-	var cellType;
+	this.cellX = Math.floor(point.x);
+	this.cellY = Math.floor(point.y);
+	this.cellType;
 
 	if (this.mode == SETCELL_DIAGONAL) {
 		// Pick a different cell type depending on the quadrant
-		if (point.x - cellX < 0.5) {
-			cellType = (point.y - cellY < 0.5) ? CELL_FLOOR_DIAG_LEFT : CELL_CEIL_DIAG_LEFT;
+		if (point.x - this.cellX < 0.5) {
+			this.cellType = (point.y - this.cellY < 0.5) ? CELL_FLOOR_DIAG_LEFT : CELL_CEIL_DIAG_LEFT;
 		} else {
-			cellType = (point.y - cellY < 0.5) ? CELL_FLOOR_DIAG_RIGHT : CELL_CEIL_DIAG_RIGHT;
+			this.cellType = (point.y - this.cellY < 0.5) ? CELL_FLOOR_DIAG_RIGHT : CELL_CEIL_DIAG_RIGHT;
 		}
 	} else {
-		cellType = (this.mode == SETCELL_EMPTY) ? CELL_EMPTY : CELL_SOLID;
+		this.cellType = (this.mode == SETCELL_EMPTY) ? CELL_EMPTY : CELL_SOLID;
 	}
 	
 	// Only change the cell type if it's different
-	if (this.dragging && this.doc.world.getCell(cellX, cellY) != cellType) {
-		this.doc.setCell(cellX, cellY, cellType);
+	if (this.dragging && this.doc.world.getCell(this.cellX, this.cellY) != this.cellType) {
+		this.doc.setCell(this.cellX, this.cellY, this.cellType);
 	}
 };
 
@@ -71,21 +74,34 @@ SetCellTool.prototype.mouseUp = function(point) {
 };
 
 SetCellTool.prototype.draw = function(c) {
+	if (this.cellType != null) {
+		// Fill in the empty space
+		var cell = new Cell();
+		cell.type = this.cellType;
+		c.fillStyle = rgba(191, 191, 191, 0.5);
+		cell.draw(c, this.cellX, this.cellY);
+		
+		// Fill in the solid space
+		cell.flipType();
+		c.fillStyle = rgba(127, 127, 127, 0.5);
+		cell.draw(c, this.cellX, this.cellY);
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // class PlaceDoorTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function PlaceDoorTool(doc, isOneWay) {
+function PlaceDoorTool(doc, isOneWayFunc, colorFunc) {
 	this.doc = doc;
-	this.isOneWay = isOneWay;
+	this.isOneWayFunc = isOneWayFunc;
+	this.colorFunc = colorFunc;
 	this.edge = null;
 }
 
 PlaceDoorTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(new Door(this.isOneWay, this.edge));
+	this.doc.addPlaceable(new Door(this.isOneWayFunc(), this.colorFunc(), this.edge));
 };
 
 PlaceDoorTool.prototype.mouseMoved = function(point) {
@@ -115,14 +131,8 @@ PlaceDoorTool.prototype.mouseUp = function(point) {
 
 PlaceDoorTool.prototype.draw = function(c) {
 	if (this.edge != null) {
-		c.strokeStyle = rgba(0, 0, 0, 0.5);
-		this.edge.draw(c);
-		
-		if (!this.isOneWay) {
-			this.edge.flip();
-			this.edge.draw(c);
-			this.edge.flip();
-		}
+		var door = new Door(this.isOneWayFunc(), this.colorFunc(), this.edge);
+		door.draw(c);
 	}
 };
 
