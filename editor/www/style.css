@@ -110,15 +110,6 @@ body {
 	overflow-y: auto;
 }
 
-#help {
-	width: 200px;
-	padding: 15px 20px;
-}
-
-#enemies {
-	width: 240px;
-}
-
 .sidebar table {
 	width: 100%;
 	border-collapse: collapse;
@@ -127,6 +118,11 @@ body {
 .sidebar td {
 	width: 50%;
 	padding: 0;
+}
+
+#help {
+	width: 200px;
+	padding: 15px 20px;
 }
 
 #help td + td {
@@ -138,6 +134,10 @@ body {
 	height: 1px;
 	background: #CFCFCF;
 	margin: 10px 0;
+}
+
+#enemies {
+	width: 240px;
 }
 
 .enemy {

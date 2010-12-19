@@ -274,22 +274,21 @@ Sprites.drawHunter = function(c, alpha) {
 	c.restore();
 };
 
-Sprites.drawPopper = function(c, alpha) {
-	function drawLeg(c, x, y, angle1, angle2) {
-		angle1 *= Math.PI / 180;
-		angle2 = angle1 + angle2 * Math.PI / 180;
-		var legLength = 0.3;
-		var kneeX = x + Math.sin(angle1) * legLength;
-		var kneeY = y - Math.cos(angle1) * legLength;
-		
-		// Draw leg with one joint
-		c.beginPath();
-		c.moveTo(x, y);
-		c.lineTo(kneeX, kneeY);
-		c.lineTo(kneeX + Math.sin(angle2) * legLength, kneeY - Math.cos(angle2) * legLength);
-		c.stroke();
-	}
+function drawLeg(c, x, y, angle1, angle2, legLength) {
+	angle1 *= Math.PI / 180;
+	angle2 = angle1 + angle2 * Math.PI / 180;
+	var kneeX = x + Math.sin(angle1) * legLength;
+	var kneeY = y - Math.cos(angle1) * legLength;
 	
+	// Draw leg with one joint
+	c.beginPath();
+	c.moveTo(x, y);
+	c.lineTo(kneeX, kneeY);
+	c.lineTo(kneeX + Math.sin(angle2) * legLength, kneeY - Math.cos(angle2) * legLength);
+	c.stroke();
+}
+
+Sprites.drawPopper = function(c, alpha) {
 	function drawBody(c, x, y) {
 		c.save();
 		c.translate(x, y);
@@ -323,10 +322,10 @@ Sprites.drawPopper = function(c, alpha) {
 	
 	c.fillStyle = c.strokeStyle = rgba(0, 0, 0, alpha);
 	drawBody(c, 0, 0.1);
-	drawLeg(c, -0.2, -0.1, -80, 100);
-	drawLeg(c, -0.1, -0.1, -80, 100);
-	drawLeg(c, 0.1, -0.1, 80, -100);
-	drawLeg(c, 0.2, -0.1, 80, -100);
+	drawLeg(c, -0.2, -0.1, -80, 100, 0.3);
+	drawLeg(c, -0.1, -0.1, -80, 100, 0.3);
+	drawLeg(c, 0.1, -0.1, 80, -100, 0.3);
+	drawLeg(c, 0.2, -0.1, 80, -100, 0.3);
 };
 
 var cloudCircles = [];
@@ -415,7 +414,7 @@ Sprites.drawWallAvoider = function(c, alpha, isRed) {
 	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
 	c.strokeStyle = rgba(0, 0, 0, alpha);
 	c.beginPath();
-	c.arc(0, 0, 0.1, 0, 2 * Math.PI);
+	c.arc(0, 0, 0.1, 0, 2 * Math.PI, false);
 	c.fill();
 	c.stroke();
 	
@@ -476,4 +475,138 @@ Sprites.drawWheeligator = function(c, alpha) {
 		c.arc(0, 0, radius - rim, endAngle, startAngle, true);
 		c.fill();
 	}
+};
+
+function makeDrawSpikes(count) {
+	var spikeBallRadius = 0.2;
+	var radii = [];
+	for (var i = 0; i < count; i++) {
+		radii.push(spikeBallRadius * randInRange(0.5, 1.5));
+	}
+	return function(c) {
+		c.beginPath();
+		for (var i = 0; i < count; i++) {
+			var angle = i * (2 * Math.PI / count);
+			var radius = radii[i];
+			c.moveTo(0, 0);
+			c.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+		}
+		c.stroke();
+	};
+}
+
+var spikeDrawFuncs = [
+	makeDrawSpikes(11),
+	makeDrawSpikes(13),
+	makeDrawSpikes(7)
+];
+
+Sprites.drawSpikeBall = function(c, alpha) {
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	spikeDrawFuncs[0](c);
+	spikeDrawFuncs[1](c);
+	spikeDrawFuncs[2](c);
+};
+
+Sprites.drawRiotGun = function(c, alpha, reloadAnimation, directionAngle) {
+	function drawWheel() {
+		var numBarrels = 3;
+		c.beginPath();
+		for (var i = 0; i < numBarrels; i++) {
+			var angle = i * (2 * Math.PI / numBarrels);
+			c.moveTo(0, 0);
+			c.lineTo(0.2 * Math.cos(angle), 0.2 * Math.sin(angle));
+		}
+		c.stroke();
+	}
+	
+	var numBarrels = 3;
+	var angle = reloadAnimation * (2 * Math.PI / numBarrels);
+	var targetAngle = directionAngle - Math.PI / 2;
+	var bodyOffset = Vector.fromAngle(targetAngle).mul(0.2);
+	
+	c.fillStyle = rgba(255, 255, 0, alpha);
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	
+	c.save();
+	c.translate(-0.2, 0);
+	c.rotate(targetAngle + angle);
+	drawWheel();
+	c.restore();
+	
+	c.save();
+	c.translate(0.2, 0);
+	c.rotate(targetAngle - angle);
+	drawWheel();
+	c.restore();
+	
+	for (var side = -1; side <= 1; side += 2)
+	{
+		for (var i = 0; i < numBarrels; i++)
+		{
+			var theta = i * (2 * Math.PI / numBarrels) - side * angle;
+			var reload = (reloadAnimation - i * side) / numBarrels + (side == 1) * 0.5;
+			var pos = bodyOffset.mul(side).add(bodyOffset.rotate(theta));
+			reload -= Math.floor(reload);
+			c.beginPath();
+			c.arc(pos.x, pos.y, 0.1 * reload, 0, 2 * Math.PI, false);
+			c.fill();
+			c.stroke();
+		}
+	}
+};
+
+Sprites.drawMultiGun = function(c, alpha) {
+	var w = 0.25;
+	var h = 0.25;
+	var r = 0.1;
+
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	for (var a = -1; a <= 1; a += 2) {
+		for (var b = -1; b <= 1; b += 2) {
+			// Draw edge
+			c.beginPath();
+			c.moveTo(-w, h * a + r * b);
+			c.lineTo(w, h * a + r * b);
+			c.moveTo(w * a + r * b, -h);
+			c.lineTo(w * a + r * b, h);
+			c.stroke();
+			
+			// Draw gun
+			c.beginPath();
+			c.arc(w * a, h * b, r, 0, Math.PI * 2, false);
+			c.stroke();
+		}
+	}
+};
+
+Sprites.drawSpider = function(c, alpha) {
+	c.save();
+	c.translate(0, 0.3);
+	
+	// Draw body
+	var i, radius, angle;
+	c.fillStyle = c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	for (i = 0; i <= 21; i++)
+	{
+		angle = (0.25 + 0.5 * i / 21) * Math.PI;
+		radius = 0.6 + 0.05 * (i & 2);
+		c.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius - 0.5);
+	}
+	c.arc(0, -0.5, 0.5, Math.PI * 0.75, Math.PI * 0.25, true);
+	c.fill();
+	
+	// Draw legs
+	var w = 0.9;
+	drawLeg(c, w * 0.35, 0, -10, 70, 0.5);
+	drawLeg(c, w * 0.15, 0, 10, 20, 0.5);
+	drawLeg(c, w * -0.05, 0, -10, 20, 0.5);
+	drawLeg(c, w * -0.25, 0, -20, 10, 0.5);
+	drawLeg(c, w * 0.25, 0, -10, 20, 0.5);
+	drawLeg(c, w * 0.05, 0, -20, 10, 0.5);
+	drawLeg(c, w * -0.15, 0, -10, 70, 0.5);
+	drawLeg(c, w * -0.35, 0, 10, 20, 0.5);
+	
+	c.restore();
 };
