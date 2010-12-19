@@ -8,54 +8,49 @@ var MODE_TILES_EMPTY = 0;
 var MODE_TILES_SOLID = 1;
 var MODE_TILES_DIAGONAL = 2;
 
-// Buttons
-var MODE_BUTTONS_OPEN = 3;
-var MODE_BUTTONS_CLOSE = 4;
-var MODE_BUTTONS_TOGGLE = 5;
-var MODE_BUTTONS_LINK = 6;
-
 // Game Elements
-var MODE_ELEMENTS_START = 7;
-var MODE_ELEMENTS_GOAL = 8;
-var MODE_ELEMENTS_COG = 9;
-var MODE_ELEMENTS_SIGN = 10;
+var MODE_ELEMENTS_START = 3;
+var MODE_ELEMENTS_GOAL = 4;
+var MODE_ELEMENTS_COG = 5;
+var MODE_ELEMENTS_SIGN = 6;
 
 // Other
-var MODE_OTHER_SELECT = 11;
-var MODE_OTHER_ENEMIES = 12;
-var MODE_OTHER_WALLS = 13;
-var MODE_OTHER_HELP = 14;
+var MODE_OTHER_SELECT = 7;
+var MODE_OTHER_ENEMIES = 8;
+var MODE_OTHER_WALLS_BUTTONS = 9;
+var MODE_OTHER_HELP = 10;
 
 function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);
 }
 
 var enemies = [
-	{ name: 'Bomber', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
-	{ name: 'Doom Magnet', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
-	{ name: 'Hunter', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
-	{ name: 'Multi-Gun', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
+	{ name: 'Bomber', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
+	{ name: 'Doom Magnet', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
+	{ name: 'Hunter', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
+	{ name: 'Multi-Gun', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
 	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
-	{ name: 'Jet Stream', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
+	{ name: 'Jet Stream', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
 	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpider(c, alpha); }) },
-	{ name: 'Spike Ball', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
-	{ name: 'Wall Crawler', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },
-	{ name: 'Wheeligator', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawWheeligator(c, alpha); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, true); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, false); }) },
+	{ name: 'Spike Ball', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
+	{ name: 'Wall Crawler', sprite: new Sprite(0.25, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },
+	{ name: 'Wheeligator', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWheeligator(c, alpha); }) },
+	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, true); }) },
+	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, false); }) },
 	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, true); }) },
 	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, false); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha, true); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha, false); }) },
+	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, true); }) },
+	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, false); }) },
 	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
 	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawShockHawk(c, alpha, true); }) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawShockHawk(c, alpha, false); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawStalacbat(c, alpha, true); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawStalacbat(c, alpha, false); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, true); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, false); }) }
+	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, true); }) },
+	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, false); }) },
+	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, true); }) },
+	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, false); }) },
+	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, true); }) },
+	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, false); }) }
 ];
+var cogSprite = new Sprite(0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); });
 
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
@@ -106,17 +101,29 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
 	case MODE_ELEMENTS_COG:
-		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return new Cog(point); });
+		this.selectedTool = new AddPlaceableTool(this.doc, cogSprite);
 		break;
 	case MODE_OTHER_ENEMIES:
-		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return enemies[editor.selectedEnemy].sprite.clone(point); });
-		break;
-	case MODE_OTHER_WALLS:
-		this.selectedTool = new PlaceDoorTool(this.doc, function(){ return (editor.selectedWall & 1); }, function(){ return Math.floor(editor.selectedWall / 2); });
+	case MODE_OTHER_WALLS_BUTTONS:
+		this.setSidePanelTool();
 		break;
 	default:
 		this.selectedTool = null;
 		break;
+	}
+};
+
+Editor.prototype.setSidePanelTool = function() {
+	if (this.mode == MODE_OTHER_ENEMIES) {
+		this.selectedTool = new AddPlaceableTool(this.doc, enemies[this.selectedEnemy].sprite);
+	} else if (this.mode == MODE_OTHER_WALLS_BUTTONS) {
+		if (this.selectedWall < 6) {
+			this.selectedTool = new PlaceDoorTool(this.doc, (this.selectedWall & 1), Math.floor(this.selectedWall / 2));
+		} else if(this.selectedWall < 9) {
+			this.selectedTool = new AddPlaceableTool(this.doc, new Button(null, this.selectedWall - 6));
+		} else {
+			this.selectedTool = null;
+		}
 	}
 };
 
@@ -292,8 +299,10 @@ Editor.prototype.selectAll = function() {
 
 Editor.prototype.setSelectedEnemy = function(index) {
 	this.selectedEnemy = index;
+	this.setSidePanelTool();
 };
 
 Editor.prototype.setSelectedWall = function(index) {
 	this.selectedWall = index;
+	this.setSidePanelTool();
 };

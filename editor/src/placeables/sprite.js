@@ -13,7 +13,7 @@ Sprite.prototype.draw = function(c, alpha) {
 
 Sprite.prototype.drawSelection = function(c) {
 	c.beginPath();
-	c.arc(this.anchor.x, this.anchor.y, this.radius + 0.2, 0, Math.PI * 2, false);
+	c.arc(this.anchor.x, this.anchor.y, this.radius + 0.1, 0, Math.PI * 2, false);
 	c.fill();
 	c.stroke();
 };

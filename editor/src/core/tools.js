@@ -92,16 +92,16 @@ SetCellTool.prototype.draw = function(c) {
 // class PlaceDoorTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function PlaceDoorTool(doc, isOneWayFunc, colorFunc) {
+function PlaceDoorTool(doc, isOneWay, color) {
 	this.doc = doc;
-	this.isOneWayFunc = isOneWayFunc;
-	this.colorFunc = colorFunc;
+	this.isOneWay = isOneWay;
+	this.color = color;
 	this.edge = null;
 }
 
 PlaceDoorTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(new Door(this.isOneWayFunc(), this.colorFunc(), this.edge));
+	this.doc.addPlaceable(new Door(this.isOneWay, this.color, this.edge));
 };
 
 PlaceDoorTool.prototype.mouseMoved = function(point) {
@@ -131,8 +131,8 @@ PlaceDoorTool.prototype.mouseUp = function(point) {
 
 PlaceDoorTool.prototype.draw = function(c) {
 	if (this.edge != null) {
-		var door = new Door(this.isOneWayFunc(), this.colorFunc(), this.edge);
-		door.draw(c);
+		var door = new Door(this.isOneWay, this.color, this.edge);
+		door.draw(c, 0.5);
 	}
 };
 
@@ -280,15 +280,15 @@ SetPlayerGoalTool.prototype.draw = function(c) {
 // class AddPlaceableTool
 ////////////////////////////////////////////////////////////////////////////////
 
-function AddPlaceableTool(doc, factoryFunc) {
+function AddPlaceableTool(doc, placeableTemplate) {
 	this.doc = doc;
-	this.factoryFunc = factoryFunc;
+	this.placeableTemplate = placeableTemplate;
 	this.point = null;
 }
 
 AddPlaceableTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(this.factoryFunc(this.point));
+	this.doc.addPlaceable(this.placeableTemplate.clone(this.point));
 };
 
 AddPlaceableTool.prototype.mouseMoved = function(point) {
@@ -300,7 +300,6 @@ AddPlaceableTool.prototype.mouseUp = function(point) {
 
 AddPlaceableTool.prototype.draw = function(c) {
 	if (this.point != null) {
-		this.factoryFunc(this.point).draw(c, 0.5);
-		// Sprites.drawCog(c, 0.5, this.point.x, this.point.y, COG_RADIUS);
+		this.placeableTemplate.clone(this.point).draw(c, 0.5);
 	}
 };
