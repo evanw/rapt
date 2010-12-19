@@ -33,6 +33,7 @@ Vector.prototype.adjustTowardsTarget = function(target, maxDistance) {
     this.x = v.x;
     this.y = v.y;
 };
+Vector.prototype.floor = function() { return new Vector(Math.floor(this.x), Math.floor(this.y)); };
 
 // static functions
 Vector.fromAngle = function(theta) { return new Vector(Math.cos(theta), Math.sin(theta)); };

@@ -134,8 +134,8 @@ World.prototype.draw = function(c) {
 		}
 	}
 	
-	Sprites.drawGoal(c, this.playerGoal.add(new Vector(0.5, 0.5)), 0.6);
-	Sprites.drawSpawnPoint(c, this.playerStart.add(new Vector(0.5, 0.5)));
+	Sprites.drawGoal(c, 1, this.playerGoal.add(new Vector(0.5, 0.5)), 0.6);
+	Sprites.drawSpawnPoint(c, 1, this.playerStart.add(new Vector(0.5, 0.5)));
 	
 	// Draw placeables (doors, enemies, etc...)
 	for (i = 0; i < this.placeables.length; i++) {

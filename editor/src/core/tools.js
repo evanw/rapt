@@ -59,7 +59,10 @@ SetCellTool.prototype.mouseMoved = function(point) {
 		cellType = (this.mode == SETCELL_EMPTY) ? CELL_EMPTY : CELL_SOLID;
 	}
 	
-	if (this.dragging) this.doc.setCell(cellX, cellY, cellType);
+	// Only change the cell type if it's different
+	if (this.dragging && this.doc.world.getCell(cellX, cellY) != cellType) {
+		this.doc.setCell(cellX, cellY, cellType);
+	}
 };
 
 SetCellTool.prototype.mouseUp = function(point) {
@@ -201,6 +204,7 @@ SelectionTool.prototype.draw = function(c) {
 
 function SetPlayerStartTool(doc) {
 	this.doc = doc;
+	this.point = null;
 	this.dragging = false;
 }
 
@@ -214,6 +218,7 @@ SetPlayerStartTool.prototype.mouseMoved = function(point) {
 	if (this.dragging) {
 		this.doc.setPlayerStart(new Vector(Math.floor(point.x), Math.floor(point.y)));
 	}
+	this.point = point;
 };
 
 SetPlayerStartTool.prototype.mouseUp = function(point) {
@@ -222,6 +227,9 @@ SetPlayerStartTool.prototype.mouseUp = function(point) {
 };
 
 SetPlayerStartTool.prototype.draw = function(c) {
+	if (this.point != null) {
+		Sprites.drawSpawnPoint(c, 0.5, this.point.floor().add(new Vector(0.5, 0.5)));
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +238,7 @@ SetPlayerStartTool.prototype.draw = function(c) {
 
 function SetPlayerGoalTool(doc) {
 	this.doc = doc;
+	this.point = null;
 	this.dragging = false;
 }
 
@@ -243,6 +252,7 @@ SetPlayerGoalTool.prototype.mouseMoved = function(point) {
 	if (this.dragging) {
 		this.doc.setPlayerGoal(new Vector(Math.floor(point.x), Math.floor(point.y)));
 	}
+	this.point = point;
 };
 
 SetPlayerGoalTool.prototype.mouseUp = function(point) {
@@ -251,6 +261,9 @@ SetPlayerGoalTool.prototype.mouseUp = function(point) {
 };
 
 SetPlayerGoalTool.prototype.draw = function(c) {
+	if (this.point != null) {
+		Sprites.drawGoal(c, 0.5, this.point.floor().add(new Vector(0.5, 0.5)), 0.6);
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -276,4 +289,8 @@ AddPlaceableTool.prototype.mouseUp = function(point) {
 };
 
 AddPlaceableTool.prototype.draw = function(c) {
+	if (this.point != null) {
+		this.factoryFunc(this.point).draw(c, 0.5);
+		// Sprites.drawCog(c, 0.5, this.point.x, this.point.y, COG_RADIUS);
+	}
 };

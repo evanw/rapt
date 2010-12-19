@@ -79,14 +79,14 @@ function fillEnemies() {
 	var html = '';
 	var i;
 	for (i = 0; i < enemies.length; i++) {
-		html += '<div class="enemy"><canvas id="enemy' + i + '"></canvas>' + enemies[i].name + '</div>';
+		html += '<div class="enemy" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas"></canvas>' + enemies[i].name + '</div>';
 	}
 	$('#enemies').html(html);
 	$('.enemy:first-child').addClass('selected');
 	
 	// Draw each enemy on their <canvas>
 	for (i = 0; i < enemies.length; i++) {
-		var p = $('#enemy' + i)[0];
+		var p = $('#enemy' + i + '-canvas')[0];
 		p.width = 50;
 		p.height = 60;
 		
@@ -94,12 +94,14 @@ function fillEnemies() {
 		c.translate(25, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
-		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawin, just used to make sure sprites specify colors
-		enemies[i].draw(c);
+		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawn, just used to make sure sprites specify colors
+		enemies[i].sprite.draw(c);
 	}
 	
 	// Add an action to each enemy button
 	$('#enemies .enemy').mousedown(function(e) {
+		var selectedEnemy = parseInt(/\d+$/.exec(this.id), 10);
+		editor.setSelectedEnemy(selectedEnemy);
 		$('.selected').removeClass('selected');
 		$(this).addClass('selected');
 		e.preventDefault();
@@ -142,6 +144,12 @@ $(document).ready(function() {
 		editor.mouseWheel(deltaX, deltaY);
 		editor.mouseMoved(mousePoint(e));
 		e.preventDefault();
+	});
+	$(canvas).mouseenter(function(e) {
+		editor.mouseOver();
+	});
+	$(canvas).mouseleave(function(e) {
+		editor.mouseOut();
 	});
 });
 

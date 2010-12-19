@@ -35,28 +35,24 @@ var MODE_OTHER_ENEMIES = 17;
 var MODE_OTHER_HELP = 18;
 
 var enemies = [
-	{ name: 'Bomber', draw: function(c) { Sprites.drawBomber(c, 0.7); } },
-	{ name: 'Bouncy Rockets', draw: function(c) { Sprites.drawBouncyRocketLauncher(c); } },
-	{ name: 'Corrosion Cloud', draw: function(c) {} },
-	{ name: 'Doom Magnet', draw: function(c) { Sprites.drawDoomMagnet(c); } },
-	{ name: 'Grenadier', draw: function(c) { Sprites.drawGrenadier(c); } },
-	{ name: 'Headache', draw: function(c) {} },
-	{ name: 'Hunter', draw: function(c) {} },
-	{ name: 'Multi-Gun', draw: function(c) {} },
-	{ name: 'Popper', draw: function(c) {} },
-	{ name: 'Riot Gun', draw: function(c) {} },
-	{ name: 'Rocket Spider', draw: function(c) {} },
-	{ name: 'Shock Hawk', draw: function(c) {} },
-	{ name: 'Spike Ball', draw: function(c) {} },
-	{ name: 'Stalacbat', draw: function(c) {} },
-	{ name: 'Wall Avoider', draw: function(c) {} },
-	{ name: 'Wall Crawler', draw: function(c) {} },
-	{ name: 'Wheeligator', draw: function(c) {} }
+	{ name: 'Bomber', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
+	{ name: 'Bouncy Rockets', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha); }) },
+	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Doom Magnet', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
+	{ name: 'Grenadier', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawGrenadier(c, alpha); }) },
+	{ name: 'Headache', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Hunter', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
+	{ name: 'Multi-Gun', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Riot Gun', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Shock Hawk', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Spike Ball', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Stalacbat', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Wall Avoider', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Wall Crawler', sprite: new Sprite(0.5, function(c, alpha) {}) },
+	{ name: 'Wheeligator', sprite: new Sprite(0.5, function(c, alpha) {}) }
 ];
-
-function createNewEnemy(point) {
-	return new Cog(point);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
@@ -70,6 +66,8 @@ function Editor(canvas) {
 	this.activeTool = null;
 	this.doc = new Document();
 	this.setMode(MODE_TILES_EMPTY);
+	this.selectedSprite = enemies[0].sprite;
+	this.isMouseOver = false;
 	
 	this.doc.world.playerStart = new Vector(-2, -1);
 	this.doc.world.playerGoal = new Vector(1, -1);
@@ -110,10 +108,10 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
 	case MODE_ELEMENTS_COG:
-		this.selectedTool = new AddPlaceableTool(this.doc, function(point) { return new Cog(point); });
+		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return new Cog(point); });
 		break;
 	case MODE_OTHER_ENEMIES:
-		this.selectedTool = new AddPlaceableTool(this.doc, createNewEnemy);
+		this.selectedTool = new AddPlaceableTool(this.doc, function(point){ return editor.selectedSprite.clone(point); });
 		break;
 	default:
 		this.selectedTool = null;
@@ -148,8 +146,7 @@ Editor.prototype.draw = function() {
 	this.drawGrid();
 	
 	// Let the tool draw overlays if needed
-	if (this.activeTool != null) this.activeTool.draw(c);
-	else if (this.selectedTool != null) this.selectedTool.draw(c);
+	if (this.isMouseOver && this.selectedTool != null) this.selectedTool.draw(c);
 	
 	c.restore();
 };
@@ -241,6 +238,16 @@ Editor.prototype.mouseWheel = function(deltaX, deltaY) {
 	this.draw();
 };
 
+Editor.prototype.mouseOver = function() {
+	this.isMouseOver = true;
+	this.draw();
+};
+
+Editor.prototype.mouseOut = function() {
+	this.isMouseOver = false;
+	this.draw();
+};
+
 Editor.prototype.viewportToWorld = function(viewportPoint) {
 	// Convenience method to convert from viewport to world coordinates
 	var x = (viewportPoint.x - this.canvas.width / 2) / this.worldScale + this.worldCenter.x;
@@ -259,6 +266,7 @@ Editor.prototype.redo = function() {
 };
 
 Editor.prototype.save = function() {
+	// TODO
 };
 
 Editor.prototype.deleteSeleciton = function() {
@@ -279,4 +287,8 @@ Editor.prototype.selectAll = function() {
 	}
 	this.doc.setSelection(selection);
 	this.draw();
+};
+
+Editor.prototype.setSelectedEnemy = function(index) {
+	this.selectedSprite = enemies[index].sprite;
 };
