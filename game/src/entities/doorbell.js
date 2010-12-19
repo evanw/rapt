@@ -8,6 +8,7 @@ var DOORBELL_TOGGLE = 2;
 
 // Must be wider and taller than the player to avoid double toggling 
 var DOORBELL_WIDTH = 0.40;
+// PLAYER_HEIGHT + .01
 var DOORBELL_HEIGHT = 0.76;
 var DOORBELL_RADIUS = 0.11;
 var DOORBELL_SLICES = 3;

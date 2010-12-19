@@ -161,6 +161,7 @@ function Player(center, color) {
 	this.jumpDisabled = false;
 	this.lastContact = null;
 	this.state = PLAYER_STATE_FLOOR;
+    this.prevState = PLAYER_STATE_FLOOR;
 
 	// animation stuff
 	this.sprites = createPlayerSprites();
@@ -368,10 +369,17 @@ Player.prototype.tickPhysics = function(seconds) {
 	var ref_closestPointWorld = {}, ref_closestPointShape = {};
 	var closestPointDistance = CollisionDetector.closestToEntityWorld(this, 0.1, ref_closestPointShape, ref_closestPointWorld, gameState.world);
 
-	// apply wall friction if the player is sliding down
-	if(this.velocity.y < 0 && (this.state == PLAYER_STATE_LEFT_WALL || this.state == PLAYER_STATE_RIGHT_WALL)) {
-		this.velocity.y *= Math.pow(WALL_FRICTION, seconds);
+	if(this.state == PLAYER_STATE_LEFT_WALL || this.state == PLAYER_STATE_RIGHT_WALL) {
+        // apply wall friction if the player is sliding down
+        if (this.velocity.y < 0) {
+            this.velocity.y *= Math.pow(WALL_FRICTION, seconds);
+        }
+        if (this.velocity.y > -0.5 && this.prevState === PLAYER_STATE_CLAMBER) {
+            // continue clambering to prevent getting stuck alternating between clambering and climbing
+            this.state = PLAYER_STATE_CLAMBER;
+        }
 	}
+
 
 	// start clambering if we're touching something below us, but not on a floor, wall, or ceiling
 	if(this.state == PLAYER_STATE_AIR && closestPointDistance < 0.01 && ref_closestPointShape.ref.y > ref_closestPointWorld.ref.y)
@@ -431,12 +439,12 @@ Player.prototype.tickPhysics = function(seconds) {
 	this.polygon.moveBy(deltaPosition);
 
 	if(this.actualVelocity.y < -PLAYER_DEATH_SPEED && newContact != null && newContact.normal.y > 0.9) {
-		// TODO: kill player
 		this.setDead(true);
 		this.onDeath();
 	}
 
 	// After everything, reenable jump
+    this.prevState = this.state;
 	this.jumpDisabled = false;
 };
 
