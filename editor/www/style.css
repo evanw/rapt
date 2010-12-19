@@ -129,11 +129,11 @@ body {
 	padding: 0;
 }
 
-.sidebar td + td {
+#help td + td {
 	text-align: right;
 }
 
-.sidebar hr {
+#help hr {
 	border: none;
 	height: 1px;
 	background: #CFCFCF;
@@ -145,9 +145,7 @@ body {
 	text-align: center;
 	border-right: 1px solid #EFEFEF;
 	border-bottom: 1px solid #EFEFEF;
-	width: 110px;
 	height: 80px;
-	float: left;
 }
 
 .enemy.selected {
@@ -163,7 +161,7 @@ body {
 .enemy canvas {
 	display: block;
 	margin: 0 auto;
-	width: 50px;
+	width: 80px;
 	height: 60px;
 }
 

@@ -2,3 +2,7 @@
 function rgba(r, g, b, a) {
 	return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a.toFixed(5) + ')';
 }
+
+function randInRange(min, max) {
+	return min + (max - min) * Math.random();
+}

@@ -66,30 +66,34 @@ function fillHelp() {
 	
 	// Generate keyboard shortcut html
 	var html = '<table>';
-	for (var i = 0; i < keys.length; i += 2) {
-		html += '<tr><td>' + keys[i].replace('---', '<hr>') + '</td><td>' + keys[i + 1].replace('---', '<hr>') + '</td></tr>';
+	for (var i = 0; i < keys.length; i++) {
+		if (!(i & 1)) html += '<tr>';
+		html += '<td>' + keys[i].replace('---', '<hr>') + '</td>';
+		if (i & 1) html += '</tr>';
 	}
 	$('#help').html(html + '</table>');
 }
 
 function fillEnemies() {
 	// Create a <canvas> for each enemy
-	var html = '';
+	var html = '<table>';
 	var i;
 	for (i = 0; i < enemies.length; i++) {
-		html += '<div class="enemy" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas"></canvas>' + enemies[i].name + '</div>';
+		if (!(i & 1)) html += '<tr>';
+		html += '<td><div class="enemy" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas"></canvas>' + enemies[i].name + '</div></td>';
+		if (i & 1) html += '</tr>';
 	}
-	$('#enemies').html(html);
+	$('#enemies').html(html + '</table>');
 	$('#enemy' + editor.selectedEnemy).addClass('selected');
 	
 	// Draw each enemy on their <canvas>
 	for (i = 0; i < enemies.length; i++) {
 		var p = $('#enemy' + i + '-canvas')[0];
-		p.width = 50;
+		p.width = 80;
 		p.height = 60;
 		
 		var c = p.getContext('2d');
-		c.translate(25, 30);
+		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
 		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawn, just used to make sure sprites specify colors

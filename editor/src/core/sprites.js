@@ -5,6 +5,16 @@
 function Sprites() {
 }
 
+Sprites.drawQuestionMark = function(c, alpha) {
+	// TODO: remove this when all enemies are drawn
+	c.fillStyle = rgba(0, 0, 0, alpha * 0.25);
+	c.save();
+	c.scale(1 / 50, -1 / 50);
+	c.font = '50px Arial';
+	c.fillText('?', -c.measureText('?').width / 2, 20);
+	c.restore();
+};
+
 Sprites.drawSpawnPoint = function(c, alpha, point) {
 	// Outer bubble
 	c.strokeStyle = c.fillStyle = rgba(255, 255, 255, alpha * 0.1);
@@ -319,11 +329,151 @@ Sprites.drawPopper = function(c, alpha) {
 	drawLeg(c, 0.2, -0.1, 80, -100);
 };
 
-Sprites.drawQuestionMark = function(c, alpha) {
-	c.fillStyle = rgba(0, 0, 0, alpha * 0.25);
+var cloudCircles = [];
+for (var i = 0; i < 50; i++) {
+	var angle = randInRange(0, Math.PI * 2);
+	var radius = Math.sqrt(Math.random()) * 0.4;
+	cloudCircles.push({
+		centerX: Math.cos(angle) * radius,
+		centerY: Math.sin(angle) * radius,
+		radius: randInRange(0.05, 0.15),
+		alpha: randInRange(0.1, 0.5)
+	});
+}
+
+Sprites.drawCloud = function(c, alpha, isRed) {
+	// Draw particles
+	for (var i = 0; i < 50; i++) {
+		c.fillStyle = rgba(127 * isRed, 0, 127 * !isRed, alpha * cloudCircles[i].alpha);
+		c.beginPath();
+		c.arc(cloudCircles[i].centerX, cloudCircles[i].centerY, cloudCircles[i].radius, 0, Math.PI * 2, false);
+		c.fill();
+	}
+};
+
+Sprites.drawShockHawk = function(c, alpha, isRed) {
+	// Draw solid center
+	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
+	c.beginPath();
+	c.moveTo(0, -0.15);
+	c.lineTo(0.05, -0.1);
+	c.lineTo(0, 0.1);
+	c.lineTo(-0.05, -0.1);
+	c.fill();
+
+	// Draw outlines
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	for (var scale = -1; scale <= 1; scale += 2) {
+		c.moveTo(0, -0.3);
+		c.lineTo(scale * 0.05, -0.2);
+		c.lineTo(scale * 0.1, -0.225);
+		c.lineTo(scale * 0.1, -0.275);
+		c.lineTo(scale * 0.15, -0.175);
+		c.lineTo(0, 0.3);
+
+		c.moveTo(0, -0.15);
+		c.lineTo(scale * 0.05, -0.1);
+		c.lineTo(0, 0.1);
+	}
+	c.stroke();
+};
+
+Sprites.drawStalacbat = function(c, alpha, isRed) {
+	function drawWing(c) {
+		var r = Math.sin(Math.PI / 4);
+		c.beginPath();
+		c.arc(0, 0, 0.2, 0, Math.PI / 2, false);
+		c.arc(0, 0, 0.15, Math.PI / 2, 0, true);
+		c.closePath();
+		c.moveTo(r * 0.15, r * 0.15);
+		c.lineTo(r * 0.1, r * 0.1);
+		c.stroke();
+	}
+	
+	// Draw body
+	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	c.arc(0, 0, 0.1, 0, Math.PI * 2 , false);
+	c.fill();
+	c.stroke();
+
+	// Draw wings
+	var wingAngle = Math.PI / 2;
 	c.save();
-	c.scale(1 / 50, -1 / 50);
-	c.font = '50px Arial';
-	c.fillText('?', -c.measureText('?').width / 2, 20);
+	c.rotate(-wingAngle);
+	drawWing(c);
+	c.rotate(2 * wingAngle);
+	c.scale(-1, 1);
+	drawWing(c);
 	c.restore();
+};
+
+Sprites.drawWallAvoider = function(c, alpha, isRed) {
+	// Draw body
+	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	c.arc(0, 0, 0.1, 0, 2 * Math.PI);
+	c.fill();
+	c.stroke();
+	
+	// Draw antennae
+	c.beginPath();
+	for (var i = 0; i < 4; i++)
+	{
+		var angle = i * (2 * Math.PI / 4);
+		var cos = Math.cos(angle), sin = Math.sin(angle);
+		c.moveTo(cos * 0.1, sin * 0.1);
+		c.lineTo(cos * 0.3, sin * 0.3);
+		c.moveTo(cos * 0.16 - sin * 0.1, sin * 0.16 + cos * 0.1);
+		c.lineTo(cos * 0.16 + sin * 0.1, sin * 0.16 - cos * 0.1);
+		c.moveTo(cos * 0.23 - sin * 0.05, sin * 0.23 + cos * 0.05);
+		c.lineTo(cos * 0.23 + sin * 0.05, sin * 0.23 - cos * 0.05);
+	}
+	c.stroke();
+};
+
+Sprites.drawWallCrawler = function(c, alpha) {
+	// Draw arms
+	var space = 0.15;
+	c.fillStyle = c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.25 + space, Math.PI * 0.75 - space, false); c.stroke();
+	c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 0.75 + space, Math.PI * 1.25 - space, false); c.stroke();
+	c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.25 + space, Math.PI * 1.75 - space, false); c.stroke();
+	c.beginPath(); c.arc(0, 0, 0.25, Math.PI * 1.75 + space, Math.PI * 2.25 - space, false); c.stroke();
+	c.beginPath(); c.arc(0, 0, 0.15, 0, 2 * Math.PI, false); c.stroke();
+	c.beginPath();
+	c.moveTo(0.15, 0); c.lineTo(0.25, 0);
+	c.moveTo(0, 0.15); c.lineTo(0, 0.25);
+	c.moveTo(-0.15, 0); c.lineTo(-0.25, 0);
+	c.moveTo(0, -0.15); c.lineTo(0, -0.25);
+	c.stroke();
+	
+	// Draw bodt
+	c.beginPath();
+	c.arc(0, 0, 0.05, 0, 2 * Math.PI, false);
+	c.fill();
+};
+
+Sprites.drawWheeligator = function(c, alpha) {
+	// Draw wheel
+	var radius = 0.3;
+	var rim = 0.1;
+	c.fillStyle = c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	c.arc(0, 0, radius, 0, 2 * Math.PI, false);
+	c.arc(0, 0, radius - rim, Math.PI, 3 * Math.PI, false);
+	c.stroke();
+
+	// Fill in notches on wheel
+	for (var i = 0; i < 4; i++) {
+		var startAngle = i * (2 * Math.PI / 4);
+		var endAngle = startAngle + Math.PI / 4;
+		c.beginPath();
+		c.arc(0, 0, radius, startAngle, endAngle, false);
+		c.arc(0, 0, radius - rim, endAngle, startAngle, true);
+		c.fill();
+	}
 };
