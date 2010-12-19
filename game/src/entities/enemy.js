@@ -84,7 +84,6 @@ Enemy.prototype.tick = function(seconds) {
     this.afterTick(seconds);
 };
 
-// TODO: Return something that exists
 Enemy.prototype.getColor = function() {
     return EDGE_ENEMIES;
 };

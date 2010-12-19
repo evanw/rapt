@@ -6,9 +6,10 @@ var DOORBELL_OPEN = 0;
 var DOORBELL_CLOSE = 1;
 var DOORBELL_TOGGLE = 2;
 
-var DOORBELL_WIDTH = 0.4;
-var DOORBELL_HEIGHT = 0.4;
-var DOORBELL_RADIUS = 0.1;
+// Must be wider and taller than the player to avoid double toggling 
+var DOORBELL_WIDTH = 0.40;
+var DOORBELL_HEIGHT = 0.76;
+var DOORBELL_RADIUS = 0.11;
 var DOORBELL_SLICES = 3;
 
 Doorbell.extends(Enemy);
