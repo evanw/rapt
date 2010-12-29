@@ -1,9 +1,16 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <stack>
-#include <list>
 #include "world.pb.h"
 using namespace std;
+
+#define SECTOR_SIZE 8
+
+struct sector_t
+{
+    int cells[SECTOR_SIZE * SECTOR_SIZE];
+};
 
 string sub(string str, const string &oldStr, const string &newStr)
 {
@@ -137,8 +144,8 @@ void convert(const string &input, const string &output, bool pack)
 
     JSON json(&out, pack);
     json.name("unique_id").value(world.unique_id());
-    json.name("width").value(world.width() * 8);
-    json.name("height").value(world.height() * 8);
+    json.name("width").value(world.width() * SECTOR_SIZE);
+    json.name("height").value(world.height() * SECTOR_SIZE);
     json.name("start").value(world.players_start_x(), world.players_start_y());
     json.name("end").value(world.players_end_x(), world.players_end_y());
     json.name("entities").array();
@@ -209,13 +216,38 @@ void convert(const string &input, const string &output, bool pack)
         json.end();
     }
 
+    vector<sector_t> sectors;
+    for (int i = 0; i < world.sector_size(); i++)
+    {
+        const FileSector &sector = world.sector(i);
+        sector_t copy;
+        for (int j = 0; j < SECTOR_SIZE * SECTOR_SIZE; j++)
+            copy.cells[j] = sector.cell(j).type();
+        sectors.push_back(copy);
+    }
+
+    int w = world.width(), h = world.height();
+    json.name("cells").array();
+    for (int y = 0; y < h * SECTOR_SIZE; y++)
+    {
+        json.array();
+        for (int x = 0; x < w * SECTOR_SIZE; x++)
+        {
+            int sx = x / SECTOR_SIZE;
+            int sy = y / SECTOR_SIZE;
+            json.value(sectors[sx + sy * w].cells[(x - sx * SECTOR_SIZE) + (y - sy * SECTOR_SIZE) * SECTOR_SIZE]);
+        }
+        json.end();
+    }
+    json.end();
+
     json.end();
 }
 
 int main(int argc, char *argv[])
 {
-    list<string> args;
-    list<string>::iterator i;
+    vector<string> args;
+    vector<string>::iterator i;
     for (int i = 1; i < argc; i++)
         args.push_back(argv[i]);
 
