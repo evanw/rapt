@@ -76,11 +76,13 @@ HelpSign.prototype.draw = function(c) {
 
     c.save();
     // draw the sprite
-    c.font = "34px sans serif";
-    c.lineWidth = 5;
+    c.font = "bold 34px sans-serif";
+    c.lineWidth = 1;
     c.fillStyle = "yellow";
+    c.strokeStyle = "black";
     c.translate(pos.x * gameScale, pos.y * gameScale - 36);
     var timeFloor = Math.floor(this.timeSinceStart);
+
     /* 2 second period version
     var scale = this.timeSinceStart;
     if (timeFloor % 2 === 0) {
@@ -96,11 +98,13 @@ HelpSign.prototype.draw = function(c) {
     // convert from 0-2 to 1 - 1/16 to 1 + 1/16
     c.scale(scale, scale);
     c.fillText("?", 0, 0);
+    c.strokeText("?", 0, 0);
     c.restore();
 
     // draw the text
     if (this.drawText) {
-        c.font = "12px sans serif";
+        c.textAlign = "left";
+        c.font = "12px sans-serif";
         c.fillStyle = "black";
         c.lineWidth = 2;
         var textCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
@@ -108,7 +112,7 @@ HelpSign.prototype.draw = function(c) {
         // Draw each phrase, starting from the top down
         for (var i = 0; i < this.textArray.length; ++i) {
             var text = this.textArray[i];
-            c.fillText(text, textCenter, textTop);
+            c.fillText(text, textCenter - Math.floor(c.measureText(text).width / 2), textTop);
             textTop += 12;
         }
     }

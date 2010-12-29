@@ -14,3 +14,4 @@ rails/public/stylesheets/game.css
 
 # rails stuff
 rails/tmp/
+rails/log/
