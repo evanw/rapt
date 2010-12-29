@@ -3,14 +3,17 @@
 *.pyc
 *.swp
 *~
+*.user
 
 # build files
+*.o
 game/www/rapt.js
 editor/www/editor.js
 rails/public/javascripts/editor.js
 rails/public/javascripts/rapt.js
 rails/public/stylesheets/editor.css
 rails/public/stylesheets/game.css
+level_converter/level_converter
 
 # rails stuff
 rails/tmp/
