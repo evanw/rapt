@@ -37,7 +37,7 @@ template <> void val<bool>(ostream *o, bool value) { *o << (value ? "true" : "fa
 class JSON
 {
 private:
-    enum { ARRAY, OBJECT };
+    enum { ARRAY, PACKED_ARRAY, OBJECT };
 
     bool pack;
     stack<int> s;
@@ -45,12 +45,13 @@ private:
     bool first;
     int i;
 
-    string indent() { return pack ? "" : string(2 * i, ' '); }
-    bool in_array() { return !s.empty() && s.top() == ARRAY; }
+    string indent() { return is_packed() ? "" : string(2 * i, ' '); }
+    bool in_array() { return !s.empty() && s.top() != OBJECT; }
+    bool is_packed() { return pack || (!s.empty() && s.top() == PACKED_ARRAY); }
 
     void newline_indent()
     {
-        if (pack) *o << (first ? "" : ",") << indent();
+        if (is_packed()) *o << (first ? "" : ",") << indent();
         else *o << (first ? "\n" : ",\n") << indent();
         first = false;
     }
@@ -62,7 +63,7 @@ public:
     JSON &name(const string &name)
     {
         newline_indent();
-        *o << '"' << name << "\":" << (pack ? "" : " ");
+        *o << '"' << name << "\":" << (is_packed() ? "" : " ");
         first = false;
         return *this;
     }
@@ -85,13 +86,13 @@ public:
         return *this;
     }
 
-    JSON &array()
+    JSON &array(bool packed)
     {
         if (in_array()) newline_indent();
         *o << '[';
         first = true;
         i++;
-        s.push(ARRAY);
+        s.push(packed ? PACKED_ARRAY : ARRAY);
         return *this;
     }
 
@@ -110,7 +111,7 @@ public:
         int t = s.top();
         first = false;
         i--;
-        *o << (pack ? "" : "\n") << indent() << (t == ARRAY ? ']' : '}');
+        *o << (is_packed() ? "" : "\n") << indent() << (t == OBJECT ? '}' : ']');
         s.pop();
         return *this;
     }
@@ -148,7 +149,7 @@ void convert(const string &input, const string &output, bool pack)
     json.name("height").value(world.height() * SECTOR_SIZE);
     json.name("start").value(world.players_start_x(), world.players_start_y());
     json.name("end").value(world.players_end_x(), world.players_end_y());
-    json.name("entities").array();
+    json.name("entities").array(false);
 
     for (int i = 0; i < world.door_size(); i++)
     {
@@ -179,7 +180,7 @@ void convert(const string &input, const string &output, bool pack)
         json.name("class").value("button");
         json.name("type").value(button.behavior());
         json.name("pos").value(button.position_x(), button.position_y());
-        json.name("walls").array();
+        json.name("walls").array(false);
         for (int j = 0; j < button.door_index_size(); j++)
             json.value(button.door_index(j));
         json.end();
@@ -227,10 +228,10 @@ void convert(const string &input, const string &output, bool pack)
     }
 
     int w = world.width(), h = world.height();
-    json.name("cells").array();
+    json.name("cells").array(false);
     for (int y = 0; y < h * SECTOR_SIZE; y++)
     {
-        json.array();
+        json.array(true);
         for (int x = 0; x < w * SECTOR_SIZE; x++)
         {
             int sx = x / SECTOR_SIZE;
