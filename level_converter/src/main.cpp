@@ -5,10 +5,26 @@
 #include "world.pb.h"
 using namespace std;
 
+string sub(string str, const string &oldStr, const string &newStr)
+{
+    string::size_type i = 0;
+    while ((i = str.find(oldStr, i)) != string::npos)
+    {
+        str.replace(str.begin() + i, str.begin() + i + oldStr.size(), newStr.begin(), newStr.end());
+        i += newStr.size();
+    }
+    return str;
+}
+
+string quote(const string &str)
+{
+    return '"' + sub(sub(str, "\\", "\\\\"), "\"", "\\\"") + '"';
+}
+
 // partial template specialization for strings and bools
 template <typename T> void val(ostream *o, T value) { *o << value; }
-template <> void val<const char *>(ostream *o, const char *value) { *o << '"' << value << '"'; }
-template <> void val<string>(ostream *o, string value) { *o << '"' << value << '"'; }
+template <> void val<const char *>(ostream *o, const char *value) { *o << quote(value); }
+template <> void val<string>(ostream *o, string value) { *o << quote(value); }
 template <> void val<bool>(ostream *o, bool value) { *o << (value ? "true" : "false"); }
 
 class JSON
@@ -174,6 +190,25 @@ void convert(const string &input, const string &output, bool pack)
         json.end();
     }
 
+    for (int i = 0; i < world.enemy_size(); i++)
+    {
+        const FileEnemy &enemy = world.enemy(i);
+
+        // convert enemy name from integer to string
+        string type = FileEnemy_EnemyType_Name(enemy.type());
+        type = sub(sub(type, "ENEMY_", ""), "_", " ");
+        for (int j = 0; j < type.size(); j++)
+            type[j] = tolower(type[j]);
+
+        json.object();
+        json.name("class").value("enemy");
+        json.name("type").value(type);
+        json.name("pos").value(enemy.center_x(), enemy.center_y());
+        json.name("color").value(enemy.color());
+        json.name("angle").value(enemy.angle());
+        json.end();
+    }
+
     json.end();
 }
 
@@ -208,7 +243,7 @@ int main(int argc, char *argv[])
     {
         string input = *i;
         string output = input;
-        if (output.find(".lvl") == output.size() - 4) output = output.substr(0, output.size() - 4);
+        if (output.rfind(".lvl") == output.size() - 4) output = output.substr(0, output.size() - 4);
         output += ".json";
         convert(input, output, pack);
     }
