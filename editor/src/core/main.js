@@ -81,7 +81,7 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML());
+	$('#help').html(gen.getHTML() + '<hr>TODO: signs and enemy rotation');
 }
 
 function fillEnemies() {

@@ -2,53 +2,10 @@ embed_assets: on
 
 javascripts:
   editor:
-    - public/javascripts/editor/jquery.mousewheel.min.js
-    - public/javascripts/editor/src/util/*.js
-    - public/javascripts/editor/src/placeables/*.js
-    - public/javascripts/editor/src/core/*.js
+    - public/javascripts/jquery.mousewheel.min.js
+    - public/javascripts/editor.js
   game:
-    - public/javascripts/game/src/util/*.js
-    - public/javascripts/game/src/entities/entity.js
-    - public/javascripts/game/src/entities/enemy.js
-    - public/javascripts/game/src/entities/freefallenemy.js
-    - public/javascripts/game/src/entities/rotatingenemy.js
-    - public/javascripts/game/src/entities/spawningenemy.js
-    - public/javascripts/game/src/entities/walkingenemy.js
-    - public/javascripts/game/src/entities/bomb.js
-    - public/javascripts/game/src/entities/bomber.js
-    - public/javascripts/game/src/entities/rocket.js
-    - public/javascripts/game/src/entities/bouncyrocket.js
-    - public/javascripts/game/src/entities/bouncyrocketlauncher.js
-    - public/javascripts/game/src/entities/corrosioncloud.js
-    - public/javascripts/game/src/entities/doommagnet.js
-    - public/javascripts/game/src/entities/doorbell.js
-    - public/javascripts/game/src/entities/entity.js
-    - public/javascripts/game/src/entities/goldencog.js
-    - public/javascripts/game/src/entities/grenade.js
-    - public/javascripts/game/src/entities/grenadier.js
-    - public/javascripts/game/src/entities/hoveringenemy.js
-    - public/javascripts/game/src/entities/headache.js
-    - public/javascripts/game/src/entities/helpsign.js
-    - public/javascripts/game/src/entities/hunter.js
-    - public/javascripts/game/src/entities/laser.js
-    - public/javascripts/game/src/entities/multigun.js
-    - public/javascripts/game/src/entities/particle.js
-    - public/javascripts/game/src/entities/player.js
-    - public/javascripts/game/src/entities/popper.js
-    - public/javascripts/game/src/entities/riotbullet.js
-    - public/javascripts/game/src/entities/riotgun.js
-    - public/javascripts/game/src/entities/rocketspiderlegs.js
-    - public/javascripts/game/src/entities/rocketspider.js
-    - public/javascripts/game/src/entities/shockhawk.js
-    - public/javascripts/game/src/entities/spikeball.js
-    - public/javascripts/game/src/entities/wallavoider.js
-    - public/javascripts/game/src/entities/wheeligator.js
-    - public/javascripts/game/src/collisions/*.js
-    - public/javascripts/game/src/game/screen.js
-    - public/javascripts/game/src/game/camera.js
-    - public/javascripts/game/src/game/game.js
-    - public/javascripts/game/src/game/main.js
-    - public/javascripts/game/src/world/*.js
+    - public/javascripts/rapt.js
     
 stylesheets:
   editor:
