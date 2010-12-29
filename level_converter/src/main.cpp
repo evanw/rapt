@@ -149,8 +149,8 @@ void convert(const string &input, const string &output, bool pack)
     json.name("height").value(world.height() * SECTOR_SIZE);
     json.name("start").value(world.players_start_x(), world.players_start_y());
     json.name("end").value(world.players_end_x(), world.players_end_y());
-    json.name("entities").array(false);
 
+    json.name("entities").array(false);
     for (int i = 0; i < world.door_size(); i++)
     {
         const FileDoor &door = world.door(i);
@@ -163,7 +163,6 @@ void convert(const string &input, const string &output, bool pack)
         json.name("color").value(door.color());
         json.end();
     }
-
     for (int i = 0; i < world.cog_size(); i++)
     {
         const FileCog &cog = world.cog(i);
@@ -172,7 +171,6 @@ void convert(const string &input, const string &output, bool pack)
         json.name("pos").value(cog.cog_x(), cog.cog_y());
         json.end();
     }
-
     for (int i = 0; i < world.button_size(); i++)
     {
         const FileButton &button = world.button(i);
@@ -187,7 +185,6 @@ void convert(const string &input, const string &output, bool pack)
         json.name("color").value(button.color());
         json.end();
     }
-
     for (int i = 0; i < world.sign_size(); i++)
     {
         const FileSign &sign = world.sign(i);
@@ -197,7 +194,6 @@ void convert(const string &input, const string &output, bool pack)
         json.name("text").value(sign.text());
         json.end();
     }
-
     for (int i = 0; i < world.enemy_size(); i++)
     {
         const FileEnemy &enemy = world.enemy(i);
@@ -216,7 +212,9 @@ void convert(const string &input, const string &output, bool pack)
         json.name("angle").value(enemy.angle());
         json.end();
     }
+    json.end();
 
+    json.name("cells").array(false);
     vector<sector_t> sectors;
     for (int i = 0; i < world.sector_size(); i++)
     {
@@ -226,9 +224,7 @@ void convert(const string &input, const string &output, bool pack)
             copy.cells[j] = sector.cell(j).type();
         sectors.push_back(copy);
     }
-
     int w = world.width(), h = world.height();
-    json.name("cells").array(false);
     for (int y = 0; y < h * SECTOR_SIZE; y++)
     {
         json.array(true);
@@ -240,8 +236,6 @@ void convert(const string &input, const string &output, bool pack)
         }
         json.end();
     }
-    json.end();
-
     json.end();
 }
 
