@@ -12,7 +12,15 @@ def compile(a, b):
 	f.write(atext.replace('extends', 'subclasses'))
 	f.close()
 
-	compile = 'java -jar compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js "%s" --js_output_file "%s"'
+	compile = ' '.join([
+		'java -jar ./closure_compiler/compiler.jar',
+		'--compilation_level ADVANCED_OPTIMIZATIONS',
+		'--externs ./closure_compiler/jquery-1.4.4.externs.js',
+		'--externs ./closure_compiler/jquery.mousewheel.externs.js',
+		'--js "%s"',
+		'--js_output_file "%s"'
+	])
+
 	os.system(compile % (temp, b))
 	os.system('rm -f "%s"' % temp)
 
@@ -23,9 +31,8 @@ def copy(a, b):
 	os.system('cp "%s" "%s"' % (a, b))
 	print 'copied %s' % b
 
-op = copy
-op('./editor/www/editor.js', './rails/public/javascripts/editor.js')
-op('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
+compile('./editor/www/editor.js', './rails/public/javascripts/editor.js')
+copy('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
 
 copy('./editor/www/style.css', './rails/public/stylesheets/editor.css')
 copy('./game/www/style.css', './rails/public/stylesheets/game.css')

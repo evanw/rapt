@@ -4,21 +4,21 @@ var MOUSE_MIDDLE = (1 << 2);
 var MOUSE_RIGHT = (1 << 3);
 
 // Tiles
-var MODE_TILES_EMPTY = 0;
-var MODE_TILES_SOLID = 1;
-var MODE_TILES_DIAGONAL = 2;
+var MODE_EMPTY = 0;
+var MODE_SOLID = 1;
+var MODE_DIAGONAL = 2;
 
 // Game Elements
-var MODE_ELEMENTS_START = 3;
-var MODE_ELEMENTS_GOAL = 4;
-var MODE_ELEMENTS_COG = 5;
-var MODE_ELEMENTS_SIGN = 6;
+var MODE_START = 3;
+var MODE_GOAL = 4;
+var MODE_COG = 5;
+var MODE_SIGN = 6;
 
 // Other
-var MODE_OTHER_SELECT = 7;
-var MODE_OTHER_ENEMIES = 8;
-var MODE_OTHER_WALLS_BUTTONS = 9;
-var MODE_OTHER_HELP = 10;
+var MODE_SELECT = 7;
+var MODE_ENEMIES = 8;
+var MODE_WALLS_BUTTONS = 9;
+var MODE_HELP = 10;
 
 function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);
@@ -35,7 +35,7 @@ function Editor(canvas) {
 	this.worldScale = 50;
 	this.activeTool = null;
 	this.doc = new Document();
-	this.setMode(MODE_TILES_EMPTY);
+	this.setMode(MODE_EMPTY);
 	this.selectedEnemy = 0;
 	this.selectedWall = 0;
 	this.isMouseOver = false;
@@ -81,29 +81,29 @@ Editor.prototype.setMode = function(mode) {
 	this.mode = mode;
 	
 	switch (mode) {
-	case MODE_TILES_EMPTY:
+	case MODE_EMPTY:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_EMPTY);
 		break;
-	case MODE_TILES_SOLID:
+	case MODE_SOLID:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_SOLID);
 		break;
-	case MODE_TILES_DIAGONAL:
+	case MODE_DIAGONAL:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
 		break;
-	case MODE_OTHER_SELECT:
+	case MODE_SELECT:
 		this.selectedTool = new SelectionTool(this.doc);
 		break;
-	case MODE_ELEMENTS_START:
+	case MODE_START:
 		this.selectedTool = new SetPlayerStartTool(this.doc);
 		break;
-	case MODE_ELEMENTS_GOAL:
+	case MODE_GOAL:
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
-	case MODE_ELEMENTS_COG:
+	case MODE_COG:
 		this.selectedTool = new AddPlaceableTool(this.doc, spriteTemplates[SPRITE_COG].sprite);
 		break;
-	case MODE_OTHER_ENEMIES:
-	case MODE_OTHER_WALLS_BUTTONS:
+	case MODE_ENEMIES:
+	case MODE_WALLS_BUTTONS:
 		this.setSidePanelTool();
 		break;
 	default:
@@ -113,9 +113,9 @@ Editor.prototype.setMode = function(mode) {
 };
 
 Editor.prototype.setSidePanelTool = function() {
-	if (this.mode == MODE_OTHER_ENEMIES) {
+	if (this.mode == MODE_ENEMIES) {
 		this.selectedTool = new AddPlaceableTool(this.doc, this.enemies[this.selectedEnemy].sprite);
-	} else if (this.mode == MODE_OTHER_WALLS_BUTTONS) {
+	} else if (this.mode == MODE_WALLS_BUTTONS) {
 		// TODO: constants for these
 		if (this.selectedWall < 6) {
 			this.selectedTool = new PlaceDoorTool(this.doc, (this.selectedWall & 1), false, Math.floor(this.selectedWall / 2));

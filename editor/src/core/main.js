@@ -1,3 +1,19 @@
+#require <editor.js>
+
+var idToModeMap = {
+	'mode_empty': MODE_EMPTY,
+	'mode_solid': MODE_SOLID,
+	'mode_diagonal': MODE_DIAGONAL,
+	'mode_start': MODE_START,
+	'mode_goal': MODE_GOAL,
+	'mode_cog': MODE_COG,
+	'mode_sign': MODE_SIGN,
+	'mode_select': MODE_SELECT,
+	'mode_enemies': MODE_ENEMIES,
+	'mode_walls_buttons': MODE_WALLS_BUTTONS,
+	'mode_help': MODE_HELP
+};
+
 var editor = null;
 var buttons = 0;
 
@@ -5,17 +21,17 @@ function resizeEditor() {
 	var toolbarHeight = $('#toolbar').outerHeight();
 	var sidebarWidth = 0;
 	
-	if (editor.mode == MODE_OTHER_HELP) {
+	if (editor.mode == MODE_HELP) {
 		$('#help').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#help').outerWidth();
 	}
 	
-	if (editor.mode == MODE_OTHER_ENEMIES) {
+	if (editor.mode == MODE_ENEMIES) {
 		$('#enemies').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#enemies').outerWidth();
 	}
 
-	if (editor.mode == MODE_OTHER_WALLS_BUTTONS) {
+	if (editor.mode == MODE_WALLS_BUTTONS) {
 		$('#walls').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#walls').outerWidth();
 	}
@@ -26,21 +42,21 @@ function resizeEditor() {
 
 function showOrHidePanels(mode) {
 	// Show or hide the help panel
-	if (mode == MODE_OTHER_HELP) {
+	if (mode == MODE_HELP) {
 		$('#help').show();
 	} else {
 		$('#help').hide();
 	}
 	
 	// Show or hide the enemies panel
-	if (mode == MODE_OTHER_ENEMIES) {
+	if (mode == MODE_ENEMIES) {
 		$('#enemies').show();
 	} else {
 		$('#enemies').hide();
 	}
 	
 	// Show or hide the walls panel
-	if (mode == MODE_OTHER_WALLS_BUTTONS) {
+	if (mode == MODE_WALLS_BUTTONS) {
 		$('#walls').show();
 	} else {
 		$('#walls').hide();
@@ -81,7 +97,7 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML() + '<hr>TODO: signs and enemy rotation');
+	$('#help').html(gen.getHTML() + '<hr>TODO: signs, enemy rotation, and headache graphics');
 }
 
 function fillEnemies() {
@@ -204,7 +220,7 @@ function fillWalls() {
 $(document).ready(function() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').mousedown(function(e) {
-		var mode = eval(this.id);
+		var mode = idToModeMap[this.id];
 		editor.setMode(mode);
 		$('.toolbar-current').removeClass('toolbar-current');
 		$(this).addClass('toolbar-current');
