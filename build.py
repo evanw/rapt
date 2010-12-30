@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os
+import os, sys
 os.system('cd editor && python build.py release')
 os.system('cd game && python build.py release')
 
@@ -32,8 +32,9 @@ def copy(a, b):
 	os.system('cp "%s" "%s"' % (a, b))
 	print 'copied %s' % b
 
-compile('./editor/www/editor.js', './rails/public/javascripts/editor.js')
-compile('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
+op = compile if 'release' in sys.argv else copy
+op('./editor/www/editor.js', './rails/public/javascripts/editor.js')
+op('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
 
 copy('./editor/www/style.css', './rails/public/stylesheets/editor.css')
 copy('./game/www/style.css', './rails/public/stylesheets/game.css')

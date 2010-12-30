@@ -19,12 +19,12 @@ body {
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 	border-bottom: 1px solid #3F3F3F;
-	padding: 13px 0 0 15px;
+	padding: 7px 8px 7px 8px;
 	z-index: 1;
 }
 
 #toolbar .section {
-	margin: 0 15px 13px 0;
+	margin: 7px 8px 7px 8px;
 	float: left;
 }
 
