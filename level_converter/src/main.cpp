@@ -182,7 +182,6 @@ void convert(const string &input, const string &output, bool pack)
         for (int j = 0; j < button.door_index_size(); j++)
             json.value(button.door_index(j));
         json.end();
-        json.name("color").value(button.color());
         json.end();
     }
     for (int i = 0; i < world.sign_size(); i++)
