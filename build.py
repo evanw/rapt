@@ -17,6 +17,7 @@ def compile(a, b):
 		'--compilation_level ADVANCED_OPTIMIZATIONS',
 		'--externs ./closure_compiler/jquery-1.4.4.externs.js',
 		'--externs ./closure_compiler/jquery.mousewheel.externs.js',
+		'--externs ./closure_compiler/player.externs.js',
 		'--js "%s"',
 		'--js_output_file "%s"'
 	])
@@ -32,7 +33,7 @@ def copy(a, b):
 	print 'copied %s' % b
 
 compile('./editor/www/editor.js', './rails/public/javascripts/editor.js')
-copy('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
+compile('./game/www/rapt.js', './rails/public/javascripts/rapt.js')
 
 copy('./editor/www/style.css', './rails/public/stylesheets/editor.css')
 copy('./game/www/style.css', './rails/public/stylesheets/game.css')
