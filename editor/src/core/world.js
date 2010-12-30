@@ -1,10 +1,10 @@
 // Cell.type takes one of these values
 var CELL_EMPTY = 0;
 var CELL_SOLID = 1;
-var CELL_CEIL_DIAG_LEFT = 2;
-var CELL_CEIL_DIAG_RIGHT = 3;
-var CELL_FLOOR_DIAG_LEFT = 4;
-var CELL_FLOOR_DIAG_RIGHT = 5;
+var CELL_FLOOR_DIAG_LEFT = 2;
+var CELL_FLOOR_DIAG_RIGHT = 3;
+var CELL_CEIL_DIAG_LEFT = 4;
+var CELL_CEIL_DIAG_RIGHT = 5;
 
 // Use these values to index into Cell.edges
 var EDGE_XNEG = 0;

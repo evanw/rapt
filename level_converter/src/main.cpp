@@ -58,7 +58,7 @@ private:
 
 public:
     JSON(ostream *out, bool should_pack) : pack(should_pack), o(out), first(true), i(1) { *o << "{"; }
-    ~JSON() { *o << (pack ? "}" : "\n}\n"); }
+    ~JSON() { *o << (pack ? "}\n" : "\n}\n"); }
 
     JSON &name(const string &name)
     {

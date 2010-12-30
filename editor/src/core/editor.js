@@ -68,14 +68,8 @@ function Editor(canvas) {
 	this.selectedWall = 0;
 	this.isMouseOver = false;
 	
-	this.doc.world.playerStart = new Vector(-2, -1);
-	this.doc.world.playerGoal = new Vector(1, -1);
-	this.doc.world.setCell(-2, -1, CELL_EMPTY);
-	this.doc.world.setCell(-2, 0, CELL_EMPTY);
-	this.doc.world.setCell(-1, 0, CELL_EMPTY);
-	this.doc.world.setCell(0, 0, CELL_EMPTY);
-	this.doc.world.setCell(1, 0, CELL_EMPTY);
-	this.doc.world.setCell(1, -1, CELL_EMPTY);
+	this.doc.world = loadWorldFromJSON('{"unique_id":1432757828,"width":16,"height":16,"start":[8,8],"end":[8,9],"entities":[{"class":"wall","start":[7,7],"end":[6,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[6,9],"end":[7,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[4,6],"end":[5,7],"oneway":false,"open":false,"color":0},{"class":"cog","pos":[4.49878,5.55471]},{"class":"button","type":0,"pos":[5.47134,6.61063],"walls":[2,0,1],"color":0},{"class":"sign","pos":[8.45018,10.5177],"text":"NO HELP FOR YOU"},{"class":"enemy","type":"bomber","pos":[10.451,11.5348],"color":0,"angle":3.14636},{"class":"enemy","type":"corrosion cloud","pos":[11.5348,12.5352],"color":1,"angle":0}],"cells":[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,2,3,1,1,1,1],[1,1,1,1,1,0,0,0,1,1,4,5,1,1,1,1],[1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1],[1,1,1,1,1,5,4,1,0,0,0,1,1,1,1,1],[1,1,1,1,1,3,2,1,1,1,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]}');
+	this.worldCenter = this.doc.world.playerStart.add(new Vector(0.5, 0.5));
 }
 
 Editor.prototype.setMode = function(mode) {
