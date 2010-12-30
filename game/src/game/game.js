@@ -29,8 +29,8 @@ var GAME_WIN_TEXT = "You won!  Hit SPACE to play the next level or ESC for the l
 var GOLDEN_COG_TEXT = "You earned a golden cog!";
 var SILVER_COG_TEXT = "You earned a silver cog!";
 var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new level.";
-var TEXT_BOX_X_MARGIN = 12;
-var TEXT_BOX_Y_MARGIN = 28;
+var TEXT_BOX_X_MARGIN = 6;
+var TEXT_BOX_Y_MARGIN = 6;
 
 Game.extends(Screen);
 
@@ -116,21 +116,40 @@ Game.prototype.render = function(c, center) {
 	c.restore();
 };
 
-function drawTextBox(c, text, xCenter, yCenter) {
-    // Get the font size
-    c.font = '14px Arial, sans-serif';
-    var textWidth = c.measureText(text).width;
+// Draw a text box, takes in an array of lines
+function drawTextBox(c, textArray, xCenter, yCenter, textSize) {
+    var numLines = textArray.length;
+    if (numLines < 1) return;
+
+    // Calculate the height of all lines and the widest line's width
+    c.font = textSize + 'px Arial, sans-serif';
+    var lineHeight = textSize + 2;
+    var textHeight = lineHeight * numLines;
+    var textWidth = -1;
+    for (var i = 0; i < numLines; ++i) {
+        var currWidth = c.measureText(textArray[i]).width;
+        if (textWidth < currWidth) {
+            textWidth = currWidth;
+        }
+    }
 
     // Draw the box
 	c.strokeStyle = '#7F7F7F';
 	c.fillStyle = '#BFBFBF';
-    c.fillRect(xCenter - (textWidth + TEXT_BOX_X_MARGIN) / 2, yCenter - (TEXT_BOX_Y_MARGIN - 10), textWidth + TEXT_BOX_X_MARGIN, TEXT_BOX_Y_MARGIN);
-    c.strokeRect(xCenter - (textWidth + TEXT_BOX_X_MARGIN) / 2, yCenter - (TEXT_BOX_Y_MARGIN - 10), textWidth + TEXT_BOX_X_MARGIN, TEXT_BOX_Y_MARGIN);
+    var xLeft = xCenter - textWidth / 2 - TEXT_BOX_X_MARGIN;
+    var yBottom = yCenter - textHeight / 2 - TEXT_BOX_Y_MARGIN;
+    c.fillRect(xLeft, yBottom, textWidth + TEXT_BOX_X_MARGIN * 2, textHeight + TEXT_BOX_Y_MARGIN * 2);
+    c.strokeRect(xLeft, yBottom, textWidth + TEXT_BOX_X_MARGIN * 2, textHeight + TEXT_BOX_Y_MARGIN * 2);
 
     // Draw the text
 	c.fillStyle = 'black';
     c.textAlign = 'center';
-    c.fillText(text, xCenter, yCenter);
+    // yCurr starts at the top, so subtract half of height of box
+    var yCurr = yCenter + 4 - (numLines - 1) * lineHeight / 2;
+    for (var i = 0; i < numLines; ++i) {
+        c.fillText(textArray[i], xCenter, yCurr);
+        yCurr += lineHeight;
+    }
 }
 
 Game.prototype.draw = function(c) {
@@ -149,12 +168,12 @@ Game.prototype.draw = function(c) {
     if (this.gameStatus === GAME_WON) {
         // draw winning text
         c.save();
-        drawTextBox(c, GAME_WIN_TEXT, this.width / 2, this.height / 2);
+        drawTextBox(c, [GAME_WIN_TEXT], this.width / 2, this.height / 2, 14);
         c.restore();
     } else if (this.gameStatus === GAME_LOST) {
         // draw losing text
         c.save();
-        drawTextBox(c, GAME_LOSS_TEXT, this.width / 2, this.height / 2);
+        drawTextBox(c, [GAME_LOSS_TEXT], this.width / 2, this.height / 2, 14);
         c.restore();
     }
 
