@@ -103,8 +103,10 @@ function fillEnemies() {
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
-		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawn, just used to make sure sprites specify colors
-		editor.enemies[i].sprite.draw(c);
+		c.fillStyle = c.strokeStyle = 'green';
+		var sprite = editor.enemies[i].sprite;
+		if (i == SPRITE_ROCKET_SPIDER) sprite = sprite.clone(new Vector(0, -0.2));
+		sprite.draw(c);
 	}
 	
 	// Add an action to each enemy button
@@ -246,6 +248,9 @@ $(document).ready(function() {
 	$(canvas).mouseleave(function(e) {
 		editor.mouseOut();
 	});
+	
+	// attempt loading from external json file
+	editor.loadFromJSON(externalJSON);
 });
 
 $(window).resize(function() {

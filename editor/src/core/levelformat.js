@@ -26,7 +26,6 @@ function jsonToVec(json) {
 
 function loadWorldFromJSON(json) {
 	var world = new World();
-	json = JSON.parse(json);
 	
 	// load general info
 	world.playerStart = jsonToVec(json.start);
