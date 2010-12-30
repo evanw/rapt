@@ -75,7 +75,7 @@ HelpSign.prototype.draw = function(c) {
     c.scale(1 / gameScale, -1 / gameScale);
 
     c.save();
-    // draw the sprite
+    // Draw the sprite
     c.font = "bold 34px sans-serif";
     c.lineWidth = 1;
     c.fillStyle = "yellow";
@@ -95,26 +95,18 @@ HelpSign.prototype.draw = function(c) {
     var scale = this.timeSinceStart - timeFloor;
     scale = Math.cos(scale * 2 * Math.PI) / 16 + 1;
 
-    // convert from 0-2 to 1 - 1/16 to 1 + 1/16
+    // Convert from 0-2 to 1 - 1/16 to 1 + 1/16
     c.scale(scale, scale);
     c.fillText("?", 0, 0);
     c.strokeText("?", 0, 0);
     c.restore();
 
-    // draw the text
+    // Draw the text in a text box
     if (this.drawText) {
-        c.textAlign = "left";
-        c.font = "12px sans-serif";
-        c.fillStyle = "black";
-        c.lineWidth = 2;
-        var textCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
-        var textTop = -this.hitBox.getTop() * gameScale - 12 * this.textArray.length;
-        // Draw each phrase, starting from the top down
-        for (var i = 0; i < this.textArray.length; ++i) {
-            var text = this.textArray[i];
-            c.fillText(text, textCenter - Math.floor(c.measureText(text).width / 2), textTop);
-            textTop += 12;
-        }
+        var fontSize = 13;
+        var xCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
+        var yCenter = -this.hitBox.getTop() * gameScale - fontSize * this.textArray.length;
+        drawTextBox(c, this.textArray, xCenter, yCenter, fontSize);
     }
 
     c.restore();
