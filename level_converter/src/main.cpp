@@ -199,6 +199,8 @@ void convert(const string &input, const string &output, bool pack)
 
         // convert enemy name from integer to string
         string type = FileEnemy_EnemyType_Name(enemy.type());
+        type = sub(type, "ENEMY_RIOT_GUN", "jet stream");
+        type = sub(type, "ENEMY_MULTI_THROW", "multi gun");
         type = sub(sub(type, "ENEMY_", ""), "_", " ");
         for (int j = 0; j < type.size(); j++)
             type[j] = tolower(type[j]);

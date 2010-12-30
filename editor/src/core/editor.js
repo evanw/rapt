@@ -24,34 +24,6 @@ function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);
 }
 
-var enemies = [
-	{ name: 'Bomber', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
-	{ name: 'Doom Magnet', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
-	{ name: 'Hunter', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
-	{ name: 'Multi-Gun', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
-	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
-	{ name: 'Jet Stream', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
-	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpider(c, alpha); }) },
-	{ name: 'Spike Ball', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
-	{ name: 'Wall Crawler', sprite: new Sprite(0.25, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },
-	{ name: 'Wheeligator', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWheeligator(c, alpha); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, true); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, false); }) },
-	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, true); }) },
-	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, false); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, true); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, false); }) },
-	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
-	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, true); }) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, false); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, true); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, false); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, true); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, false); }) }
-];
-var cogSprite = new Sprite(0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); });
-
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,8 +40,28 @@ function Editor(canvas) {
 	this.selectedWall = 0;
 	this.isMouseOver = false;
 	
-	this.doc.world = loadWorldFromJSON('{"unique_id":1432757828,"width":16,"height":16,"start":[8,8],"end":[8,9],"entities":[{"class":"wall","start":[7,7],"end":[6,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[6,9],"end":[7,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[4,6],"end":[5,7],"oneway":false,"open":false,"color":0},{"class":"cog","pos":[4.49878,5.55471]},{"class":"button","type":0,"pos":[5.47134,6.61063],"walls":[2,0,1],"color":0},{"class":"sign","pos":[8.45018,10.5177],"text":"NO HELP FOR YOU"},{"class":"enemy","type":"bomber","pos":[10.451,11.5348],"color":0,"angle":3.14636},{"class":"enemy","type":"corrosion cloud","pos":[11.5348,12.5352],"color":1,"angle":0}],"cells":[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,2,3,1,1,1,1],[1,1,1,1,1,0,0,0,1,1,4,5,1,1,1,1],[1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1],[1,1,1,1,1,5,4,1,0,0,0,1,1,1,1,1],[1,1,1,1,1,3,2,1,1,1,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]}');
+	this.doc.world = loadWorldFromJSON('{"unique_id":1701400916,"width":40,"height":16,"start":[8,8],"end":[8,9],"entities":[{"class":"wall","start":[7,7],"end":[6,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[6,9],"end":[7,8],"oneway":false,"open":false,"color":0},{"class":"wall","start":[4,6],"end":[5,7],"oneway":false,"open":false,"color":0},{"class":"cog","pos":[4.49878,5.55471]},{"class":"button","type":0,"pos":[5.47134,6.61063],"walls":[2,0,1]},{"class":"sign","pos":[8.45018,10.5177],"text":"NO HELP FOR YOU"},{"class":"enemy","type":"bomber","pos":[10.451,11.5348],"color":0,"angle":3.14636},{"class":"enemy","type":"bouncy rocket launcher","pos":[11.48,11.46],"color":1,"angle":0},{"class":"enemy","type":"bouncy rocket launcher","pos":[12.46,11.44],"color":2,"angle":0},{"class":"enemy","type":"corrosion cloud","pos":[13.5,11.48],"color":1,"angle":0},{"class":"enemy","type":"corrosion cloud","pos":[14.5,11.44],"color":2,"angle":0},{"class":"enemy","type":"doom magnet","pos":[15.48,11.44],"color":0,"angle":0},{"class":"enemy","type":"grenadier","pos":[16.44,11.48],"color":1,"angle":0},{"class":"enemy","type":"grenadier","pos":[17.44,11.46],"color":2,"angle":0},{"class":"enemy","type":"headache","pos":[18.48,11.44],"color":1,"angle":0},{"class":"enemy","type":"headache","pos":[19.46,11.44],"color":2,"angle":0},{"class":"enemy","type":"hunter","pos":[20.46,11.44],"color":0,"angle":0},{"class":"enemy","type":"multi gun","pos":[21.46,11.46],"color":0,"angle":0},{"class":"enemy","type":"popper","pos":[22.48,11.48],"color":0,"angle":0},{"class":"enemy","type":"jet stream","pos":[23.5,11.46],"color":0,"angle":0},{"class":"enemy","type":"rocket spider","pos":[24.48,11.44],"color":0,"angle":0},{"class":"enemy","type":"shock hawk","pos":[25.48,11.46],"color":1,"angle":0},{"class":"enemy","type":"shock hawk","pos":[26.44,11.44],"color":2,"angle":0},{"class":"enemy","type":"spike ball","pos":[27.48,11.46],"color":0,"angle":0},{"class":"enemy","type":"stalacbat","pos":[28.5,11.48],"color":1,"angle":0},{"class":"enemy","type":"stalacbat","pos":[29.46,11.44],"color":2,"angle":0},{"class":"enemy","type":"wall avoider","pos":[30.46,11.5],"color":1,"angle":0},{"class":"enemy","type":"wall avoider","pos":[31.48,11.5],"color":2,"angle":0},{"class":"enemy","type":"wall crawler","pos":[32.5,11.46],"color":0,"angle":0},{"class":"enemy","type":"wheeligator","pos":[33.48,11.48],"color":0,"angle":0}],"cells":[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,0,0,1,1,1,1,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,0,0,0,1,1,4,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,5,4,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,3,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]}');
 	this.worldCenter = this.doc.world.playerStart.add(new Vector(0.5, 0.5));
+	
+	this.enemies = [];
+	// add color-neutral enemies
+	for (var i = SPRITE_BOMBER; i <= SPRITE_WHEELIGATOR; i++) {
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite
+		});
+	}
+	// add color-specific enemies
+	for (i = SPRITE_BOUNCY_ROCKET_LAUNCHER; i <= SPRITE_WALL_AVOIDER; i++) {
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite.clone(new Vector(0, 0), COLOR_RED)
+		});
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite.clone(new Vector(0, 0), COLOR_BLUE)
+		});
+	}
 }
 
 Editor.prototype.setMode = function(mode) {
@@ -95,7 +87,7 @@ Editor.prototype.setMode = function(mode) {
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
 	case MODE_ELEMENTS_COG:
-		this.selectedTool = new AddPlaceableTool(this.doc, cogSprite);
+		this.selectedTool = new AddPlaceableTool(this.doc, spriteTemplates[SPRITE_COG].sprite);
 		break;
 	case MODE_OTHER_ENEMIES:
 	case MODE_OTHER_WALLS_BUTTONS:
@@ -109,7 +101,7 @@ Editor.prototype.setMode = function(mode) {
 
 Editor.prototype.setSidePanelTool = function() {
 	if (this.mode == MODE_OTHER_ENEMIES) {
-		this.selectedTool = new AddPlaceableTool(this.doc, enemies[this.selectedEnemy].sprite);
+		this.selectedTool = new AddPlaceableTool(this.doc, this.enemies[this.selectedEnemy].sprite);
 	} else if (this.mode == MODE_OTHER_WALLS_BUTTONS) {
 		// TODO: constants for these
 		if (this.selectedWall < 6) {

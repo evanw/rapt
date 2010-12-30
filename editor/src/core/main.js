@@ -90,21 +90,21 @@ function fillEnemies() {
 	// Create a <canvas> for each enemy
 	var i;
 	gen.addHeader('Color-neutral enemies');
-	for (i = 0; i < enemies.length; i++) {
+	for (i = 0; i < editor.enemies.length; i++) {
 		if (i == 10) gen.addHeader('Color-specific enemies');
-		gen.addCell('<div class="cell" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas" width="80" height="60"></canvas>' + enemies[i].name + '</div>');
+		gen.addCell('<div class="cell" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas" width="80" height="60"></canvas>' + editor.enemies[i].name + '</div>');
 	}
 	$('#enemies').html(gen.getHTML());
 	$('#enemy' + editor.selectedEnemy).addClass('enemy-current');
 	
 	// Draw each enemy on its <canvas>
-	for (i = 0; i < enemies.length; i++) {
+	for (i = 0; i < editor.enemies.length; i++) {
 		var c = $('#enemy' + i + '-canvas')[0].getContext('2d');
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
 		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawn, just used to make sure sprites specify colors
-		enemies[i].sprite.draw(c);
+		editor.enemies[i].sprite.draw(c);
 	}
 	
 	// Add an action to each enemy button
@@ -182,10 +182,10 @@ function fillWalls() {
 			c.translate(0.3, -0.2);
 			
 			// Draw door
-			new Door(true, false, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
+			new Door(true, false, COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
 		} else {
 			// Draw initially open door
-			new Door(true, true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+			new Door(true, true, COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
 		}
 	}
 	

@@ -1,3 +1,25 @@
+#require <sprite.js>
+
+var enemyToSpriteMap = {
+	'bomber': SPRITE_BOMBER,
+	'doom magnet': SPRITE_DOOM_MAGNET,
+	'grenadier': SPRITE_GRENADIER,
+	'headache': SPRITE_HEADACHE,
+	'popper': SPRITE_POPPER,
+	'jet stream': SPRITE_JET_STREAM,
+	'shock hawk': SPRITE_SHOCK_HAWK,
+	'stalacbat': SPRITE_STALACBAT,
+	'wall crawler': SPRITE_WALL_CRAWLER,
+	'wheeligator': SPRITE_WHEELIGATOR,
+	'rocket spider': SPRITE_ROCKET_SPIDER,
+	'hunter': SPRITE_HUNTER,
+	'wall avoider': SPRITE_WALL_AVOIDER,
+	'spike ball': SPRITE_SPIKE_BALL,
+	'corrosion cloud': SPRITE_CORROSION_CLOUD,
+	'bouncy rocket launcher': SPRITE_BOUNCY_ROCKET_LAUNCHER,
+	'multi gun': SPRITE_MULTI_GUN
+};
+
 function jsonToVec(json) {
 	return new Vector(json[0], json[1]);
 }
@@ -25,7 +47,7 @@ function loadWorldFromJSON(json) {
 		var e = json.entities[i];
 		switch (e['class']) {
 		case 'cog':
-			world.placeables.push(cogSprite.clone(jsonToVec(e.pos)));
+			world.placeables.push(spriteTemplates[SPRITE_COG].sprite.clone(jsonToVec(e.pos)));
 			break;
 			
 		case 'wall':
@@ -39,6 +61,14 @@ function loadWorldFromJSON(json) {
 			button.walls = e.walls;
 			buttons.push(button);
 			world.placeables.push(button);
+			break;
+			
+		case 'sign':
+			// TODO
+			break;
+			
+		case 'enemy':
+			world.placeables.push(spriteTemplates[enemyToSpriteMap[e.type]].sprite.clone(jsonToVec(e.pos), e.color));
 			break;
 		}
 	}
