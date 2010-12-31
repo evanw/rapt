@@ -41,55 +41,7 @@ function Game() {
     this.gameStatus = GAME_IN_PLAY;
 
 	gameState = new GameState();
-
-    gameState.loadLevelFromJSON(BOMBERLAND);
-    /*
-    TESTING CODE
-
-    // Add doors and doorbells
-    gameState.addDoor(new Vector(2, 0), new Vector(2, 1), TWO_WAY, EDGE_NEUTRAL);
-    gameState.addDoor(new Vector(0, 1), new Vector(1, 1), ONE_WAY, EDGE_RED);
-    gameState.addDoor(new Vector(2, 0), new Vector(3, 1), TWO_WAY, EDGE_BLUE);
-    // Close the doors
-    gameState.getDoor(0).act(DOORBELL_CLOSE, true, false);
-    gameState.getDoor(2).act(DOORBELL_CLOSE, true, false);
-
-    var button0 = new Doorbell(new Vector(0.5, 3.5), DOORBELL_OPEN, true);
-    var button1 = new Doorbell(new Vector(0.5, 1.5), DOORBELL_TOGGLE, true);
-    var button2 = new Doorbell(new Vector(4.5, 0.5), DOORBELL_CLOSE, true);
-    button0.addDoor(0);
-    button1.addDoor(1);
-    button2.addDoor(1);
-    button2.addDoor(2);
-    gameState.addEnemy(button0);
-    gameState.addEnemy(button1);
-    gameState.addEnemy(button2);
-
-    //gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
-
-    // The following enemies are done!
-    gameState.addEnemy(new Stalacbat(new Vector(0.7, 9.5), gameState.playerB));
-    //gameState.addEnemy(new JetStream(new Vector(5.5, 2.5), Math.PI * 0.55));
-    gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
-    gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
-    //gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
-    gameState.addEnemy(new BouncyRocketLauncher(new Vector(8.5, 0.5), gameState.playerA));
-    gameState.addEnemy(new GoldenCog(new Vector(14.5, 0.5)));
-    gameState.addEnemy(new GoldenCog(new Vector(0.5, 12.5)));
-    //gameState.addEnemy(new MultiGun(new Vector(0.7, 5.5)));
-    //gameState.addEnemy(new ShockHawk(new Vector(5.3, 10.5), gameState.playerB));
-    //gameState.addEnemy(new SpikeBall(new Vector(5.3, 8.5)));
-    //gameState.addEnemy(new RocketSpider(new Vector(4.5, 3.5), 0));
-    //gameState.addEnemy(new Hunter(new Vector(9.5, 0.7), gameState.playerB));
-    //gameState.addEnemy(new Bomber(new Vector(4.5, 3.0), 0));
-    //gameState.addEnemy(new Wheeligator(new Vector(3.5, 4.6), 0));
-    //gameState.addEnemy(new WallCrawler(new Vector(0.5, 3.5), 0));
-    //gameState.addEnemy(new WallAvoider(new Vector(1.5, 5.5), gameState.playerA));
-    //gameState.addEnemy(new Popper(new Vector(5.5, 0.6)));
-    //gameState.addEnemy(new CorrosionCloud(new Vector(4.5, 4.5), gameState.playerB));
-    //gameState.addEnemy(new Grenadier(new Vector(5.5, 5.5), gameState.playerA));
-    
-    */
+    gameState.loadLevelFromJSON(TUTORIAL_1);
 }
 
 Game.prototype.resize = function(w, h) {
@@ -139,8 +91,9 @@ function drawTextBox(c, textArray, xCenter, yCenter, textSize) {
     }
 
     // Draw the box
-	c.strokeStyle = '#7F7F7F';
 	c.fillStyle = '#BFBFBF';
+	c.strokeStyle = '#7F7F7F';
+    c.lineWidth = 1;
     var xLeft = xCenter - textWidth / 2 - TEXT_BOX_X_MARGIN;
     var yBottom = yCenter - textHeight / 2 - TEXT_BOX_Y_MARGIN;
     c.fillRect(xLeft, yBottom, textWidth + TEXT_BOX_X_MARGIN * 2, textHeight + TEXT_BOX_Y_MARGIN * 2);

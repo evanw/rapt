@@ -80,7 +80,7 @@ HelpSign.prototype.draw = function(c) {
     c.lineWidth = 1;
     c.fillStyle = "yellow";
     c.strokeStyle = "black";
-    c.translate(pos.x * gameScale, pos.y * gameScale - 36);
+    c.translate(pos.x * gameScale, -pos.y * gameScale + 12);
     var timeFloor = Math.floor(this.timeSinceStart);
 
     /* 2 second period version
@@ -92,11 +92,11 @@ HelpSign.prototype.draw = function(c) {
     }
     scale = Math.cos(scale * Math.PI) / 9 + 1; */
 
-    var scale = this.timeSinceStart - timeFloor;
-    scale = Math.cos(scale * 2 * Math.PI) / 16 + 1;
+    var scaleFactor = this.timeSinceStart - timeFloor;
+    scaleFactor = Math.cos(scaleFactor * 2 * Math.PI) / 16 + 1;
 
     // Convert from 0-2 to 1 - 1/16 to 1 + 1/16
-    c.scale(scale, scale);
+    c.scale(scaleFactor, scaleFactor);
     c.fillText("?", 0, 0);
     c.strokeText("?", 0, 0);
     c.restore();
@@ -104,7 +104,7 @@ HelpSign.prototype.draw = function(c) {
     // Draw the text in a text box
     if (this.drawText) {
         var fontSize = 13;
-        var xCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
+        var xCenter = pos.x * gameScale;
         var yCenter = -this.hitBox.getTop() * gameScale - fontSize * this.textArray.length;
         drawTextBox(c, this.textArray, xCenter, yCenter, fontSize);
     }

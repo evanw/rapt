@@ -129,18 +129,20 @@ GameState.prototype.addDoor = function(start, end, type, color, startsOpen) {
     }
     //diagonal
     else {
-        firstCell.x = secondCell.x = start.x < end.x ? start.x : end.x;
-        firstCell.y = secondCell.y = start.y < end.y ? start.y : end.y;
+        firstCell.x = secondCell.x = (start.x < end.x ? start.x : end.x);
+        firstCell.y = secondCell.y = (start.y < end.y ? start.y : end.y);
     }
 
     var door;
     if (type === ONE_WAY) {
-        this.doors.push(new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0));
+        door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0);
+        this.doors.push(door);
     } else {
-        this.doors.push(new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
-                        new Edge(end, start, color), secondCell.x, secondCell.y));
+        door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
+                   new Edge(end, start, color), secondCell.x, secondCell.y);
+        this.doors.push(door);
     }
-    if (startsOpen) {
+    if (!startsOpen) {
         door.act(DOORBELL_CLOSE, true, false);
     }
 }

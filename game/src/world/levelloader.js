@@ -2,11 +2,19 @@
 #require <gamestate.js>
 #require <levels.js>
 
+function jsonToTarget(json) {
+    return (json.color === 1 ? gameState.playerA : gameState.playerB);
+}
+
+function jsonToVec(json) {
+	return new Vector(json[0], json[1]);
+}
+
 function jsonToEnemy(json) {
     var pos = jsonToVec(json.pos);
     switch (json.type) {
         case 'bomber':
-            return new Enemy(pos, json.angle);
+            return new Bomber(pos, json.angle);
         case 'bouncy rocket launcher':
             return new BouncyRocketLauncher(pos, jsonToTarget(json.color));
         case 'corrosion cloud':
@@ -39,15 +47,10 @@ function jsonToEnemy(json) {
             return new WallCrawler(pos, json.angle);
         case 'wheeligator':
             return new Wheeligator(pos, json.angle);
+        default:
+            console.log('Invalid enemy type in level');
+            return new SpikeBall(pos);
     }
-};
-
-function jsonToTarget(json) {
-    return (json.color == 1 ? this.playerA : this.playerB);
-}
-
-function jsonToVec(json) {
-	return new Vector(json[0], json[1]);
 }
 
 GameState.prototype.loadLevelFromJSON = function(json) {
@@ -70,7 +73,6 @@ GameState.prototype.loadLevelFromJSON = function(json) {
 	this.playerA = new Player(this.world.spawnPoint, EDGE_RED);
 	this.playerB = new Player(this.world.spawnPoint, EDGE_BLUE);
 	
-    /*
 	// Load entities
 	for (var i = 0; i < json.entities.length; ++i) {
 		var e = json.entities[i];
@@ -79,15 +81,12 @@ GameState.prototype.loadLevelFromJSON = function(json) {
             this.enemies.push(new GoldenCog(jsonToVec(e.pos)));
 			break;
 		case 'wall':
-            // TODO: Walls and buttons
-            //gameState.addDoor(jsonToVec(e.start), jsonToVec(e.end), e.oneway, e.color, e.open);
-			//var door = new Door(new Edge(jsonToVec(e.start), jsonToVec(e.end)), t.oneway, e.open, e.color);
-            //this.doors.push(door);
+            gameState.addDoor(jsonToVec(e.end), jsonToVec(e.start), e.oneway ? ONE_WAY : TWO_WAY, e.color, e.open);
 			break;
 		case 'button':
-            //var button = new Doorbell(jsonToVec(e.pos), e.type, true);
-            //button.doors = e.walls;
-            //this.enemies.push(button);
+            var button = new Doorbell(jsonToVec(e.pos), e.type, true);
+            button.doors = e.walls;
+            this.enemies.push(button);
 			break;
 		case 'sign':
             this.enemies.push(new HelpSign(jsonToVec(e.pos), e.text));
@@ -97,5 +96,4 @@ GameState.prototype.loadLevelFromJSON = function(json) {
 			break;
 		}
 	}
-    */
 }
