@@ -14,8 +14,8 @@ var STAT_NUM_COGS = 5;
 function GameState() {
 	this.world = new World(50, 50);
     // Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
-	this.playerA = new Player(this.world.getSpawnPoint(), EDGE_RED);
-	this.playerB = new Player(this.world.getSpawnPoint(), EDGE_BLUE);
+	this.playerA = new Player(this.world.spawnPoint, EDGE_RED);
+	this.playerB = new Player(this.world.spawnPoint, EDGE_BLUE);
 	this.spawnPointParticleTimer = 0;
     this.spawnPointOffset = new Vector(0, 0);
     this.enemies = [];
@@ -38,11 +38,11 @@ GameState.prototype.getOtherPlayer = function(player) {
 }
 
 GameState.prototype.getSpawnPoint = function() {
-    return this.world.getSpawnPoint();
+    return this.world.spawnPoint;
 }
 
 GameState.prototype.setSpawnPoint = function(point) {
-    this.world.setSpawnPoint(point.x, point.y);
+    this.world.spawnPoint = new Vector(point.x, point.y);
     
     // offset to keep spawn point from drawing below ground
     this.spawnPointOffset.y = 0.125;
@@ -52,7 +52,7 @@ GameState.prototype.setSpawnPoint = function(point) {
 }
 
 GameState.prototype.gameWon = function() {
-    var goal = this.world.getGoal();
+    var goal = this.world.goal;
     var atGoalA = !this.playerA.isDead() && Math.abs(this.playerA.getCenter().x - goal.x) < 0.4 && 
                     Math.abs(this.playerA.getCenter().y - goal.y) < 0.4;
     var atGoalB = !this.playerB.isDead() && Math.abs(this.playerB.getCenter().x - goal.x) < 0.4 && 
@@ -96,48 +96,52 @@ GameState.prototype.clearDoors = function() {
     this.doors = [];
 }
 
-GameState.prototype.addDoor = function(startX, startY, endX, endY, type, color) {
-    var firstCellX, firstCellY, secondCellX, secondCellY;
+GameState.prototype.addDoor = function(start, end, type, color, startsOpen) {
+    var firstCell = new Vector();
+    var secondCell = new Vector();
     // left wall
-    if (startY + 1 == endY && startX == endX) {
-        firstCellX = startX;
-        firstCellY = startY;
-        secondCellX = startX - 1;
-        secondCellY = startY;
+    if (start.y + 1 == end.y && start.x == end.x) {
+        firstCell.x = start.x;
+        firstCell.y = start.y;
+        secondCell.x = start.x - 1;
+        secondCell.y = start.y;
     }
     // right wall
-    else if (startY - 1 == endY && startX == endX) {
-        firstCellX = startX - 1;
-        firstCellY = endY;
-        secondCellX = startX;
-        secondCellY = endY;
+    else if (start.y - 1 == end.y && start.x == end.x) {
+        firstCell.x = start.x - 1;
+        firstCell.y = end.y;
+        secondCell.x = start.x;
+        secondCell.y = end.y;
     }
     // ceiling
-    else if (startX + 1 == endX && startY == endY) {
-        firstCellX = startX;
-        firstCellY = startY - 1;
-        secondCellX = startX;
-        secondCellY = startY;
+    else if (start.x + 1 == end.x && start.y == end.y) {
+        firstCell.x = start.x;
+        firstCell.y = start.y - 1;
+        secondCell.x = start.x;
+        secondCell.y = start.y;
     }
     // floor
-    else if (startX - 1 == endX && startY == endY) {
-        firstCellX = endX;
-        firstCellY = startY;
-        secondCellX = endX;
-        secondCellY = startY - 1;
+    else if (start.x - 1 == end.x && start.y == end.y) {
+        firstCell.x = end.x;
+        firstCell.y = start.y;
+        secondCell.x = end.x;
+        secondCell.y = start.y - 1;
     }
     //diagonal
     else {
-        firstCellX = secondCellX = startX < endX ? startX : endX;
-        firstCellY = secondCellY = startY < endY ? startY : endY;
+        firstCell.x = secondCell.x = start.x < end.x ? start.x : end.x;
+        firstCell.y = secondCell.y = start.y < end.y ? start.y : end.y;
     }
 
+    var door;
     if (type === ONE_WAY) {
-        this.doors.push(new Door(new Edge(new Vector(startX, startY), new Vector(endX, endY), color), firstCellX, firstCellY,
-                                null, 0, 0));
+        this.doors.push(new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0));
     } else {
-        this.doors.push(new Door(new Edge(new Vector(startX, startY), new Vector(endX, endY), color), firstCellX, firstCellY,
-                        new Edge(new Vector(endX, endY), new Vector(startX, startY), color), secondCellX, secondCellY));
+        this.doors.push(new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
+                        new Edge(end, start, color), secondCell.x, secondCell.y));
+    }
+    if (startsOpen) {
+        door.act(DOORBELL_CLOSE, true, false);
     }
 }
 
@@ -182,7 +186,7 @@ GameState.prototype.tick = function(seconds) {
 	this.spawnPointParticleTimer -= seconds;
 	if(this.spawnPointParticleTimer <= 0)
 	{
-		var position = this.world.getSpawnPoint().sub(new Vector(0, 0.25));
+		var position = this.world.spawnPoint.sub(new Vector(0, 0.25));
 		Particle().position(position).velocity(new Vector(randInRange(-0.3, 0.3), 0.3)).radius(0.03, 0.05).bounces(0).decay(0.1, 0.2).color(1, 1, 1, 1).circle().gravity(-5);
 		this.spawnPointParticleTimer += SPAWN_POINT_PARTICLE_FREQ;
 	}
@@ -239,8 +243,8 @@ function drawGoal(c, point, time) {
 
 GameState.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 	this.world.draw(c, xmin, ymin, xmax, ymax);
-	drawSpawnPoint(c, this.world.getSpawnPoint().add(this.spawnPointOffset));
-	drawGoal(c, this.world.getGoal(), this.timeSinceStart);
+	drawSpawnPoint(c, this.world.spawnPoint.add(this.spawnPointOffset));
+	drawGoal(c, this.world.goal, this.timeSinceStart);
 	this.playerA.draw(c);
 	this.playerB.draw(c);
     for (var i = 0; i < this.enemies.length; ++i) {

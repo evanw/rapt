@@ -42,10 +42,14 @@ function Game() {
 
 	gameState = new GameState();
 
+    gameState.loadLevelFromJSON(BOMBERLAND);
+    /*
+    TESTING CODE
+
     // Add doors and doorbells
-    gameState.addDoor(2, 0, 2, 1, TWO_WAY, EDGE_NEUTRAL);
-    gameState.addDoor(0, 1, 1, 1, ONE_WAY, EDGE_RED);
-    gameState.addDoor(2, 0, 3, 1, TWO_WAY, EDGE_BLUE);
+    gameState.addDoor(new Vector(2, 0), new Vector(2, 1), TWO_WAY, EDGE_NEUTRAL);
+    gameState.addDoor(new Vector(0, 1), new Vector(1, 1), ONE_WAY, EDGE_RED);
+    gameState.addDoor(new Vector(2, 0), new Vector(3, 1), TWO_WAY, EDGE_BLUE);
     // Close the doors
     gameState.getDoor(0).act(DOORBELL_CLOSE, true, false);
     gameState.getDoor(2).act(DOORBELL_CLOSE, true, false);
@@ -61,12 +65,11 @@ function Game() {
     gameState.addEnemy(button1);
     gameState.addEnemy(button2);
 
-    // TODO: Headache graphics
     //gameState.addEnemy(new Headache(new Vector(0.5, 6.5), gameState.playerA));
-    // Riot bullets maybe should be changed?
-    //gameState.addEnemy(new RiotGun(new Vector(5.5, 2.5), Math.PI * 0.55));
 
     // The following enemies are done!
+    gameState.addEnemy(new Stalacbat(new Vector(0.7, 9.5), gameState.playerB));
+    //gameState.addEnemy(new JetStream(new Vector(5.5, 2.5), Math.PI * 0.55));
     gameState.addEnemy(new HelpSign(new Vector(14.5, 0.5), "I am a sign with a short message!"));
     gameState.addEnemy(new HelpSign(new Vector(10.5, 0.5), "I am a sign with a really long message! Really really long. Yeah I am.", 2.5));
     //gameState.addEnemy(new DoomMagnet(new Vector(0.5, 6.5), gameState.playerA));
@@ -85,6 +88,8 @@ function Game() {
     //gameState.addEnemy(new Popper(new Vector(5.5, 0.6)));
     //gameState.addEnemy(new CorrosionCloud(new Vector(4.5, 4.5), gameState.playerB));
     //gameState.addEnemy(new Grenadier(new Vector(5.5, 5.5), gameState.playerA));
+    
+    */
 }
 
 Game.prototype.resize = function(w, h) {

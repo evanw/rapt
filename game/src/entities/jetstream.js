@@ -1,23 +1,23 @@
 #require <class.js>
 #require <spawningenemy.js>
 
-var RIOT_GUN_WIDTH = 0.4;
-var RIOT_GUN_HEIGHT = 0.4;
-var RIOT_SHOOT_FREQ = 0.2;
+var JET_STREAM_WIDTH = 0.4;
+var JET_STREAM_HEIGHT = 0.4;
+var JET_STREAM_SHOOT_FREQ = 0.2;
 var NUM_BARRELS = 3;
 
-var RIOT_SPRITE_A = 0;
-var RIOT_SPRITE_B = 1;
+var JET_STREAM_SPRITE_A = 0;
+var JET_STREAM_SPRITE_B = 1;
 
-RiotGun.extends(SpawningEnemy);
+JetStream.extends(SpawningEnemy);
 
-function RiotGun(center, direction) {
-    SpawningEnemy.prototype.constructor.call(this, ENEMY_RIOT_GUN, center, RIOT_GUN_WIDTH, RIOT_GUN_HEIGHT, 0, RIOT_SHOOT_FREQ, 0);
+function JetStream(center, direction) {
+    SpawningEnemy.prototype.constructor.call(this, ENEMY_JET_STREAM, center, JET_STREAM_WIDTH, JET_STREAM_HEIGHT, 0, JET_STREAM_SHOOT_FREQ, 0);
     this.direction = direction;
     this.reloadAnimation = 0;
 
 	this.sprites = [new Sprite(), new Sprite()];
-	this.sprites[RIOT_SPRITE_A].drawGeometry = this.sprites[RIOT_SPRITE_B].drawGeometry = function(c) {
+	this.sprites[JET_STREAM_SPRITE_A].drawGeometry = this.sprites[JET_STREAM_SPRITE_B].drawGeometry = function(c) {
 		c.strokeStyle = 'black';
 		c.beginPath();
         for(var i = 0; i < NUM_BARRELS; i++) {
@@ -29,34 +29,34 @@ function RiotGun(center, direction) {
 	};
 }
 
-RiotGun.prototype.canCollide = function() { return false; }
+JetStream.prototype.canCollide = function() { return false; }
 
-RiotGun.prototype.spawn = function() {
+JetStream.prototype.spawn = function() {
     gameState.addEnemy(new RiotBullet(this.getCenter(), this.direction), this.getCenter());
     return true;
 }
 
-RiotGun.prototype.afterTick = function(seconds) {
-    this.reloadAnimation += seconds * (0.5 / RIOT_SHOOT_FREQ);
+JetStream.prototype.afterTick = function(seconds) {
+    this.reloadAnimation += seconds * (0.5 / JET_STREAM_SHOOT_FREQ);
 
     var angle = this.reloadAnimation * (2 * Math.PI / NUM_BARRELS);
     var targetAngle = this.direction - Math.PI / 2;
     var bodyOffset = Vector.fromAngle(targetAngle).mul(0.2);
 
     var position = this.getCenter();
-    this.sprites[RIOT_SPRITE_A].angle = targetAngle + angle;
-    this.sprites[RIOT_SPRITE_B].angle = targetAngle - angle;
-    this.sprites[RIOT_SPRITE_A].offsetBeforeRotation = position.sub(bodyOffset);
-    this.sprites[RIOT_SPRITE_B].offsetBeforeRotation = position.add(bodyOffset);
+    this.sprites[JET_STREAM_SPRITE_A].angle = targetAngle + angle;
+    this.sprites[JET_STREAM_SPRITE_B].angle = targetAngle - angle;
+    this.sprites[JET_STREAM_SPRITE_A].offsetBeforeRotation = position.sub(bodyOffset);
+    this.sprites[JET_STREAM_SPRITE_B].offsetBeforeRotation = position.add(bodyOffset);
 
     // adjust for even NUM_BARRELS
     if (!(NUM_BARRELS & 1))
-        this.sprites[RIOT_SPRITE_B].angle += Math.PI / NUM_BARRELS;
+        this.sprites[JET_STREAM_SPRITE_B].angle += Math.PI / NUM_BARRELS;
 }
 
-RiotGun.prototype.draw = function(c) {
-    this.sprites[RIOT_SPRITE_A].draw(c);
-    this.sprites[RIOT_SPRITE_B].draw(c);
+JetStream.prototype.draw = function(c) {
+    this.sprites[JET_STREAM_SPRITE_A].draw(c);
+    this.sprites[JET_STREAM_SPRITE_B].draw(c);
 
     var angle = this.reloadAnimation * (2 * Math.PI / NUM_BARRELS);
     var targetAngle = this.direction - Math.PI / 2;
