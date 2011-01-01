@@ -278,7 +278,8 @@ Editor.prototype.redo = function() {
 };
 
 Editor.prototype.save = function() {
-	// TODO
+	// TODO: this will be ajax
+	console.log(saveWorldToJSON(this.doc.world));
 };
 
 Editor.prototype.deleteSeleciton = function() {

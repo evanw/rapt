@@ -77,13 +77,7 @@ public:
 
     template <typename X, typename Y> JSON &value(X x, Y y)
     {
-        if (in_array()) newline_indent();
-        *o << '[';
-        val(o, x);
-        *o << "," << (pack ? "" : " ");
-        val(o, y);
-        *o << ']';
-        return *this;
+        return array(true).value(x).value(y).end();
     }
 
     JSON &array(bool packed)
@@ -178,7 +172,7 @@ void convert(const string &input, const string &output, bool pack)
         json.name("class").value("button");
         json.name("type").value(button.behavior());
         json.name("pos").value(button.position_x(), button.position_y());
-        json.name("walls").array(false);
+        json.name("walls").array(true);
         for (int j = 0; j < button.door_index_size(); j++)
             json.value(button.door_index(j));
         json.end();
