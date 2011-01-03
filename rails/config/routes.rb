@@ -3,6 +3,8 @@ Rapt::Application.routes.draw do
 
   resources :levels
   
+  match 'play' => 'game#play'
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
