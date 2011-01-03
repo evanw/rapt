@@ -587,7 +587,7 @@ Sprites.drawMultiGun = function(c, alpha) {
 
 Sprites.drawSpider = function(c, alpha) {
 	c.save();
-	c.translate(0, 0.3);
+	c.translate(0, 0.51);
 	
 	// Draw body
 	var i, radius, angle;

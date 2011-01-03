@@ -4,53 +4,25 @@ var MOUSE_MIDDLE = (1 << 2);
 var MOUSE_RIGHT = (1 << 3);
 
 // Tiles
-var MODE_TILES_EMPTY = 0;
-var MODE_TILES_SOLID = 1;
-var MODE_TILES_DIAGONAL = 2;
+var MODE_EMPTY = 0;
+var MODE_SOLID = 1;
+var MODE_DIAGONAL = 2;
 
 // Game Elements
-var MODE_ELEMENTS_START = 3;
-var MODE_ELEMENTS_GOAL = 4;
-var MODE_ELEMENTS_COG = 5;
-var MODE_ELEMENTS_SIGN = 6;
+var MODE_START = 3;
+var MODE_GOAL = 4;
+var MODE_COG = 5;
+var MODE_SIGN = 6;
 
 // Other
-var MODE_OTHER_SELECT = 7;
-var MODE_OTHER_ENEMIES = 8;
-var MODE_OTHER_WALLS_BUTTONS = 9;
-var MODE_OTHER_HELP = 10;
+var MODE_SELECT = 7;
+var MODE_ENEMIES = 8;
+var MODE_WALLS_BUTTONS = 9;
+var MODE_HELP = 10;
 
 function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);
 }
-
-var enemies = [
-	{ name: 'Bomber', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
-	{ name: 'Doom Magnet', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawDoomMagnet(c, alpha); }) },
-	{ name: 'Hunter', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
-	{ name: 'Multi-Gun', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
-	{ name: 'Popper', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
-	{ name: 'Jet Stream', sprite: new Sprite(0.45, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
-	{ name: 'Rocket Spider', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawSpider(c, alpha); }) },
-	{ name: 'Spike Ball', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
-	{ name: 'Wall Crawler', sprite: new Sprite(0.25, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },
-	{ name: 'Wheeligator', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWheeligator(c, alpha); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, true); }) },
-	{ name: 'Bouncy Rockets', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawBouncyRocketLauncher(c, alpha, false); }) },
-	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, true); }) },
-	{ name: 'Corrosion Cloud', sprite: new Sprite(0.5, function(c, alpha) { Sprites.drawCloud(c, alpha, false); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, true); }) },
-	{ name: 'Grenadier', sprite: new Sprite(0.35, function(c, alpha) { Sprites.drawGrenadier(c, alpha, false); }) },
-	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
-	{ name: 'Headache', sprite: new Sprite(0.5, todo) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, true); }) },
-	{ name: 'Shock Hawk', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawShockHawk(c, alpha, false); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, true); }) },
-	{ name: 'Stalacbat', sprite: new Sprite(0.2, function(c, alpha) { Sprites.drawStalacbat(c, alpha, false); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, true); }) },
-	{ name: 'Wall Avoider', sprite: new Sprite(0.3, function(c, alpha) { Sprites.drawWallAvoider(c, alpha, false); }) }
-];
-var cogSprite = new Sprite(0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); });
 
 ////////////////////////////////////////////////////////////////////////////////
 // class Editor
@@ -63,11 +35,12 @@ function Editor(canvas) {
 	this.worldScale = 50;
 	this.activeTool = null;
 	this.doc = new Document();
-	this.setMode(MODE_TILES_EMPTY);
+	this.setMode(MODE_EMPTY);
 	this.selectedEnemy = 0;
 	this.selectedWall = 0;
 	this.isMouseOver = false;
 	
+	// simple default level
 	this.doc.world.playerStart = new Vector(-2, -1);
 	this.doc.world.playerGoal = new Vector(1, -1);
 	this.doc.world.setCell(-2, -1, CELL_EMPTY);
@@ -76,35 +49,61 @@ function Editor(canvas) {
 	this.doc.world.setCell(0, 0, CELL_EMPTY);
 	this.doc.world.setCell(1, 0, CELL_EMPTY);
 	this.doc.world.setCell(1, -1, CELL_EMPTY);
+	
+	this.enemies = [];
+	// add color-neutral enemies
+	for (var i = SPRITE_BOMBER; i <= SPRITE_WHEELIGATOR; i++) {
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite
+		});
+	}
+	// add color-specific enemies
+	for (i = SPRITE_BOUNCY_ROCKET_LAUNCHER; i <= SPRITE_WALL_AVOIDER; i++) {
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite.clone(new Vector(0, 0), COLOR_RED)
+		});
+		this.enemies.push({
+			name: spriteTemplates[i].name,
+			sprite: spriteTemplates[i].sprite.clone(new Vector(0, 0), COLOR_BLUE)
+		});
+	}
 }
+
+Editor.prototype.loadFromJSON = function(json) {
+	this.doc.world = loadWorldFromJSON(json);
+	this.worldCenter = this.doc.world.playerStart.add(new Vector(0.5, 0.5));
+	this.draw();
+};
 
 Editor.prototype.setMode = function(mode) {
 	this.mode = mode;
 	
 	switch (mode) {
-	case MODE_TILES_EMPTY:
+	case MODE_EMPTY:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_EMPTY);
 		break;
-	case MODE_TILES_SOLID:
+	case MODE_SOLID:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_SOLID);
 		break;
-	case MODE_TILES_DIAGONAL:
+	case MODE_DIAGONAL:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_DIAGONAL);
 		break;
-	case MODE_OTHER_SELECT:
+	case MODE_SELECT:
 		this.selectedTool = new SelectionTool(this.doc);
 		break;
-	case MODE_ELEMENTS_START:
+	case MODE_START:
 		this.selectedTool = new SetPlayerStartTool(this.doc);
 		break;
-	case MODE_ELEMENTS_GOAL:
+	case MODE_GOAL:
 		this.selectedTool = new SetPlayerGoalTool(this.doc);
 		break;
-	case MODE_ELEMENTS_COG:
-		this.selectedTool = new AddPlaceableTool(this.doc, cogSprite);
+	case MODE_COG:
+		this.selectedTool = new AddPlaceableTool(this.doc, spriteTemplates[SPRITE_COG].sprite);
 		break;
-	case MODE_OTHER_ENEMIES:
-	case MODE_OTHER_WALLS_BUTTONS:
+	case MODE_ENEMIES:
+	case MODE_WALLS_BUTTONS:
 		this.setSidePanelTool();
 		break;
 	default:
@@ -114,9 +113,9 @@ Editor.prototype.setMode = function(mode) {
 };
 
 Editor.prototype.setSidePanelTool = function() {
-	if (this.mode == MODE_OTHER_ENEMIES) {
-		this.selectedTool = new AddPlaceableTool(this.doc, enemies[this.selectedEnemy].sprite);
-	} else if (this.mode == MODE_OTHER_WALLS_BUTTONS) {
+	if (this.mode == MODE_ENEMIES) {
+		this.selectedTool = new AddPlaceableTool(this.doc, this.enemies[this.selectedEnemy].sprite);
+	} else if (this.mode == MODE_WALLS_BUTTONS) {
 		// TODO: constants for these
 		if (this.selectedWall < 6) {
 			this.selectedTool = new PlaceDoorTool(this.doc, (this.selectedWall & 1), false, Math.floor(this.selectedWall / 2));
@@ -279,7 +278,8 @@ Editor.prototype.redo = function() {
 };
 
 Editor.prototype.save = function() {
-	// TODO
+	// TODO: this will be ajax
+	console.log(saveWorldToJSON(this.doc.world));
 };
 
 Editor.prototype.deleteSeleciton = function() {

@@ -75,12 +75,14 @@ HelpSign.prototype.draw = function(c) {
     c.scale(1 / gameScale, -1 / gameScale);
 
     c.save();
-    // draw the sprite
-    c.font = "34px sans serif";
-    c.lineWidth = 5;
+    // Draw the sprite
+    c.font = "bold 34px sans-serif";
+    c.lineWidth = 1;
     c.fillStyle = "yellow";
-    c.translate(pos.x * gameScale, pos.y * gameScale - 36);
+    c.strokeStyle = "black";
+    c.translate(pos.x * gameScale, -pos.y * gameScale + 12);
     var timeFloor = Math.floor(this.timeSinceStart);
+
     /* 2 second period version
     var scale = this.timeSinceStart;
     if (timeFloor % 2 === 0) {
@@ -90,27 +92,21 @@ HelpSign.prototype.draw = function(c) {
     }
     scale = Math.cos(scale * Math.PI) / 9 + 1; */
 
-    var scale = this.timeSinceStart - timeFloor;
-    scale = Math.cos(scale * 2 * Math.PI) / 16 + 1;
+    var scaleFactor = this.timeSinceStart - timeFloor;
+    scaleFactor = Math.cos(scaleFactor * 2 * Math.PI) / 16 + 1;
 
-    // convert from 0-2 to 1 - 1/16 to 1 + 1/16
-    c.scale(scale, scale);
+    // Convert from 0-2 to 1 - 1/16 to 1 + 1/16
+    c.scale(scaleFactor, scaleFactor);
     c.fillText("?", 0, 0);
+    c.strokeText("?", 0, 0);
     c.restore();
 
-    // draw the text
+    // Draw the text in a text box
     if (this.drawText) {
-        c.font = "12px sans serif";
-        c.fillStyle = "black";
-        c.lineWidth = 2;
-        var textCenter = (this.hitBox.getLeft() + this.hitBox.getWidth() / 2) * gameScale;
-        var textTop = -this.hitBox.getTop() * gameScale - 12 * this.textArray.length;
-        // Draw each phrase, starting from the top down
-        for (var i = 0; i < this.textArray.length; ++i) {
-            var text = this.textArray[i];
-            c.fillText(text, textCenter, textTop);
-            textTop += 12;
-        }
+        var fontSize = 13;
+        var xCenter = pos.x * gameScale;
+        var yCenter = -this.hitBox.getTop() * gameScale - fontSize * this.textArray.length;
+        drawTextBox(c, this.textArray, xCenter, yCenter, fontSize);
     }
 
     c.restore();

@@ -75,7 +75,6 @@ var SPACEBAR = 32;
     }
 
     function addLevelToDOM(parentDiv, hash) {
-        console.log("<div class=\"level\"><a href=\"" + hash + "\">" + hash.split('/')[2] + "</a></div>");
         parentDiv.append("<div class=\"level\"><a href=\"" + hash + "\">" + hash.split('/')[2] + "</a></div>");
     }
 

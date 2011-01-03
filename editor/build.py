@@ -96,4 +96,5 @@ def monitor():
 
 if __name__ == '__main__':
 	build()
-	monitor()
+	if not 'release' in sys.argv:
+		monitor()

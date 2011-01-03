@@ -52,11 +52,11 @@ WallCrawler.prototype.move = function(seconds) {
     }
     if (delta.lengthSquared() > (WALL_CRAWLER_RADIUS * WALL_CRAWLER_RADIUS * 1.1)) {
         // Pull the crawler towards the wall
-        if (this.clockwise) this.velocity = -flip.sub(delta.mul(PULL_FACTOR));
+        if (this.clockwise) this.velocity = flip.mul(-1).sub(delta.mul(PULL_FACTOR));
         else this.velocity = flip.sub(delta.mul(PULL_FACTOR));
     } else {
         // Push the crawler away from the wall
-        if (this.clockwise) this.velocity = -flip.add(delta.mul(PUSH_FACTOR));
+        if (this.clockwise) this.velocity = flip.mul(-1).add(delta.mul(PUSH_FACTOR));
         else this.velocity = flip.add(delta.mul(PUSH_FACTOR));
     }
     this.velocity.normalize();

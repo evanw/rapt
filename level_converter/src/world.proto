@@ -1,0 +1,135 @@
+enum FileColor
+{
+    NEUTRAL = 0;
+    RED = 1;
+    BLUE = 2;
+}
+
+message FileEnemy
+{
+    enum EnemyType
+    {
+        ENEMY_BOMBER = 0;
+        ENEMY_DOOM_MAGNET = 1;
+        ENEMY_GRENADIER = 2;
+        ENEMY_HEADACHE = 3;
+        ENEMY_POPPER = 4;
+        ENEMY_RIOT_GUN = 5;
+        ENEMY_SHOCK_HAWK = 6;
+        ENEMY_STALACBAT = 7;
+        ENEMY_WALL_CRAWLER = 8;
+        ENEMY_WHEELIGATOR = 9;
+        ENEMY_ROCKET_SPIDER = 10;
+        ENEMY_HUNTER = 11;
+        ENEMY_WALL_AVOIDER = 12;
+        ENEMY_SPIKE_BALL = 13;
+        ENEMY_CORROSION_CLOUD = 14;
+        ENEMY_BOUNCY_ROCKET_LAUNCHER = 15;
+        ENEMY_MULTI_THROW = 16;
+    }
+
+    required float center_x = 1;
+    required float center_y = 2;
+    required float angle = 3;
+    required EnemyType type = 4;
+    required FileColor color = 5;
+}
+
+message FileButton
+{
+    enum ButtonBehavior
+    {
+        OPEN_ALL = 0;
+        CLOSE_ALL = 1;
+        TOGGLE_ALL = 2;
+    }
+
+    required float position_x = 1;
+    required float position_y = 2;
+    required bool is_visible = 3;
+    required ButtonBehavior behavior = 4;
+    required FileColor color = 5;
+    repeated int32 door_index = 6;
+}
+
+message FileDoor
+{
+    enum DoorState
+    {
+        DOOR_OPEN = 0;
+        DOOR_CLOSED = 1;
+    }
+
+    enum DoorType
+    {
+        ONE_WAY = 0;
+        TWO_WAY = 1;
+    }
+
+    required int32 start_x = 1;
+    required int32 start_y = 2;
+    required int32 end_x = 3;
+    required int32 end_y = 4;
+    required DoorState state = 5;
+    required DoorType type = 6;
+    required FileColor color = 7;
+}
+
+message FileCell
+{
+    enum CellType
+    {
+        CELL_EMPTY = 0;
+        CELL_SOLID = 1;
+        CELL_FLOOR_DIAG_LEFT = 2;
+        CELL_FLOOR_DIAG_RIGHT = 3;
+        CELL_CEIL_DIAG_LEFT = 4;
+        CELL_CEIL_DIAG_RIGHT = 5;
+    }
+
+    enum EdgeType
+    {
+        EDGE_EMPTY = 0;
+        EDGE_NORMAL = 1;
+        EDGE_STICKY = 2;
+        EDGE_SLIPPERY = 3;
+    }
+
+    required CellType type = 1;
+    repeated EdgeType edge = 2;
+}
+
+message FileSector
+{
+    repeated FileCell cell = 1;
+}
+
+message FileCog
+{
+    required float cog_x = 1;
+    required float cog_y = 2;
+};
+
+message FileSign
+{
+    required float sign_x = 1;
+    required float sign_y = 2;
+    required string text = 3;
+};
+
+message FileWorld
+{
+    required int32 players_start_x = 1;
+    required int32 players_start_y = 2;
+    required int32 players_end_x = 3;
+    required int32 players_end_y = 4;
+    required int32 width = 5;
+    required int32 height = 6;
+    repeated FileSector sector = 7;
+    repeated FileButton button = 8;
+    repeated FileEnemy enemy = 9;
+    repeated FileDoor door = 10;
+    repeated FileCog cog = 11;
+    optional int32 unique_id = 12;
+    repeated FileSign sign = 13;
+}

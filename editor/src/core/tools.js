@@ -49,7 +49,6 @@ SetCellTool.prototype.mouseDown = function(point) {
 SetCellTool.prototype.mouseMoved = function(point) {
 	this.cellX = Math.floor(point.x);
 	this.cellY = Math.floor(point.y);
-	this.cellType;
 
 	if (this.mode == SETCELL_DIAGONAL) {
 		// Pick a different cell type depending on the quadrant

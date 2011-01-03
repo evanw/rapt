@@ -1,8 +1,4 @@
-var DOOR_COLOR_NEUTRAL = 0;
-var DOOR_COLOR_RED = 1;
-var DOOR_COLOR_BLUE = 2;
-
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // class Door
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +14,7 @@ function Door(isOneWay, isInitiallyOpen, color, edge) {
 }
 
 Door.prototype.draw = function(c, alpha) {
-	c.strokeStyle = rgba(255 * (this.color == DOOR_COLOR_RED), 0, 255 * (this.color == DOOR_COLOR_BLUE), alpha || 1);
+	c.strokeStyle = rgba(255 * (this.color == COLOR_RED), 0, 255 * (this.color == COLOR_BLUE), alpha || 1);
 	if (this.isInitiallyOpen) {
 		this.edge.drawOpen(c);
 		if (!this.isOneWay) {

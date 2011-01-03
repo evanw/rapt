@@ -1,31 +1,40 @@
 var WORLD_MARGIN = 60;
 
 // class World
-function World(w, h) {
+function World(w, h, spawnPoint, goal) {
 	this.cells = new Array(w);
 	this.width = w;
 	this.height = h;
-	this.safety = null;
-	this.spawnPoint = new Vector(0.5, 0.5);
-	this.goal = new Vector(2.5, 0.5);
+    this.safety = new Vector(0, 0);
 
-	for(var x = 0; x < w; x++) {
+    // Handle undefined spawn & goal for testing
+    if (spawnPoint !== undefined) {
+        this.spawnPoint = spawnPoint.add(new Vector(0.5, 0.5));
+    } else {
+        this.spawnPoint = new Vector(0.5, 0.5);
+    }
+    if (goal !== undefined) {
+        this.goal = goal.add(new Vector(0.5, 0.5));
+    } else {
+        this.goal = new Vector(3.5, 0.5);
+    }
+
+
+	for (var x = 0; x < w; ++x) {
 		this.cells[x] = new Array(h);
-		for(var y = 0; y < h; y++) {
-			this.cells[x][y] = new Cell(x, y, (x > 0 && y > 0 && x + 1 < w && y + 1 < h) * Math.round(Math.random() * 5));
-			//this.cells[x][y] = new Cell(x, y, (x > 0 && y > 0 && x + 1 < w && y + 1 < h) * CELL_SOLID);
-			//this.cells[x][y] = new Cell(x, y, ((x / 2) & (y / 2) & 1) * CELL_SOLID);
-
-			if(this.cells[x][y].type != CELL_SOLID)
-				this.safety = new Vector(x + 0.5, y + 0.5);
+		for (var y = 0; y < h; ++y) {
+            //this.cells[x][y] = new Cell(x, y, (x > 0 && y > 0 && x + 1 < w && y + 1 < h) * Math.round(Math.random() * 5))
+			this.cells[x][y] = new Cell(x, y, CELL_SOLID);
 		}
 	}
 
-	for(var x = 0; x < w; x++) {
-		for(var y = 0; y < h; y++) {
+    /*
+	for (var x = 0; x < w; ++x) {
+		for (var y = 0; y < h; ++y) {
 			this.cells[x][y].edges = this.createEdges(x, y);
 		}
 	}
+    */
 }
 
 function rect(c, x, y, w, h) { c.fillRect(x, y, w, h); c.strokeRect(x, y, w, h); }
@@ -68,10 +77,24 @@ World.prototype.getCell = function(x, y) {
 	return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y] : null;
 };
 
+
 // cells outside the world return solid
 World.prototype.getCellType = function(x, y) {
 	return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].type : CELL_SOLID;
 };
+
+World.prototype.setCell = function(x, y, type) {
+    this.cells[x][y] = new Cell(x, y, type);
+};
+
+World.prototype.createAllEdges = function() {
+	for (var x = 0; x < this.cells.length; x++) {
+		for (var y = 0; y < this.cells[0].length; y++) {
+			this.cells[x][y].edges = this.createEdges(x, y);
+		}
+	}
+}
+
 
 // is this side of the cell empty?
 function IS_EMPTY_XNEG(type){ return type == CELL_EMPTY || type == CELL_FLOOR_DIAG_RIGHT || type == CELL_CEIL_DIAG_RIGHT; }
@@ -154,27 +177,10 @@ World.prototype.getHugeAabb = function() {
     return new AABB(new Vector(-WORLD_MARGIN, -WORLD_MARGIN), new Vector(this.width + WORLD_MARGIN, this.height + WORLD_MARGIN));
 }
 
-
 World.prototype.getWidth = function() {
     return this.width;
 }
 
 World.prototype.getHeight = function() {
     return this.height;
-}
-
-World.prototype.setSpawnPoint = function(cellX, cellY) {
-    this.spawnPoint = new Vector(cellX, cellY);
-}
-
-World.prototype.setGoal = function(cellX, cellY) {
-    this.goal = new Vector(cellX + 0.5, cellY + 0.5);
-}
-
-World.prototype.getSpawnPoint = function() {
-    return this.spawnPoint;
-}
-
-World.prototype.getGoal = function() {
-    return this.goal;
 }

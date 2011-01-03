@@ -14,13 +14,21 @@ function CorrosionCloud(center, target) {
     this.smoothedVelocity = new Vector(0, 0);
 }
 
+CorrosionCloud.prototype.canCollide = function() {
+    return false;
+}
+
+CorrosionCloud.prototype.avoidsSpawn = function() {
+    return true;
+}
+
 CorrosionCloud.prototype.move = function(seconds) {
     var avoidingSpawn = false;
     if (!this.target) return new Vector(0, 0);
     var targetDelta = this.target.getCenter().sub(this.getCenter());
     // As long as the max rotation is over 2 pi, it will rotate to face the player no matter what
     this.heading = adjustAngleToTarget(this.heading, targetDelta.atan2(), 7);
-    // ACCELERATION, 10 is a number
+    // ACCELERATION
     var speed = CORROSION_CLOUD_SPEED * CORROSION_CLOUD_ACCEL * seconds;
     this.velocity.x += speed * Math.cos(this.heading);
     this.velocity.y += speed * Math.sin(this.heading);

@@ -1,3 +1,19 @@
+#require <editor.js>
+
+var idToModeMap = {
+	'mode_empty': MODE_EMPTY,
+	'mode_solid': MODE_SOLID,
+	'mode_diagonal': MODE_DIAGONAL,
+	'mode_start': MODE_START,
+	'mode_goal': MODE_GOAL,
+	'mode_cog': MODE_COG,
+	'mode_sign': MODE_SIGN,
+	'mode_select': MODE_SELECT,
+	'mode_enemies': MODE_ENEMIES,
+	'mode_walls_buttons': MODE_WALLS_BUTTONS,
+	'mode_help': MODE_HELP
+};
+
 var editor = null;
 var buttons = 0;
 
@@ -5,17 +21,17 @@ function resizeEditor() {
 	var toolbarHeight = $('#toolbar').outerHeight();
 	var sidebarWidth = 0;
 	
-	if (editor.mode == MODE_OTHER_HELP) {
+	if (editor.mode == MODE_HELP) {
 		$('#help').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#help').outerWidth();
 	}
 	
-	if (editor.mode == MODE_OTHER_ENEMIES) {
+	if (editor.mode == MODE_ENEMIES) {
 		$('#enemies').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#enemies').outerWidth();
 	}
 
-	if (editor.mode == MODE_OTHER_WALLS_BUTTONS) {
+	if (editor.mode == MODE_WALLS_BUTTONS) {
 		$('#walls').css({ top: toolbarHeight + 'px' });
 		sidebarWidth = $('#walls').outerWidth();
 	}
@@ -26,21 +42,21 @@ function resizeEditor() {
 
 function showOrHidePanels(mode) {
 	// Show or hide the help panel
-	if (mode == MODE_OTHER_HELP) {
+	if (mode == MODE_HELP) {
 		$('#help').show();
 	} else {
 		$('#help').hide();
 	}
 	
 	// Show or hide the enemies panel
-	if (mode == MODE_OTHER_ENEMIES) {
+	if (mode == MODE_ENEMIES) {
 		$('#enemies').show();
 	} else {
 		$('#enemies').hide();
 	}
 	
 	// Show or hide the walls panel
-	if (mode == MODE_OTHER_WALLS_BUTTONS) {
+	if (mode == MODE_WALLS_BUTTONS) {
 		$('#walls').show();
 	} else {
 		$('#walls').hide();
@@ -81,7 +97,7 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML());
+	$('#help').html(gen.getHTML() + '<hr>TODO: signs, enemy rotation, and headache graphics');
 }
 
 function fillEnemies() {
@@ -90,21 +106,23 @@ function fillEnemies() {
 	// Create a <canvas> for each enemy
 	var i;
 	gen.addHeader('Color-neutral enemies');
-	for (i = 0; i < enemies.length; i++) {
+	for (i = 0; i < editor.enemies.length; i++) {
 		if (i == 10) gen.addHeader('Color-specific enemies');
-		gen.addCell('<div class="cell" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas" width="80" height="60"></canvas>' + enemies[i].name + '</div>');
+		gen.addCell('<div class="cell" id="enemy' + i + '"><canvas id="enemy' + i + '-canvas" width="80" height="60"></canvas>' + editor.enemies[i].name + '</div>');
 	}
 	$('#enemies').html(gen.getHTML());
 	$('#enemy' + editor.selectedEnemy).addClass('enemy-current');
 	
 	// Draw each enemy on its <canvas>
-	for (i = 0; i < enemies.length; i++) {
+	for (i = 0; i < editor.enemies.length; i++) {
 		var c = $('#enemy' + i + '-canvas')[0].getContext('2d');
 		c.translate(40, 30);
 		c.scale(50, -50);
 		c.lineWidth = 1 / 50;
-		c.fillStyle = c.strokeStyle = 'green'; // TODO: remove this when everything is drawn, just used to make sure sprites specify colors
-		enemies[i].sprite.draw(c);
+		c.fillStyle = c.strokeStyle = 'green';
+		var sprite = editor.enemies[i].sprite;
+		if (i == SPRITE_ROCKET_SPIDER) sprite = sprite.clone(new Vector(0, -0.2));
+		sprite.draw(c);
 	}
 	
 	// Add an action to each enemy button
@@ -182,10 +200,10 @@ function fillWalls() {
 			c.translate(0.3, -0.2);
 			
 			// Draw door
-			new Door(true, false, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
+			new Door(true, false, COLOR_NEUTRAL, new Edge(new Vector(0.7, 0.4), new Vector(-0.1, -0.4))).draw(c);
 		} else {
 			// Draw initially open door
-			new Door(true, true, DOOR_COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
+			new Door(true, true, COLOR_NEUTRAL, new Edge(new Vector(0.4, 0.4), new Vector(-0.4, -0.4))).draw(c);
 		}
 	}
 	
@@ -202,7 +220,7 @@ function fillWalls() {
 $(document).ready(function() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').mousedown(function(e) {
-		var mode = eval(this.id);
+		var mode = idToModeMap[this.id];
 		editor.setMode(mode);
 		$('.toolbar-current').removeClass('toolbar-current');
 		$(this).addClass('toolbar-current');
@@ -246,6 +264,9 @@ $(document).ready(function() {
 	$(canvas).mouseleave(function(e) {
 		editor.mouseOut();
 	});
+	
+	// attempt loading from external json file
+	editor.loadFromJSON(externalJSON);
 });
 
 $(window).resize(function() {
