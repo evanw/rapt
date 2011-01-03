@@ -1,7 +1,12 @@
 Rapt::Application.routes.draw do
   devise_for :users
 
-  resources :levels
+  match 'users/:username' => 'users#show'
+  match 'users/:username/levels(.:format)' => 'users#levels'
+
+  resources :users do
+    resources :levels
+  end
   
   match 'play' => 'game#play'
   
