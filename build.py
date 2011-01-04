@@ -17,6 +17,7 @@ def compile(a, b):
 		'--compilation_level ADVANCED_OPTIMIZATIONS',
 		'--externs ./closure_compiler/jquery-1.4.4.externs.js',
 		'--externs ./closure_compiler/jquery.mousewheel.externs.js',
+		'--externs ./closure_compiler/editor.externs.js',
 		'--externs ./closure_compiler/player.externs.js',
 		'--js "%s"',
 		'--js_output_file "%s"'
