@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_username(params[:username])
-    respond_with(@user)
+    respond_with(@user, {:include => {:levels => {:methods => [:html_title], :except => [:data]}}})
   end
   
   def levels
@@ -15,14 +15,14 @@ class UsersController < ApplicationController
   # show the editor
   def edit_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
-    respond_with(@level)
+    respond_with(@level, :methods => [:html_title])
   end
   
   # update the level
   def upate_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
     @level.update_attributes(params[:level])
-    respond_width(@level)
+    respond_width(@level, :methods => [:html_title])
   end
   
 end

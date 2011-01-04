@@ -4,7 +4,7 @@ class Level < ActiveRecord::Base
   validate :title_content
   
   def html_title
-    self.title.replace(' ', '_')
+    self.title.gsub(' ', '_')
   end
   
   private
