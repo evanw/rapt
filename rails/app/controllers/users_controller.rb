@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   end
   
   # update the level
-  def upate_level
+  def update_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
     @level.update_attributes(params[:level])
     respond_width(@level, :methods => [:html_title])
