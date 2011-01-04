@@ -1,5 +1,49 @@
 #require <editor.js>
 
+function getLevelURL() {
+	return 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
+}
+
+function ajaxGetLevel(onSuccess) {
+	function showError() {
+		$('#loading').html('Could not load level from<br><b>' + getLevelURL() + '</b>');
+	}
+	
+	$.ajax({
+		url: getLevelURL(),
+		type: 'GET',
+		cache: false,
+		dataType: 'json',
+		success: function(data, status, request) {
+			if (data != null) {
+				onSuccess(JSON.parse(data.level.data));
+			} else {
+				showError();
+			}
+		},
+		error: function(request, status, error) {
+			showError();
+		}
+	});
+}
+
+function ajaxPutLevel(json) {
+	function showError() {
+		alert('Could not save level to\n' + getLevelURL());
+	}
+	
+	$.ajax({
+		url: getLevelURL(),
+		type: 'PUT',
+		dataType: 'json',
+		data: JSON.stringify({ level: { data: json } }),
+		contentType: 'application/json; charset=utf-8',
+		error: function(request, status, error) {
+			showError();
+		}
+	});
+}
+
 var idToModeMap = {
 	'mode_empty': MODE_EMPTY,
 	'mode_solid': MODE_SOLID,
@@ -270,27 +314,9 @@ $(document).ready(function() {
 	if (typeof username === "undefined") {
 		loadEditor();
 	} else {
-		var url = 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
-		function showError() {
-			$('#loading').html('Could not load level from<br><b>' + url + '</b>');
-		}
-		
-		$.ajax({
-			url: url,
-			type: 'GET',
-			cache: false,
-			dataType: 'json',
-			success: function(data, status, request) {
-				if (data != null) {
-					loadEditor();
-					editor.loadFromJSON(data);
-				} else {
-					showError();
-				}
-			},
-			error: function(request, status, error) {
-				showError();
-			}
+		ajaxGetLevel(function(data) {
+			loadEditor();
+			editor.loadFromJSON(data);
 		});
 	}
 });
@@ -313,8 +339,8 @@ $(document).keydown(function(e) {
 			editor.redo();
 			e.preventDefault();
 		} else if (e.which == 'S'.charCodeAt(0)) {
-			editor.save();
 			e.preventDefault();
+			ajaxPutLevel(editor.save());
 		} else if (e.which == 'A'.charCodeAt(0)) {
 			editor.selectAll();
 			e.preventDefault();
