@@ -3,6 +3,8 @@ Rapt::Application.routes.draw do
 
   match 'users/:username' => 'users#show'
   match 'users/:username/levels(.:format)' => 'users#levels'
+  match 'users/:username/:levelname' => 'users#edit_level', :via => :get
+  match 'users/:username/:levelname' => 'users#update_level', :via => :put
 
   resources :users do
     resources :levels
