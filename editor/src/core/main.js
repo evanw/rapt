@@ -217,7 +217,7 @@ function fillWalls() {
 	});
 }
 
-$(document).ready(function() {
+function loadEditor() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').mousedown(function(e) {
 		var mode = idToModeMap[this.id];
@@ -264,9 +264,35 @@ $(document).ready(function() {
 	$(canvas).mouseleave(function(e) {
 		editor.mouseOut();
 	});
-	
-	// attempt loading from external json file
-	editor.loadFromJSON(externalJSON);
+}
+
+$(document).ready(function() {
+	if (typeof username === "undefined") {
+		loadEditor();
+	} else {
+		var url = 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
+		function showError() {
+			$('#loading').html('Could not load level from<br><b>' + url + '</b>');
+		}
+		
+		$.ajax({
+			url: url,
+			type: 'GET',
+			cache: false,
+			dataType: 'json',
+			success: function(data, status, request) {
+				if (data != null) {
+					loadEditor();
+					editor.loadFromJSON(data);
+				} else {
+					showError();
+				}
+			},
+			error: function(request, status, error) {
+				showError();
+			}
+		});
+	}
 });
 
 $(window).resize(function() {

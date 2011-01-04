@@ -19,3 +19,4 @@ level_converter/level_converter
 # rails stuff
 rails/tmp/
 rails/log/
+rails/db/development.sqlite3
