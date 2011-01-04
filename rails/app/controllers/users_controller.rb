@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_username(params[:username])
-    respond_with(@user, {:include => {:levels => {:methods => [:html_title], :except => [:data]}}})
+    respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
   end
   
   def levels

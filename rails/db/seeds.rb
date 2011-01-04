@@ -6,9 +6,18 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
-test_user = User.create({:username => "test", :email => "test@example.com", :password => "test123", :password_confirmation => "test123"}) unless User.first
+rapt_user = User.create({:username => "rapt", :email => "admin@raptgame.com", :password => "rapt123", :password_confirmation => "rapt123"}) unless User.first
 
-test_user = User.first
-unless test_user.levels.count > 1
-  level = test_user.levels.create({:title => "Test Level 1"})
+rapt_user = User.first
+Dir.foreach("#{RAILS_ROOT}/../official_levels") do |f|
+  next if f == '.' or f == '..'
+  data = ''
+  File.open("#{RAILS_ROOT}/../official_levels/#{f}", "r") { |fs| data = fs.read }
+  title = f.split('.').first
+  puts title
+  level = rapt_user.levels.build({:title => title, :data => data})
+  level.title = title
+  level.save
 end
+
+puts rapt_user.levels.count
