@@ -15,7 +15,10 @@ class UsersController < ApplicationController
   # show the editor
   def edit_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
-    respond_with(@level, :methods => [:html_title])
+    respond_with @level do |format|
+      format.json { render :json => @level, :methods => [:html_title] }
+      format.html { render :layout => false }
+    end
   end
   
   # update the level
