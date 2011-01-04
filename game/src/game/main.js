@@ -3,6 +3,34 @@
 var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
 
+function getMenuURL() {
+	var usernameAndLevel = location.hash.substr(1); // remove the leading '#'
+	return 'http://' + location.host + '/users' + usernameAndLevel;
+}
+
+function ajaxGetMenu(onSuccess) {
+	function showError() {
+		$('#loadingScreen').html('Could not load level from<br><b>' + getMenuURL() + '</b>');
+	}
+	
+	$.ajax({
+		url: getMenuURL(),
+		type: 'GET',
+		cache: false,
+		dataType: 'json',
+		success: function(data, status, request) {
+			if (data != null) {
+				onSuccess(data);
+			} else {
+				showError();
+			}
+		},
+		error: function(request, status, error) {
+			showError();
+		}
+	});
+}
+
 // module Main
 (function(){
 	var canvas;
@@ -36,21 +64,36 @@ var SPACEBAR = 32;
             showLevelScreen();
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
-            showGameScreen();
+            showLoadingScreen();
+			ajaxGetMenu(function(json) {
+				showGameScreen();
+				gameState.loadLevelFromJSON(JSON.parse(json.level.data));
+			});
         }
     }
 
     function showLevelScreen() {
         $('#canvas').hide();
         $('#levelScreen').show();
+        $('#loadingScreen').hide();
         currentScreen = null;
     }
 
     function showGameScreen() {
-        $('#levelScreen').hide();
         $('#canvas').show();
+        $('#levelScreen').hide();
+        $('#loadingScreen').hide();
         changeScreen(new Game());
     }
+
+	function showLoadingScreen() {
+        $('#canvas').hide();
+        $('#levelScreen').hide();
+        $('#loadingScreen').show();
+        currentScreen = null;
+		
+		$('#loadingScreen').html('Loading...');
+	}
 
 	function changeScreen(newScreen) {
 		Particle.reset();
@@ -60,22 +103,21 @@ var SPACEBAR = 32;
 
     function getLevels() {
         // Boop boop, pretend we are getting levels from the server
-        levels.push('#/Evan/Level-1/');
         levels.push('#/Evan/Level-2/');
+        levels.push('#/test/Test_Level_1/');
         levels.push('#/Evan/Hunter-Food/');
 
         // Add the level screen title to the DOM
-        $('#levelScreen').prepend("<h2>Official Levels</h2>");
+        var html = "<h2>Official Levels</h2>";
 
-        var levelsDiv = $('#levels');
         // Add the levels to the DOM
+		html += '<div id="levels">';
         for (var i = 0; i < levels.length; ++i) {
-            addLevelToDOM(levelsDiv, levels[i]);
+            html += "<div class=\"level\"><a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a></div>";
         }
-    }
+		html += '</div>';
 
-    function addLevelToDOM(parentDiv, hash) {
-        parentDiv.append("<div class=\"level\"><a href=\"" + hash + "\">" + hash.split('/')[2] + "</a></div>");
+        $('#levelScreen').html(html);
     }
 
 	$(document).ready(function() {
@@ -98,6 +140,14 @@ var SPACEBAR = 32;
 	});
 
 	$(document).keydown(function(e) {
+		if (e.which === ESCAPE_KEY) {
+			// escape returns the player to the level select page
+			// Assumes URL in format #/[User]/[Level]
+			location.hash = "/" + location.hash.split("/", 2)[1] + "/";
+			showLevelScreen();
+			return;
+		}
+
         if (currentScreen !== null) {
             if (e.which === SPACEBAR) {
                 if (currentScreen.gameStatus === GAME_LOST) {
@@ -111,6 +161,7 @@ var SPACEBAR = 32;
                                 // go to the next level on the list
                                 location.hash = levels[i + 1];
                                 // Don't return because we want to prevent default
+                                showGameScreen();
                                 break;
                             } else {
                                 // return to menu screen if it was the last level
@@ -120,20 +171,14 @@ var SPACEBAR = 32;
                             }
                         }
                     }
-                    changeScreen(new Game());
                 }
-            } else if (e.which === ESCAPE_KEY) {
-                // escape returns the player to the level select page
-                // Assumes URL in format #/[User]/[Level]
-                location.hash = "/" + location.hash.split("/", 2)[1] + "/";
-                showLevelScreen();
-                return;
             }
 
-            currentScreen.keyDown(e.which);
-            // prevents default behaviors like scrolling up/down (F keys start at 112)
-            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
-        }
+			currentScreen.keyDown(e.which);
+ 		}
+
+		// prevents default behaviors like scrolling up/down (F keys start at 112)
+		if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
 	});
 
 	$(document).keyup(function(e) {

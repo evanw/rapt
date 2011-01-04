@@ -1,6 +1,5 @@
 #require <class.js>
 #require <gamestate.js>
-#require <levels.js>
 
 function jsonToTarget(json) {
     return (json.color === 1 ? gameState.playerA : gameState.playerB);

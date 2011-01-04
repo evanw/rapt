@@ -41,7 +41,6 @@ function Game() {
     this.gameStatus = GAME_IN_PLAY;
 
 	gameState = new GameState();
-    gameState.loadLevelFromJSON(TUTORIAL_1);
 }
 
 Game.prototype.resize = function(w, h) {
