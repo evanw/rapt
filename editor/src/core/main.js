@@ -16,7 +16,7 @@ function ajaxGetLevel(onSuccess) {
 		dataType: 'json',
 		success: function(data, status, request) {
 			if (data != null) {
-				onSuccess(data);
+				onSuccess(JSON.parse(data.level.data));
 			} else {
 				showError();
 			}
@@ -36,7 +36,7 @@ function ajaxPutLevel(json) {
 		url: getLevelURL(),
 		type: 'PUT',
 		dataType: 'json',
-		data: JSON.stringify(json),
+		data: JSON.stringify({ level: { data: json } }),
 		contentType: 'application/json; charset=utf-8',
 		error: function(request, status, error) {
 			showError();
