@@ -48,6 +48,12 @@ Bomber.prototype.afterTick = function() {
     // drawing stuff
 };
 
+Bomber.prototype.onDeath = function() {
+	Bomb.prototype.onDeath.call(this);
+	
+	gameState.incrementStat(STAT_ENEMY_DEATHS);
+};
+
 Bomber.prototype.draw = function(c) {
 	var pos = this.getCenter();
 	c.strokeStyle = 'black';
