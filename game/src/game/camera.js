@@ -10,7 +10,7 @@ Camera.prototype.draw = function(c, renderer) {
 	var positionA = this.playerA.getCenter();
 	var positionB = this.playerB.getCenter();
 	var center = positionA.add(positionB).div(2);
-
+	
 	// maximum distance between a player and the center is the distance to the box that is half the size of the screen
 	var temp = positionB.sub(positionA).unit();
 	temp = new Vector(this.width / Math.abs(temp.x), this.height / Math.abs(temp.y));
