@@ -13,7 +13,7 @@ Dir.foreach("#{RAILS_ROOT}/../official_levels") do |f|
   next if f == '.' or f == '..'
   data = ''
   File.open("#{RAILS_ROOT}/../official_levels/#{f}", "r") { |fs| data = fs.read }
-  title = f.split('.').first
+  title = f.chomp('.json').gsub(/-/, ' ').gsub(/[^A-Za-z0-9 ]/, '')
   puts title
   level = rapt_user.levels.build({:title => title, :data => data})
   level.title = title

@@ -19,7 +19,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 	var isSplit = (positionB.sub(positionA).length() > 2*maxLength);
 
 	if(!isSplit) {
-		renderer.render(c, center);
+		renderer.render(c, center, this.width, this.height);
 	} else {
 		var AtoB = positionB.sub(positionA).unit().mul(99999);
 		var split = AtoB.flip();
@@ -145,4 +145,4 @@ LeftRightSplitCamera.prototype.draw = function(c, renderer) {
 };
 
 // class Camera, either SplitScreenCamera, ZoomOutCamera, or LeftRightSplitCamera
-var Camera = ZoomOutCamera;
+var Camera = SplitScreenCamera;
