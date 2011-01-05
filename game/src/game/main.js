@@ -111,6 +111,7 @@ function MenuLevel(title, html_title) {
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
             showLoadingScreen();
+			menu.username = hash.split('/')[1];
 			ajaxGet('level', getURL(), function(json) {
 				jsonForCurrentLevel = JSON.parse(json['level']['data']);
 				showGameScreen();
@@ -154,8 +155,11 @@ function MenuLevel(title, html_title) {
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
 
-        // Load the official level menu
-		location.hash = '#/rapt/';
+        // Load the official level menu if it doesn't start with '#/'
+		if (location.hash.indexOf('#/') != 0) location.hash = '#/rapt/';
+		
+		// Otherwise process whatever url we happen to load (if the user pressed the back button from some other page to us)
+		processHash(location.hash);
 
         // then set up the canvas
 		canvas = $('#canvas')[0];
