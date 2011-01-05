@@ -147,3 +147,7 @@ Popper.prototype.afterTick = function(seconds) {
 Popper.prototype.draw = function(c) {
     this.sprites[POPPER_BODY].draw(c);
 };
+
+Popper.prototype.avoidsSpawn = function() {
+	return true;
+};
