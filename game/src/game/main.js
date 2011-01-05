@@ -113,9 +113,6 @@ function MenuLevel(title, html_title) {
 			ajaxGet('level', getURL(), function(json) {
 				showGameScreen();
 				gameState.loadLevelFromJSON(JSON.parse(json['level']['data']));
-				
-				// need to resize again to reset the camera, since loadLevelFromJSON() wiped out playerA and playerB
-				currentScreen.resize(canvas.width, canvas.height);
 			});
         }
     }

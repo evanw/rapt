@@ -134,7 +134,12 @@ Player.subclasses(Entity);
 // class Player extends Entity
 function Player(center, color) {
 	Entity.prototype.constructor.call(this);
+	this.reset(center, color);
+}
 
+// this is necessary because if we just set gameState.playerA = new Player()
+// it'll wipe out everyone's references (for targets and so on)
+Player.prototype.reset = function(center, color) {
 	// keys (will be set automatically)
 	this.jumpKey = false;
 	this.crouchKey = false;
@@ -177,7 +182,7 @@ function Player(center, color) {
 	// other stuff
 	this.isSuperJumping = false;
 	this.color = color;
-}
+};
 
 Player.prototype.getShape = function(){ return this.polygon; };
 Player.prototype.getColor = function(){ return this.color; };

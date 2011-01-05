@@ -15,17 +15,17 @@ function jsonToEnemy(json) {
         case 'bomber':
             return new Bomber(pos, json['angle']);
         case 'bouncy rocket launcher':
-            return new BouncyRocketLauncher(pos, jsonToTarget(json['color']));
+            return new BouncyRocketLauncher(pos, jsonToTarget(json));
         case 'corrosion cloud':
-            return new CorrosionCloud(pos, jsonToTarget(json['color']));
+            return new CorrosionCloud(pos, jsonToTarget(json));
         case 'doom magnet':
             return new DoomMagnet(pos);
         case 'grenadier':
-            return new Grenadier(pos, jsonToTarget(json['color']));
+            return new Grenadier(pos, jsonToTarget(json));
         case 'jet stream':
             return new JetStream(pos, json['angle']);
         case 'headache':
-            return new Headache(pos, jsonToTarget(json['color']));
+            return new Headache(pos, jsonToTarget(json));
         case 'hunter':
             return new Hunter(pos);
         case 'multi gun':
@@ -35,13 +35,13 @@ function jsonToEnemy(json) {
         case 'rocket spider':
             return new RocketSpider(pos, json['angle']);
         case 'shock hawk':
-            return new ShockHawk(pos, jsonToTarget(json['color']));
+            return new ShockHawk(pos, jsonToTarget(json));
         case 'spike ball':
             return new SpikeBall(pos);
         case 'stalacbat':
-            return new Stalacbat(pos, jsonToTarget(json['color']));
+            return new Stalacbat(pos, jsonToTarget(json));
         case 'wall avoider':
-            return new WallAvoider(pos, jsonToTarget(json['color']));
+            return new WallAvoider(pos, jsonToTarget(json));
         case 'wall crawler':
             return new WallCrawler(pos, json['angle']);
         case 'wheeligator':
@@ -71,8 +71,8 @@ GameState.prototype.loadLevelFromJSON = function(json) {
     this.world.createAllEdges();
 
     // Reset players
-	this.playerA = new Player(this.world.spawnPoint, EDGE_RED);
-	this.playerB = new Player(this.world.spawnPoint, EDGE_BLUE);
+	this.playerA.reset(this.world.spawnPoint, EDGE_RED);
+	this.playerB.reset(this.world.spawnPoint, EDGE_BLUE);
 	
 	// Load entities
 	for (var i = 0; i < json['entities'].length; ++i) {
