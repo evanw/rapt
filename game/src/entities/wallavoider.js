@@ -67,9 +67,8 @@ WallAvoider.prototype.onDeath = function() {
     // fire
     for(var i = 0; i < 50; ++i) {
         var direction = Vector.fromAngle(randInRange(0, 2 * Math.PI));
-        direction = direction * randInRange(0.5, 17);
+        direction = direction.mul(randInRange(0.5, 17));
 
-        console.log('im dying');
         Particle().position(position).velocity(direction).radius(0.02, 0.15).bounces(0, 4).elasticity(0.05, 0.9).decay(0.000001, 0.00001).expand(1.0, 1.2).color(1, 0.3, 0, 1).mixColor(1, 0.1, 0, 1).triangle();
     }
 };
