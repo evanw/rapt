@@ -1,12 +1,12 @@
-// class Camera
-function Camera(playerA, playerB, width, height) {
+// class SplitScreenCamera
+function SplitScreenCamera(playerA, playerB, width, height) {
 	this.playerA = playerA;
 	this.playerB = playerB;
 	this.width = width;
 	this.height = height;
 }
 
-Camera.prototype.draw = function(c, renderer) {
+SplitScreenCamera.prototype.draw = function(c, renderer) {
 	var positionA = this.playerA.getCenter();
 	var positionB = this.playerB.getCenter();
 	var center = positionA.add(positionB).div(2);
@@ -42,7 +42,7 @@ Camera.prototype.draw = function(c, renderer) {
 		c.lineTo(split.x - AtoB.x, split.y - AtoB.y);
 		c.lineTo(split.x, split.y);
 		c.clip();
-		renderer.render(c, centerA);
+		renderer.render(c, centerA, this.width, this.height);
 		c.restore();
 
 		// draw world from b's point of view
@@ -53,7 +53,7 @@ Camera.prototype.draw = function(c, renderer) {
 		c.lineTo(split.x + AtoB.x, split.y + AtoB.y);
 		c.lineTo(split.x, split.y);
 		c.clip();
-		renderer.render(c, centerB);
+		renderer.render(c, centerB, this.width, this.height);
 		c.restore();
 
 		// divide both player's view with a black line
@@ -68,4 +68,81 @@ Camera.prototype.draw = function(c, renderer) {
 		c.lineTo(split.x - AtoB.x, split.y - AtoB.x);
 		c.fill();
 	}
+};
+
+// class ZoomOutCamera
+function ZoomOutCamera(playerA, playerB, width, height) {
+	this.playerA = playerA;
+	this.playerB = playerB;
+	this.width = width;
+	this.height = height;
+};
+
+ZoomOutCamera.prototype.draw = function(c, renderer) {
+	var positionA = this.playerA.getCenter();
+	var positionB = this.playerB.getCenter();
+	var center = positionA.add(positionB).div(2);
+	
+	// maximum distance between a player and the center is the distance to the box that is half the size of the screen
+	var temp = positionB.sub(positionA).unit();
+	temp = new Vector(this.width / Math.abs(temp.x), this.height / Math.abs(temp.y));
+	var maxLength = Math.min(temp.x, temp.y) / 2;
+	
+	// zoom out to make sure both players are visible within the same window
+	var scale = Math.min(1, maxLength / Math.max(1, positionA.sub(positionB).length()));
+	if (isNaN(scale)) scale = 1; // both players in the same spot
+	c.save();
+	c.scale(scale, scale);
+	renderer.render(c, center, this.width / scale, this.height / scale);
+	c.restore();
+};
+
+// class LeftRightSplitCamera
+function LeftRightSplitCamera(playerA, playerB, width, height) {
+	this.playerA = playerA;
+	this.playerB = playerB;
+	this.width = width;
+	this.height = height;
 }
+
+LeftRightSplitCamera.prototype.draw = function(c, renderer) {
+	var positionA = this.playerA.getCenter();
+	var positionB = this.playerB.getCenter();
+
+	// draw world from a's point of view
+	c.save();
+	c.translate(-this.width / 4, 0);
+	c.beginPath();
+	c.moveTo(-this.width / 4, -this.height / 2);
+	c.lineTo(-this.width / 4, this.height / 2);
+	c.lineTo(this.width / 4, this.height / 2);
+	c.lineTo(this.width / 4, -this.height / 2);
+	c.clip();
+	renderer.render(c, positionA, this.width / 2, this.height);
+	c.restore();
+
+	// draw world from b's point of view
+	c.save();
+	c.translate(this.width / 4, 0);
+	c.beginPath();
+	c.moveTo(-this.width / 4, -this.height / 2);
+	c.lineTo(-this.width / 4, this.height / 2);
+	c.lineTo(this.width / 4, this.height / 2);
+	c.lineTo(this.width / 4, -this.height / 2);
+	c.clip();
+	renderer.render(c, positionB, this.width / 2, this.height);
+	c.restore();
+
+	// divide both player's view with a black line
+	var thickness = 0.1;
+	c.fillStyle = 'black';
+	c.beginPath();
+	c.moveTo(-thickness, -this.height / 2);
+	c.lineTo(-thickness, this.height / 2);
+	c.lineTo(thickness, this.height / 2);
+	c.lineTo(thickness, -this.height / 2);
+	c.fill();
+};
+
+// class Camera, either SplitScreenCamera, ZoomOutCamera, or LeftRightSplitCamera
+var Camera = ZoomOutCamera;

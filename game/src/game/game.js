@@ -62,9 +62,9 @@ Game.prototype.tick = function(seconds) {
 	this.fps = lerp(this.fps, 1 / seconds, 0.05);
 };
 
-Game.prototype.render = function(c, center) {
-	var halfWidth = this.width / (2 * gameScale);
-	var halfHeight = this.height / (2 * gameScale);
+Game.prototype.render = function(c, center, width, height) {
+	var halfWidth = width / 2;
+	var halfHeight = height / 2;
 	c.save();
 	c.translate(-center.x, -center.y);
 	gameState.draw(c, center.x - halfWidth, center.y - halfHeight, center.x + halfWidth, center.y + halfHeight);

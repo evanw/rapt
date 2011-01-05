@@ -83,10 +83,7 @@ function MenuLevel(title, html_title) {
 
 	function tick() {
         // Poll for hash changes
-        if (currentHash !== location.hash) {
-            currentHash = location.hash;
-            processHash(currentHash);
-        }
+		processHash(location.hash);
 
         // Draw the screen if the canvas is shown
         if (currentScreen !== null) {
@@ -100,6 +97,9 @@ function MenuLevel(title, html_title) {
 	}
 
     function processHash(hash) {
+		if (currentHash === hash) return;
+		currentHash = location.hash;
+		
         if (hash.split('/').length === 3) {
             // #/[User]/
             showLoadingScreen();
