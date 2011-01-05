@@ -3,18 +3,18 @@
 var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
 
-function getMenuURL() {
-	var usernameAndLevel = location.hash.substr(1); // remove the leading '#'
-	return 'http://' + location.host + '/users' + usernameAndLevel;
+function getURL() {
+	var hash = location.hash.substr(1); // remove the leading '#'
+	return 'http://' + location.host + '/users' + hash;
 }
 
-function ajaxGetMenu(onSuccess) {
+function ajaxGet(what, url, onSuccess) {
 	function showError() {
-		$('#loadingScreen').html('Could not load level from<br><b>' + getMenuURL() + '</b>');
+		$('#loadingScreen').html('Could not load ' + what + ' from<br><b>' + url + '</b>');
 	}
 	
 	$.ajax({
-		'url': getMenuURL(),
+		'url': url,
 		'type': 'GET',
 		'cache': false,
 		'dataType': 'json',
@@ -31,14 +31,54 @@ function ajaxGetMenu(onSuccess) {
 	});
 }
 
+// class Menu
+function Menu() {
+	this.username = '';
+	this.levels = [];
+}
+
+Menu.prototype.loadFromJSON = function(json) {
+	// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
+	
+	var levels = json['levels'];
+	this.levels = [];
+	for (var i = 0; i < levels.length; i++) {
+		this.levels.push(new MenuLevel(levels[i]['title'], levels[i]['html_title']));
+	}
+	this.username = json['username'];
+};
+
+Menu.prototype.toHTML = function() {
+	var html = '<h2>' + this.username + '\'s Levels</h2><div id="levels">';
+	for (var i = 0; i < this.levels.length; ++i) {
+		html += '<div class="level"><a href="' + this.getHashForLevel(this.levels[i]) + '">' + this.levels[i].title + '</div>';
+	}
+	html += '</div>';
+	return html;
+};
+
+Menu.prototype.getHash = function() {
+	return '#/' + this.username + '/';
+};
+
+Menu.prototype.getHashForLevel = function(level) {
+	return '#/' + this.username + '/' + level.html_title + '/';
+};
+
+// class MenuLevel
+function MenuLevel(title, html_title) {
+	this.title = title;
+	this.html_title = html_title;
+}
+
 // module Main
 (function(){
 	var canvas;
 	var context;
 	var lastTime;
 	var currentScreen = null;
-    var currentHash;
-    var levels = new Array();
+    var currentHash = '';
+    var menu = new Menu();
 
 	function tick() {
         // Poll for hash changes
@@ -61,11 +101,16 @@ function ajaxGetMenu(onSuccess) {
     function processHash(hash) {
         if (hash.split('/').length === 3) {
             // #/[User]/
-            showLevelScreen();
+            showLoadingScreen();
+			ajaxGet('menu', getURL(), function(json) {
+	            showLevelScreen();
+				menu.loadFromJSON(json['user']);
+		        $('#levelScreen').html(menu.toHTML());
+			});
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
             showLoadingScreen();
-			ajaxGetMenu(function(json) {
+			ajaxGet('level', getURL(), function(json) {
 				showGameScreen();
 				gameState.loadLevelFromJSON(JSON.parse(json['level']['data']));
 			});
@@ -100,36 +145,15 @@ function ajaxGetMenu(onSuccess) {
 		currentScreen = newScreen;
 		currentScreen.resize(canvas.width, canvas.height);
 	}
-
-    function getLevels() {
-        // Boop boop, pretend we are getting levels from the server
-        levels.push('#/rapt/Cube/');
-        levels.push('#/rapt/Tour/');
-
-        // Add the level screen title to the DOM
-        var html = "<h2>Official Levels</h2>";
-
-        // Add the levels to the DOM
-		html += '<div id="levels">';
-        for (var i = 0; i < levels.length; ++i) {
-            html += "<div class=\"level\"><a href=\"" + levels[i] + "\">" + levels[i].split('/')[2] + "</a></div>";
-        }
-		html += '</div>';
-
-        $('#levelScreen').html(html);
-    }
-
+	
 	$(document).ready(function() {
         // first set up the level menu links
         $('#canvas').hide();
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
 
-        // Pretend we've already loaded the menu
-        getLevels();
-		showLevelScreen();
+        // Load the official level menu
 		location.hash = '#/rapt/';
-        currentHash = location.hash;
 
         // then set up the canvas
 		canvas = $('#canvas')[0];
@@ -144,7 +168,7 @@ function ajaxGetMenu(onSuccess) {
 		if (e.which === ESCAPE_KEY) {
 			// escape returns the player to the level select page
 			// Assumes URL in format #/[User]/[Level]
-			location.hash = "/" + location.hash.split("/", 2)[1] + "/";
+			location.hash = menu.getHash();
 			showLevelScreen();
 			return;
 		}
@@ -156,17 +180,17 @@ function ajaxGetMenu(onSuccess) {
                     changeScreen(new Game());
                 } else if (currentScreen.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
-                    for (var i = 0; i < levels.length; ++i) {
-                        if (levels[i] === location.hash) {
-                            if (i < levels.length - 1) {
+                    for (var i = 0; i < menu.levels.length; ++i) {
+                        if (menu.getHashForLevel(menu.levels[i]) === location.hash) {
+                            if (i < menu.levels.length - 1) {
                                 // go to the next level on the list
-                                location.hash = levels[i + 1];
+                                location.hash = menu.getHashForLevel(menu.levels[i + 1]);
                                 // Don't return because we want to prevent default
                                 showGameScreen();
                                 break;
                             } else {
                                 // return to menu screen if it was the last level
-                                location.hash = "/" + location.hash.split("/", 2)[1] + "/";
+                                location.hash = menu.getHash();
                                 showLevelScreen();
                                 return;
                             }
