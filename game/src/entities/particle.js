@@ -13,6 +13,7 @@
 var PARTICLE_CIRCLE = 0;
 var PARTICLE_TRIANGLE = 1;
 var PARTICLE_LINE = 2;
+var PARTICLE_CUSTOM = 3;
 
 function randOrTakeFirst(min, max) {
 	return (typeof max !== 'undefined') ? randInRange(min, max) : min;
@@ -43,6 +44,7 @@ ParticleInstance.prototype.init = function() {
 	this.m_velocity = new Vector(0, 0);
 	this.m_angle = 0;
 	this.m_angularVelocity = 0;
+	this.m_drawFunc = null;
 };
 
 ParticleInstance.prototype.tick = function(seconds) {
@@ -91,6 +93,15 @@ ParticleInstance.prototype.draw = function(c) {
 		c.lineTo(this.m_position.x + dx, this.m_position.y + dy);
 		c.stroke();
 		break;
+		
+	case PARTICLE_CUSTOM:
+		c.fillStyle = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
+		c.save();
+		c.translate(this.m_position.x, this.m_position.y);
+		c.rotate(this.m_angle);
+		this.m_drawFunc(c);
+		c.restore();
+		break;
 	}
 };
 
@@ -99,6 +110,7 @@ ParticleInstance.prototype.bounces = function(min, max) { this.m_bounces = Math.
 ParticleInstance.prototype.circle = function() { this.m_type = PARTICLE_CIRCLE; return this; };
 ParticleInstance.prototype.triangle = function() { this.m_type = PARTICLE_TRIANGLE; return this; };
 ParticleInstance.prototype.line = function() { this.m_type = PARTICLE_LINE; return this; };
+ParticleInstance.prototype.custom = function(drawFunc) { this.m_type = PARTICLE_CUSTOM; this.m_drawFunc = drawFunc; return this; };
 ParticleInstance.prototype.color = function(r, g, b, a) {
 	this.m_red = r;
 	this.m_green = g;

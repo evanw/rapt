@@ -47,7 +47,6 @@ var SPIDER_SIGHT_HEIGHT = 10;
 
 function drawSpiderBody(c) {
 	var innerRadius = 0.5;
-	c.fillStyle = 'black';
 	c.beginPath();
     for(var i = 0; i <= 21; i++)
     {
@@ -64,7 +63,6 @@ function drawSpiderBody(c) {
 }
 
 function drawSpiderLeg(c) {
-	c.strokeStyle = 'black';
 	c.beginPath();
 	c.moveTo(0, 0);
 	c.lineTo(0, -SPIDER_LEG_HEIGHT);
@@ -192,15 +190,14 @@ RocketSpider.prototype.reactToPlayer = function(player) {
 }
 
 RocketSpider.prototype.onDeath = function() {
-    // don't add this death to the stats because it is added in the legs OnDeath() method
+	// don't add this death to the stats because it is added in the legs OnDeath() method
 
-    // add something that looks like the body
-    var angularVelocity = randInRange(-Math.PI, Math.PI);
-    //unsigned int displayList = sprites[SPRITE_BODY].GetDisplayList();
-    //Particle().Position(this.getCenter()).bounces(1).gravity(5).decay(0.1).displayList(displayList).rotate(0, angularVelocity));
+	// add something that looks like the body
+	Particle().position(this.getCenter()).bounces(1).gravity(5).decay(0.1).custom(drawSpiderBody).color(0, 0, 0, 1).angle(0).angularVelocity(randInRange(-Math.PI, Math.PI));
 }
 
 RocketSpider.prototype.draw = function(c) {
-    c.strokeStyle = 'black';
+	c.strokeStyle = 'black';
+	c.fillStyle = 'black';
     this.sprites[SPIDER_BODY].draw(c);
 }

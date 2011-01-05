@@ -76,7 +76,7 @@ RocketSpiderLegs.prototype.onDeath = function() {
         var angle = randInRange(0, 2*Math.PI);
         var angularVelocity = randInRange(-Math.PI, Math.PI);
 
-        Particle().position(position).velocity(direction).radius(0.25).bounces(3).elasticity(0.5).decay(0.01).triangle();
+		Particle().position(position).velocity(direction).radius(0.25).bounces(3).elasticity(0.5).decay(0.01).line().angle(angle).angularVelocity(angularVelocity).color(0, 0, 0, 1);
     }
 }
 
