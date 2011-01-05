@@ -33,7 +33,7 @@ var ENEMY_CRAWLER = 23;
 var ENEMY_WHEELIGATOR = 24;
 var ENEMY_DOORBELL = 25;
 
-Enemy.extends(Entity);
+Enemy.subclasses(Entity);
 
 /**
   * Abstract class.  Represents dynamic non-user-controlled entities in the game world.

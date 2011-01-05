@@ -7,7 +7,7 @@ var GRENADIER_HEIGHT = .5;
 var GRENADIER_RANGE = 8
 var GRENADIER_SHOOT_FREQ = 1.2;
 
-Grenadier.extends(SpawningEnemy);
+Grenadier.subclasses(SpawningEnemy);
 
 function Grenadier(center, target) {
 	SpawningEnemy.prototype.constructor.call(this, ENEMY_GRENADIER, center, GRENADIER_WIDTH, GRENADIER_HEIGHT, 0, GRENADIER_SHOOT_FREQ, randInRange(0, GRENADIER_SHOOT_FREQ));

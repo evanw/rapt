@@ -4,7 +4,7 @@
 var WALL_AVOIDER_RADIUS = .3;
 var WALL_AVOIDER_ACCEL = 3.3;
 
-WallAvoider.extends(RotatingEnemy);
+WallAvoider.subclasses(RotatingEnemy);
 
 function WallAvoider(center, target) {
 	RotatingEnemy.prototype.constructor.call(this, ENEMY_WALL_AVOIDER, center, WALL_AVOIDER_RADIUS, 0, 0);

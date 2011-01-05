@@ -6,7 +6,7 @@ var SHOCK_HAWK_ACCEL = 6;
 var SHOCK_HAWK_DECEL = 0.8;
 var SHOCK_HAWK_RANGE = 10;
 
-ShockHawk.extends(HoveringEnemy);
+ShockHawk.subclasses(HoveringEnemy);
 
 function ShockHawk(center, target) {
     HoveringEnemy.prototype.constructor.call(this, ENEMY_SHOCK_HAWK, center, SHOCK_HAWK_RADIUS, 0);

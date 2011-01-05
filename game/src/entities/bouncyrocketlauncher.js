@@ -6,7 +6,7 @@ var BOUNCY_LAUNCHER_HEIGHT = .5;
 var BOUNCY_LAUNCHER_SHOOT_FREQ = 1;
 var BOUNCY_LAUNCHER_RANGE = 8;
 
-BouncyRocketLauncher.extends(SpawningEnemy);
+BouncyRocketLauncher.subclasses(SpawningEnemy);
 
 function BouncyRocketLauncher(center, target) { 
     SpawningEnemy.prototype.constructor.call(this, ENEMY_BOUNCY_ROCKET_LAUNCHER, center, BOUNCY_LAUNCHER_WIDTH, BOUNCY_LAUNCHER_HEIGHT, 0, BOUNCY_LAUNCHER_SHOOT_FREQ, 0);

@@ -1,7 +1,7 @@
 #require <class.js>
 #require <enemy.js>
 
-HoveringEnemy.extends(Enemy);
+HoveringEnemy.subclasses(Enemy);
 
 /**
   * Abstract class representing a Hovering Enemy

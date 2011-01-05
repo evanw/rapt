@@ -8,7 +8,7 @@ var HEADACHE_RANGE = 6;
 
 var CHANGE_GAZE_TIME = 2;
 
-Headache.extends(HoveringEnemy);
+Headache.subclasses(HoveringEnemy);
 
 function Headache(center, target) {
 	HoveringEnemy.prototype.constructor.call(this, ENEMY_HEADACHE, center, HEADACHE_RADIUS, HEADACHE_ELASTICITY);

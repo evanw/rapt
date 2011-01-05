@@ -21,7 +21,7 @@ function makeDrawSpikes(count) {
 	};
 }
 
-SpikeBall.extends(Enemy);
+SpikeBall.subclasses(Enemy);
 
 // A boring old spike ball
 function SpikeBall(center) {

@@ -5,7 +5,7 @@ var LASER_RADIUS = .15;
 var LASER_SPEED = 5;
 var LASER_BOUNCES = 0;
 
-Laser.extends(FreefallEnemy);
+Laser.subclasses(FreefallEnemy);
 
 function Laser(center, direction) {
 	FreefallEnemy.prototype.constructor.call(this, ENEMY_LASER, center, LASER_RADIUS, 1);

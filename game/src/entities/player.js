@@ -129,7 +129,7 @@ function createPlayerSprites() {
 	return sprites;
 }
 
-Player.extends(Entity);
+Player.subclasses(Entity);
 
 // class Player extends Entity
 function Player(center, color) {

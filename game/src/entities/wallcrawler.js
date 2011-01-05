@@ -6,7 +6,7 @@ var WALL_CRAWLER_RADIUS = 0.25;
 var PULL_FACTOR = 0.9;
 var PUSH_FACTOR = 0.11;
 
-WallCrawler.extends(WalkingEnemy);
+WallCrawler.subclasses(WalkingEnemy);
 
 function WallCrawler(center, direction) {
 	WalkingEnemy.prototype.constructor.call(this, ENEMY_CRAWLER, center, WALL_CRAWLER_RADIUS, 0);

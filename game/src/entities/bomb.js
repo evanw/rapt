@@ -3,7 +3,7 @@
 
 var BOMB_RADIUS = 0.15;
 
-Bomb.extends(FreefallEnemy);
+Bomb.subclasses(FreefallEnemy);
 
 function Bomb(center, velocity) {
 	FreefallEnemy.prototype.constructor.call(this, ENEMY_BOMB, center, BOMB_RADIUS, 0);

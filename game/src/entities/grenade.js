@@ -5,7 +5,7 @@ var GRENADE_LIFETIME = 5;
 var GRENADE_RADIUS = 0.2;
 var GRENADE_ELASTICITY = 0.5;
 
-Grenade.extends(FreefallEnemy);
+Grenade.subclasses(FreefallEnemy);
 
 function Grenade(center, direction, speed) {
 	FreefallEnemy.prototype.constructor.call(this, ENEMY_GRENADE, center, GRENADE_RADIUS, GRENADE_ELASTICITY);

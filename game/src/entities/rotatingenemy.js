@@ -1,7 +1,7 @@
 #require <class.js>
 #require <enemy.js>
 
-RotatingEnemy.extends(Enemy);
+RotatingEnemy.subclasses(Enemy);
 
 /**
   * Abstract class representing enemies that may rotating, including seeking enemies.

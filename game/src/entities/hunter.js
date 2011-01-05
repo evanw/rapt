@@ -18,7 +18,7 @@ var STATE_RED = 1;
 var STATE_BLUE = 2;
 var STATE_BOTH = 3;
 
-Hunter.extends(RotatingEnemy);
+Hunter.subclasses(RotatingEnemy);
 
 function Hunter(center) {
 	RotatingEnemy.prototype.constructor.call(this, ENEMY_HUNTER, center, HUNTER_RADIUS, 0, HUNTER_ELASTICITY);

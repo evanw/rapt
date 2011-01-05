@@ -4,7 +4,7 @@
 var RIOT_BULLET_RADIUS = 0.1;
 var RIOT_BULLET_SPEED = 7;
 
-RiotBullet.extends(FreefallEnemy);
+RiotBullet.subclasses(FreefallEnemy);
 
 function RiotBullet(center, direction) {
     FreefallEnemy.prototype.constructor.call(this, ENEMY_RIOT_BULLET, center, RIOT_BULLET_RADIUS, 0);

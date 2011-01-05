@@ -7,7 +7,7 @@ var STALACBAT_SPRITE_BODY = 0;
 var STALACBAT_SPRITE_LEFT_WING = 1;
 var STALACBAT_SPRITE_RIGHT_WING = 2;
 
-Stalacbat.extends(FreefallEnemy);
+Stalacbat.subclasses(FreefallEnemy);
 
 function Stalacbat(center, target) {
 	FreefallEnemy.prototype.constructor.call(this, ENEMY_STALACBAT, center, STALACBAT_RADIUS, 0);

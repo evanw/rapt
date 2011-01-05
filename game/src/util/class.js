@@ -12,7 +12,7 @@
 //         console.log('A.bar(' + arg + ')');
 //     }
 //
-//     B.extends(A);
+//     B.subclasses(A);
 //     function B() {
 //         A.prototype.constructor.call(this);
 //         console.log('B.constructor()');
@@ -53,7 +53,7 @@
 //     #require <class.js>
 //     #require <superclass.js>
 //
-//     Subclass.extends(Superclass);
+//     Subclass.subclasses(Superclass);
 //     function Subclass() {
 //     }
 //
@@ -70,14 +70,14 @@
 //         console.log('A.foo()');
 //     }
 //
-//     B.extends(A);
+//     B.subclasses(A);
 //     function B(){}
 //     B.prototype.foo = function(){
 //         console.log('B.foo()');
 //         this.super.foo.call(this);
 //     }
 //
-//     C.extends(B);
+//     C.subclasses(B);
 //     function C(){}
 //     C.prototype.foo = function(){
 //         console.log('C.foo()');
@@ -93,20 +93,20 @@
 //         console.log('A.foo()');
 //     }
 //
-//     B.extends(A);
+//     B.subclasses(A);
 //     function B(){}
 //     B.prototype.foo = function(){
 //         console.log('B.foo()');
 //         A.prototype.foo.call(this);
 //     }
 //
-//     C.extends(B);
+//     C.subclasses(B);
 //     function C(){}
 //     C.prototype.foo = function(){
 //         console.log('C.foo()');
 //         B.prototype.foo.call(this);
 //     }
 
-Function.prototype.extends = function(obj) {
+Function.prototype.subclasses = function(obj) {
 	$.extend(this.prototype, obj.prototype);
 }

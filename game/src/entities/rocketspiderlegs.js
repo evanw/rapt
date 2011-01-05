@@ -6,7 +6,7 @@ var SPIDER_LEGS_WEAK_SPOT_RADIUS = .2;
 var SPIDER_LEGS_ELASTICITY = 1.0;
 var SPIDER_LEGS_FLOOR_ELASTICITY = 0.1;
 
-RocketSpiderLegs.extends(WalkingEnemy);
+RocketSpiderLegs.subclasses(WalkingEnemy);
 
 function RocketSpiderLegs(center, angle, body) {
     WalkingEnemy.prototype.constructor.call(this, -1, center, SPIDER_LEGS_RADIUS, SPIDER_LEGS_ELASTICITY);

@@ -5,7 +5,7 @@ var HELP_SIGN_TEXT_WIDTH = 1.5;
 var HELP_SIGN_WIDTH = 0.7;
 var HELP_SIGN_HEIGHT = 0.7;
 
-HelpSign.extends(Enemy);
+HelpSign.subclasses(Enemy);
 
 // Help signs take in an array of strings, each string in the array is drawn
 // on its own line.

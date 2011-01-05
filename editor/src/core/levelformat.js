@@ -29,6 +29,8 @@ function vecToJSON(vec) {
 }
 
 function loadWorldFromJSON(json) {
+	// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
+	
 	var world = new World();
 	
 	// load general info
@@ -127,6 +129,8 @@ function spriteTypeFromId(id) {
 }
 
 function saveWorldToJSON(world) {
+	// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
+	
 	var json = {};
 	
 	// fit a bounding box around all non-blank cells

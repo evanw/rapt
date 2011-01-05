@@ -9,7 +9,7 @@ var BOMB_FREQUENCY = 1.0;
 var BOMBER_ELASTICITY = 1.0;
 var BOMBER_EXPLOSION_POWER = 6;
 
-Bomber.extends(SpawningEnemy);
+Bomber.subclasses(SpawningEnemy);
 
 function Bomber(center, angle) {
 	SpawningEnemy.prototype.constructor.call(this, ENEMY_BOMBER, center, BOMBER_WIDTH, BOMBER_HEIGHT, BOMBER_ELASTICITY, BOMB_FREQUENCY, randInRange(0, BOMB_FREQUENCY));

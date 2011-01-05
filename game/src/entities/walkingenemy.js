@@ -1,7 +1,7 @@
 #require <class.js>
 #require <enemy.js>
 
-WalkingEnemy.extends(Enemy);
+WalkingEnemy.subclasses(Enemy);
 
 function WalkingEnemy(type, center, radius, elasticity) {
 	Enemy.prototype.constructor.call(this, type, elasticity);

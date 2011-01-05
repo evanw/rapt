@@ -13,7 +13,7 @@ var DOORBELL_HEIGHT = 0.76;
 var DOORBELL_RADIUS = 0.11;
 var DOORBELL_SLICES = 3;
 
-Doorbell.extends(Enemy);
+Doorbell.subclasses(Enemy);
 
 function Doorbell(center, behavior, visible) {
     Enemy.prototype.constructor.call(this, ENEMY_DOORBELL, 1);

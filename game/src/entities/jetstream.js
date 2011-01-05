@@ -9,7 +9,7 @@ var NUM_BARRELS = 3;
 var JET_STREAM_SPRITE_A = 0;
 var JET_STREAM_SPRITE_B = 1;
 
-JetStream.extends(SpawningEnemy);
+JetStream.subclasses(SpawningEnemy);
 
 function JetStream(center, direction) {
     SpawningEnemy.prototype.constructor.call(this, ENEMY_JET_STREAM, center, JET_STREAM_WIDTH, JET_STREAM_HEIGHT, 0, JET_STREAM_SHOOT_FREQ, 0);

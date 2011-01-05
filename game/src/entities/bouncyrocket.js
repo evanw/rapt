@@ -25,7 +25,7 @@ function drawBouncyRocket(c, isBlue) {
 	c.stroke();
 }
 
-BouncyRocket.extends(Rocket);
+BouncyRocket.subclasses(Rocket);
 
 function BouncyRocket(center, target, heading, launcher) {
     Rocket.prototype.constructor.call(this, center, target, heading, BOUNCY_ROCKET_MAX_ROTATION, ENEMY_BOUNCY_ROCKET),

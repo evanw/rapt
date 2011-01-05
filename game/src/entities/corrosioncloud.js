@@ -5,7 +5,7 @@ var CORROSION_CLOUD_RADIUS = .5;
 var CORROSION_CLOUD_SPEED = .7;
 var CORROSION_CLOUD_ACCEL = 10;
 
-CorrosionCloud.extends(RotatingEnemy);
+CorrosionCloud.subclasses(RotatingEnemy);
 
 function CorrosionCloud(center, target) {
 	RotatingEnemy.prototype.constructor.call(this, ENEMY_CLOUD, center, CORROSION_CLOUD_RADIUS, 0, 0);

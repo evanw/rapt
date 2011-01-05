@@ -86,7 +86,7 @@ function createPopperSprites() {
 	return sprites;
 }
 
-Popper.extends(WalkingEnemy);
+Popper.subclasses(WalkingEnemy);
 
 function Popper(center) {
 	WalkingEnemy.prototype.constructor.call(this, ENEMY_POPPER, center, POPPER_RADIUS, POPPER_ELASTICITY);

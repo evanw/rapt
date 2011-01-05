@@ -6,7 +6,7 @@ var MULTI_GUN_HEIGHT = .5;
 var MULTI_GUN_SHOOT_FREQ = 1.25;
 var MULTI_GUN_RANGE = 8;
 
-MultiGun.extends(SpawningEnemy);
+MultiGun.subclasses(SpawningEnemy);
 
 function MultiGun(center) {
 	SpawningEnemy.prototype.constructor.call(this, ENEMY_MULTI_GUN, center, MULTI_GUN_WIDTH, MULTI_GUN_HEIGHT, 0, MULTI_GUN_SHOOT_FREQ, 0);

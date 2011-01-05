@@ -32,7 +32,7 @@ var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new le
 var TEXT_BOX_X_MARGIN = 6;
 var TEXT_BOX_Y_MARGIN = 6;
 
-Game.extends(Screen);
+Game.subclasses(Screen);
 
 // class Game extends Screen
 function Game() {

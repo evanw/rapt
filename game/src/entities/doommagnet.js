@@ -7,7 +7,7 @@ var DOOM_MAGNET_RANGE = 10;
 var DOOM_MAGNET_ACCEL = 2;
 var MAGNET_MAX_ROTATION = 2 * Math.PI;
 
-DoomMagnet.extends(RotatingEnemy);
+DoomMagnet.subclasses(RotatingEnemy);
 
 function DoomMagnet(center) {
 	RotatingEnemy.prototype.constructor.call(this, ENEMY_MAGNET, center, DOOM_MAGNET_RADIUS, 0, DOOM_MAGNET_ELASTICITY);

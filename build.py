@@ -23,13 +23,6 @@ op('cd editor && python build.py' + suffix)
 op('cd game && python build.py' + suffix)
 
 def compile(a, b):
-	temp = b + '.temp'
-	atext = open(a).read()
-
-	f = open(temp, 'w')
-	f.write(atext.replace('extends', 'subclasses'))
-	f.close()
-
 	compile = ' '.join([
 		'java -jar ./closure_compiler/compiler.jar',
 		'--compilation_level ADVANCED_OPTIMIZATIONS',
@@ -41,11 +34,8 @@ def compile(a, b):
 		'--js_output_file "%s"'
 	])
 
-	os.system(compile % (temp, b))
-	os.system('rm -f "%s"' % temp)
-
-	btext = open(b).read()
-	print 'built %s (%.2f%%)' % (b, 100.0 * len(btext) / len(atext))
+	os.system(compile % (a, b))
+	print 'built %s (%.2f%%)' % (b, 100.0 * len(open(b).read()) / len(open(a).read()))
 
 def copy(a, b):
 	os.system('cp "%s" "%s"' % (a, b))

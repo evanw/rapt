@@ -27,7 +27,7 @@ function drawRocket(c) {
 	c.stroke();
 }
 
-Rocket.extends(RotatingEnemy);
+Rocket.subclasses(RotatingEnemy);
 
 function Rocket(center, target, heading, maxRotation, type) {
 	RotatingEnemy.prototype.constructor.call(this, type, center, ROCKET_RADIUS, heading, ROCKET_ELASTICITY);

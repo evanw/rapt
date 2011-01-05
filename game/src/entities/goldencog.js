@@ -3,7 +3,7 @@
 
 var GOLDEN_COG_RADIUS = 0.25;
 
-GoldenCog.extends(Enemy);
+GoldenCog.subclasses(Enemy);
 
 function GoldenCog(center) {
 	Enemy.prototype.constructor.call(this, -1, 0);

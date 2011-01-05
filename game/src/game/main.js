@@ -14,18 +14,18 @@ function ajaxGetMenu(onSuccess) {
 	}
 	
 	$.ajax({
-		url: getMenuURL(),
-		type: 'GET',
-		cache: false,
-		dataType: 'json',
-		success: function(data, status, request) {
+		'url': getMenuURL(),
+		'type': 'GET',
+		'cache': false,
+		'dataType': 'json',
+		'success': function(data, status, request) {
 			if (data != null) {
 				onSuccess(data);
 			} else {
 				showError();
 			}
 		},
-		error: function(request, status, error) {
+		'error': function(request, status, error) {
 			showError();
 		}
 	});
@@ -67,7 +67,7 @@ function ajaxGetMenu(onSuccess) {
             showLoadingScreen();
 			ajaxGetMenu(function(json) {
 				showGameScreen();
-				gameState.loadLevelFromJSON(JSON.parse(json.level.data));
+				gameState.loadLevelFromJSON(JSON.parse(json['level']['data']));
 			});
         }
     }

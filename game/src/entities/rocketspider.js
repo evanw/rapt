@@ -102,7 +102,7 @@ function createSpiderSprites() {
 	return sprites;
 }
 
-RocketSpider.extends(SpawningEnemy);
+RocketSpider.subclasses(SpawningEnemy);
 
 function RocketSpider(center, angle) {
     SpawningEnemy.prototype.constructor.call(this, ENEMY_ROCKET_SPIDER, center.add(new Vector(0, 0.81 - SPIDER_LEGS_RADIUS + SPIDER_HEIGHT * 0.5)),

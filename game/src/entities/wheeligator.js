@@ -6,7 +6,7 @@ var WHEELIGATOR_SPEED = 3;
 var WHEELIGATOR_ELASTICITY = 1;
 var WHEELIGATOR_FLOOR_ELASTICITY = 0.3;
 
-Wheeligator.extends(WalkingEnemy);
+Wheeligator.subclasses(WalkingEnemy);
 
 function Wheeligator(center, angle) {
 	WalkingEnemy.prototype.constructor.call(this, ENEMY_WHEELIGATOR, center, WHEELIGATOR_RADIUS, WHEELIGATOR_ELASTICITY);

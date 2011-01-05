@@ -3,7 +3,7 @@
 
 var FREEFALL_ACCEL = -6;
 
-FreefallEnemy.extends(Enemy);
+FreefallEnemy.subclasses(Enemy);
 
 function FreefallEnemy(type, center, radius, elasticity) {
 	Enemy.prototype.constructor.call(this, type, elasticity);

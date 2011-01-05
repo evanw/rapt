@@ -1,7 +1,7 @@
 #require <class.js>
 #require <enemy.js>
 
-SpawningEnemy.extends(Enemy);
+SpawningEnemy.subclasses(Enemy);
 
 function SpawningEnemy(type, center, width, height, elasticity, frequency, startingTime) {
 	Enemy.prototype.constructor.call(this, type, elasticity);
