@@ -37,8 +37,8 @@ Edge.prototype.drawDirectionIndicators = function(c, isInitiallyOpen) {
 	for (var i = 1, num = 10; i < num - 1; i++) {
 		var point = this.pointAlongLine(i / (num - 1));
 		var d = isInitiallyOpen ? 0.05 : 0;
-		c.moveTo(point.x - normal.x * d, point.y - normal.y * d);
-		c.lineTo(point.x - normal.x * 0.1, point.y - normal.y * 0.1);
+		c.moveTo(point.x + normal.x * d, point.y + normal.y * d);
+		c.lineTo(point.x + normal.x * 0.1, point.y + normal.y * 0.1);
 	}
 };
 

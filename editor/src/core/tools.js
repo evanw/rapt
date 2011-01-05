@@ -123,7 +123,7 @@ PlaceDoorTool.prototype.mouseMoved = function(point) {
 	
 	// Pick the closest edge facing away from point
 	this.edge = EdgePicker.getClosestEdge(point, edges);
-	if (!this.edge.pointBehindEdge(point)) this.edge.flip();
+	if (this.edge.pointBehindEdge(point)) this.edge.flip();
 };
 
 PlaceDoorTool.prototype.mouseUp = function(point) {
