@@ -6,7 +6,7 @@ function World(w, h, spawnPoint, goal) {
 	for (var x = 0; x < w; ++x) {
 		this.cells[x] = new Array(h);
 		for (var y = 0; y < h; ++y) {
-			this.cells[x][y] = new Cell(x, y, CELL_EMPTY);
+			this.cells[x][y] = new Cell(x, y, CELL_SOLID);
 		}
 	}
 	

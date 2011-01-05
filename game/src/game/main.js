@@ -76,6 +76,7 @@ function MenuLevel(title, html_title) {
 	var canvas;
 	var context;
 	var lastTime;
+	var jsonForCurrentLevel = null;
 	var currentScreen = null;
     var currentHash = '';
     var menu = new Menu();
@@ -111,8 +112,9 @@ function MenuLevel(title, html_title) {
             // #/[User]/[Level]/
             showLoadingScreen();
 			ajaxGet('level', getURL(), function(json) {
+				jsonForCurrentLevel = JSON.parse(json['level']['data']);
 				showGameScreen();
-				gameState.loadLevelFromJSON(JSON.parse(json['level']['data']));
+				gameState.loadLevelFromJSON(jsonForCurrentLevel);
 			});
         }
     }
@@ -176,8 +178,9 @@ function MenuLevel(title, html_title) {
         if (currentScreen !== null) {
             if (e.which === SPACEBAR) {
                 if (currentScreen.gameStatus === GAME_LOST) {
-                    // if the level is being restarted, change the screen to a new Game
-                    changeScreen(new Game());
+                    // if the level is being restarted, reload the level
+					showGameScreen();
+					gameState.loadLevelFromJSON(jsonForCurrentLevel);
                 } else if (currentScreen.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
                     for (var i = 0; i < menu.levels.length; ++i) {
@@ -186,7 +189,6 @@ function MenuLevel(title, html_title) {
                                 // go to the next level on the list
                                 location.hash = menu.getHashForLevel(menu.levels[i + 1]);
                                 // Don't return because we want to prevent default
-                                showGameScreen();
                                 break;
                             } else {
                                 // return to menu screen if it was the last level
