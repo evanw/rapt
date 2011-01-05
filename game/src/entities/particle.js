@@ -12,6 +12,7 @@
 // enum ParticleType
 var PARTICLE_CIRCLE = 0;
 var PARTICLE_TRIANGLE = 1;
+var PARTICLE_LINE = 2;
 
 function randOrTakeFirst(min, max) {
 	return (typeof max !== 'undefined') ? randInRange(min, max) : min;
@@ -40,7 +41,9 @@ ParticleInstance.prototype.init = function() {
 	this.m_expand = 1;
 	this.m_position = new Vector(0, 0);
 	this.m_velocity = new Vector(0, 0);
-}
+	this.m_angle = 0;
+	this.m_angularVelocity = 0;
+};
 
 ParticleInstance.prototype.tick = function(seconds) {
 	if(this.m_bounces < 0) {
@@ -50,17 +53,17 @@ ParticleInstance.prototype.tick = function(seconds) {
 	this.m_radius *= Math.pow(this.m_expand, seconds);
 	this.m_velocity.y -= this.m_gravity * seconds;
 	this.m_position = this.m_position.add(this.m_velocity.mul(seconds));
+	this.m_angle += this.m_angularVelocity * seconds;
 	if(this.m_alpha < 0.01) {
 		this.m_bounces = -1;
 	}
 	return (this.m_bounces >= 0);
-}
+};
 
 ParticleInstance.prototype.draw = function(c) {
-	var color = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
-	c.fillStyle = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
 	switch(this.m_type) {
 	case PARTICLE_CIRCLE:
+		c.fillStyle = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
 		c.beginPath();
 		c.arc(this.m_position.x, this.m_position.y, this.m_radius, 0, 2 * Math.PI, false);
 		c.fill();
@@ -70,6 +73,7 @@ ParticleInstance.prototype.draw = function(c) {
 		var v1 = this.m_position.add(this.m_velocity.mul(0.04));
 		var v2 = this.m_position.sub(this.m_velocity.flip().mul(0.01));
 		var v3 = this.m_position.add(this.m_velocity.flip().mul(0.01));
+		c.fillStyle = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
 		c.beginPath();
 		c.moveTo(v1.x, v1.y);
 		c.lineTo(v2.x, v2.y);
@@ -77,20 +81,31 @@ ParticleInstance.prototype.draw = function(c) {
 		c.closePath();
 		c.fill();
 		break;
+		
+	case PARTICLE_LINE:
+		var dx = Math.cos(this.m_angle) * this.m_radius;
+		var dy = Math.sin(this.m_angle) * this.m_radius;
+		c.strokeStyle = cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
+		c.beginPath();
+		c.moveTo(this.m_position.x - dx, this.m_position.y - dy);
+		c.lineTo(this.m_position.x + dx, this.m_position.y + dy);
+		c.stroke();
+		break;
 	}
-}
+};
 
 // all of these functions support chaining to fix constructor with 200 arguments
-ParticleInstance.prototype.bounces = function(min, max) { this.m_bounces = Math.round(randOrTakeFirst(min, max)); return this; }
-ParticleInstance.prototype.circle = function() { this.m_type = PARTICLE_CIRCLE; return this; }
-ParticleInstance.prototype.triangle = function() { this.m_type = PARTICLE_TRIANGLE; return this; }
+ParticleInstance.prototype.bounces = function(min, max) { this.m_bounces = Math.round(randOrTakeFirst(min, max)); return this; };
+ParticleInstance.prototype.circle = function() { this.m_type = PARTICLE_CIRCLE; return this; };
+ParticleInstance.prototype.triangle = function() { this.m_type = PARTICLE_TRIANGLE; return this; };
+ParticleInstance.prototype.line = function() { this.m_type = PARTICLE_LINE; return this; };
 ParticleInstance.prototype.color = function(r, g, b, a) {
 	this.m_red = r;
 	this.m_green = g;
 	this.m_blue = b;
 	this.m_alpha = a;
 	return this;
-}
+};
 ParticleInstance.prototype.mixColor = function(r, g, b, a) {
 	var percent = Math.random();
 	this.m_red = lerp(this.m_red, r, percent);
@@ -98,14 +113,16 @@ ParticleInstance.prototype.mixColor = function(r, g, b, a) {
 	this.m_blue = lerp(this.m_blue, b, percent);
 	this.m_alpha = lerp(this.m_alpha, a, percent);
 	return this;
-}
-ParticleInstance.prototype.radius = function(min, max) { this.m_radius = randOrTakeFirst(min, max); return this; }
-ParticleInstance.prototype.gravity = function(min, max) { this.m_gravity = randOrTakeFirst(min, max); return this; }
-ParticleInstance.prototype.elasticity = function(min, max) { this.m_elasticity = randOrTakeFirst(min, max); return this; }
-ParticleInstance.prototype.decay = function(min, max) { this.m_decay = randOrTakeFirst(min, max); return this; }
-ParticleInstance.prototype.expand = function(min, max) { this.m_expand = randOrTakeFirst(min, max); return this; }
-ParticleInstance.prototype.position = function(position) { this.m_position = position; return this; }
-ParticleInstance.prototype.velocity = function(velocity) { this.m_velocity = velocity; return this; }
+};
+ParticleInstance.prototype.radius = function(min, max) { this.m_radius = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.gravity = function(min, max) { this.m_gravity = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.elasticity = function(min, max) { this.m_elasticity = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.decay = function(min, max) { this.m_decay = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.expand = function(min, max) { this.m_expand = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.angle = function(min, max) { this.m_angle = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.angularVelocity = function(min, max) { this.m_angularVelocity = randOrTakeFirst(min, max); return this; };
+ParticleInstance.prototype.position = function(position) { this.m_position = position; return this; };
+ParticleInstance.prototype.velocity = function(velocity) { this.m_velocity = velocity; return this; };
 
 // wrap in anonymous function for private variables
 var Particle = (function() {
@@ -132,27 +149,31 @@ var Particle = (function() {
 
 	Particle.reset = function() {
 		firstParticle = lastParticle = 0;
-	}
+	};
 
 	Particle.tick = function(seconds) {
 		// strip off all the particles that have died, from the start of the list
-		for(; firstParticle != lastParticle; firstParticle = (firstParticle + 1) % particles.length)
+		for(; firstParticle != lastParticle; firstParticle = (firstParticle + 1) % particles.length) {
 			// if the first particle in our slice of the buffer is still alive, don't strip it off
-			if(particles[firstParticle].tick(seconds))
+			if(particles[firstParticle].tick(seconds)) {
 				break;
+			}
+		}
 
 		// loop through all of the particles in our slice of the circular buffer
-		if(firstParticle != lastParticle)
+		if(firstParticle != lastParticle) {
 			// add one because the first particle has already been ticked above
-			for(var i = (firstParticle + 1) % particles.length; i != lastParticle; i = (i + 1) % particles.length)
+			for(var i = (firstParticle + 1) % particles.length; i != lastParticle; i = (i + 1) % particles.length) {
 				particles[i].tick(seconds);
-	}
+			}
+		}
+	};
 
 	Particle.draw = function(c) {
         for(var i = firstParticle; i != lastParticle; i = (i + 1) % particles.length) {
 			particles[i].draw(c);
 		}
-	}
+	};
 
 	return Particle;
 })();

@@ -24,10 +24,11 @@ Laser.prototype.reactToWorld = function(contact) {
 
         var position = this.getCenter();
         for (var i = 0; i < 20; ++i) {
-            var direction = Vector.fromAngle(randInRange(0, 2 * Math.PI));
+			var angle = randInRange(0, 2 * Math.PI);
+            var direction = Vector.fromAngle(angle);
             direction = direction.mul(randInRange(0.5, 5));
 
-            Particle().position(position).velocity(direction).radius(0.1).bounces(1).elasticity(1).decay(0.01).gravity(0).color(1, 1, 1, 1).circle();
+            Particle().position(position).velocity(direction).angle(angle).radius(0.1).bounces(1).elasticity(1).decay(0.01).gravity(0).color(1, 1, 1, 1).line();
         }
     } else {
         --this.bouncesLeft;
