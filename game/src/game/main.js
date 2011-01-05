@@ -3,9 +3,17 @@
 var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
 
-function getURL() {
-	var hash = location.hash.substr(1); // remove the leading '#'
-	return 'http://' + location.host + '/users' + hash;
+function getMenuURL() {
+	var matches = /^#\/([^\/]+)\//.exec(location.hash);
+	var username = matches[1];
+	return 'http://' + location.host + '/users/' + username + '/';
+}
+
+function getLevelURL() {
+	var matches = /^#\/([^\/]+)\/([^\/]+)\/$/.exec(location.hash);
+	var username = matches[1];
+	var levelname = matches[2];
+	return 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
 }
 
 function ajaxGet(what, url, onSuccess) {
@@ -103,7 +111,7 @@ function MenuLevel(title, html_title) {
         if (hash.split('/').length === 3) {
             // #/[User]/
             showLoadingScreen();
-			ajaxGet('menu', getURL(), function(json) {
+			ajaxGet('menu', getMenuURL(), function(json) {
 	            showLevelScreen();
 				menu.loadFromJSON(json['user']);
 		        $('#levelScreen').html(menu.toHTML());
@@ -111,8 +119,21 @@ function MenuLevel(title, html_title) {
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
             showLoadingScreen();
+
+			// if the user refreshes while in a level, we need to remember the username so we know what to do when escape is pressed
 			menu.username = hash.split('/')[1];
-			ajaxGet('level', getURL(), function(json) {
+			
+			// if the user refreshes while in a level, we also need to load the menu in the background
+			// so that when the user beats the level they can press space to advance to the next level
+			// (without loading the menu we wouldn't know what the next level is)
+			ajaxGet('menu', getMenuURL(), function(json) {
+				// don't go to the menu screen because we are loading the menu in the background
+				menu.loadFromJSON(json['user']);
+		        $('#levelScreen').html(menu.toHTML());
+			});
+			
+			// finally, load the level
+			ajaxGet('level', getLevelURL(), function(json) {
 				jsonForCurrentLevel = JSON.parse(json['level']['data']);
 				showGameScreen();
 				gameState.loadLevelFromJSON(jsonForCurrentLevel);
