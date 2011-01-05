@@ -420,6 +420,13 @@ CollisionDetector.collideCirclePoint = function(circle, deltaPosition, point) {
 	// when the circle travels so that the point moves OUT of it, so we don't want to stop it from doing that.
 	var ref_deltaProportion0 = {}, ref_deltaProportion1 = {};
 
+	// BUGFIX: shock hawks were disappearing on Traps when deltaPosition was very small, which caused
+	// us to try to solve a quadratic with a second order coefficient of zero and put NaNs everywhere
+	var delta = deltaPosition.length();
+	if (delta < 0.0000001) {
+		return false;
+	}
+
 	// if these don't intersect at all, then forget about it.
 	if(!this.intersectCircleLine(circle, new Segment(point, point.sub(deltaPosition)), ref_deltaProportion0, ref_deltaProportion1)) {
 		return null;
