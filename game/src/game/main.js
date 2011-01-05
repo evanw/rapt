@@ -36,7 +36,7 @@ function ajaxGetMenu(onSuccess) {
 	var canvas;
 	var context;
 	var lastTime;
-	var currentScreen;
+	var currentScreen = null;
     var currentHash;
     var levels = new Array();
 
@@ -103,9 +103,8 @@ function ajaxGetMenu(onSuccess) {
 
     function getLevels() {
         // Boop boop, pretend we are getting levels from the server
-        levels.push('#/Evan/Level-2/');
-        levels.push('#/test/Test_Level_1/');
-        levels.push('#/Evan/Hunter-Food/');
+        levels.push('#/rapt/Cube/');
+        levels.push('#/rapt/Tour/');
 
         // Add the level screen title to the DOM
         var html = "<h2>Official Levels</h2>";
@@ -122,10 +121,14 @@ function ajaxGetMenu(onSuccess) {
 
 	$(document).ready(function() {
         // first set up the level menu links
+        $('#canvas').hide();
         $('#levelScreen').hide();
-        // Pretend we're playing a real level already
+        $('#loadingScreen').hide();
+
+        // Pretend we've already loaded the menu
         getLevels();
-        location.hash = levels[0];
+		showLevelScreen();
+		location.hash = '#/rapt/';
         currentHash = location.hash;
 
         // then set up the canvas
@@ -135,8 +138,6 @@ function ajaxGetMenu(onSuccess) {
 		context = canvas.getContext('2d');
 		lastTime = new Date();
 		setInterval(tick, 1000 / 60);
-
-		changeScreen(new Game());
 	});
 
 	$(document).keydown(function(e) {

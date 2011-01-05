@@ -32,36 +32,36 @@ function loadWorldFromJSON(json) {
 	var world = new World();
 	
 	// load general info
-	world.playerStart = jsonToVec(json.start);
-	world.playerGoal = jsonToVec(json.end);
+	world.playerStart = jsonToVec(json['start']);
+	world.playerGoal = jsonToVec(json['end']);
 	
 	// load cells
-	world.size = new Vector(Math.ceil(json.width / SECTOR_SIZE), Math.ceil(json.height / SECTOR_SIZE));
-	for (var x = 0; x < json.width; x++) {
-		for (var y = 0; y < json.height; y++) {
-			world.setCell(x, y, json.cells[y][x]);
+	world.size = new Vector(Math.ceil(json['width'] / SECTOR_SIZE), Math.ceil(json['height'] / SECTOR_SIZE));
+	for (var x = 0; x < json['width']; x++) {
+		for (var y = 0; y < json['height']; y++) {
+			world.setCell(x, y, json['cells'][y][x]);
 		}
 	}
 	
 	// load entities
 	var walls = [];
 	var buttons = [];
-	for (var i = 0; i < json.entities.length; i++) {
-		var e = json.entities[i];
+	for (var i = 0; i < json['entities'].length; i++) {
+		var e = json['entities'][i];
 		switch (e['class']) {
 		case 'cog':
-			world.placeables.push(spriteTemplates[SPRITE_COG].sprite.clone(jsonToVec(e.pos)));
+			world.placeables.push(spriteTemplates[SPRITE_COG].sprite.clone(jsonToVec(e['pos'])));
 			break;
 			
 		case 'wall':
-			var wall = new Door(e.oneway, e.open, e.color, new Edge(jsonToVec(e.start), jsonToVec(e.end)));
+			var wall = new Door(e['oneway'], e['open'], e['color'], new Edge(jsonToVec(e['start']), jsonToVec(e['end'])));
 			walls.push(wall);
 			world.placeables.push(wall);
 			break;
 			
 		case 'button':
-			var button = new Button(jsonToVec(e.pos), e.type);
-			button.walls = e.walls;
+			var button = new Button(jsonToVec(e['pos']), e['type']);
+			button.walls = e['walls'];
 			buttons.push(button);
 			world.placeables.push(button);
 			break;
@@ -71,7 +71,7 @@ function loadWorldFromJSON(json) {
 			break;
 			
 		case 'enemy':
-			world.placeables.push(spriteTemplates[enemyToSpriteMap[e.type]].sprite.clone(jsonToVec(e.pos), e.color));
+			world.placeables.push(spriteTemplates[enemyToSpriteMap[e['type']]].sprite.clone(jsonToVec(e['pos']), e['color']));
 			break;
 		}
 	}
@@ -152,30 +152,30 @@ function saveWorldToJSON(world) {
 	}
 	
 	// copy the bounding box
-	json.cells = [];
-	json.width = max.x - min.x;
-	json.height = max.y - min.y;
+	json['cells'] = [];
+	json['width'] = max.x - min.x;
+	json['height'] = max.y - min.y;
 	for (var y = min.y; y < max.y; y++) {
 		var row = [];
 		for (var x = min.x; x < max.x; x++) {
 			row.push(world.getCell(x, y));
 		}
-		json.cells.push(row);
+		json['cells'].push(row);
 	}
 	
 	// save entities
-	json.entities = [];
+	json['entities'] = [];
 	for (var i = 0; i < world.placeables.length; i++) {
 		var p = world.placeables[i];
 		if (p instanceof Button) {
-			json.entities.push({
+			json['entities'].push({
 				'class': 'button',
 				'type': p.type,
 				'pos': vecToJSON(p.anchor.sub(min)),
 				'walls': indicesOfLinkedDoors(p, world)
 			});
 		} else if (p instanceof Door) {
-			json.entities.push({
+			json['entities'].push({
 				'class': 'wall',
 				'oneway': !!p.isOneWay,
 				'open': !!p.isInitiallyOpen,
@@ -184,12 +184,12 @@ function saveWorldToJSON(world) {
 				'color': p.color
 			});
 		} else if ((p instanceof Sprite) && p.id == SPRITE_COG) {
-			json.entities.push({
+			json['entities'].push({
 				'class': 'cog',
 				'pos': vecToJSON(p.anchor.sub(min))
 			});
 		} else if (p instanceof Sprite) {
-			json.entities.push({
+			json['entities'].push({
 				'class': 'enemy',
 				'type': spriteTypeFromId(p.id),
 				'pos': vecToJSON(p.anchor.sub(min)),
@@ -200,9 +200,9 @@ function saveWorldToJSON(world) {
 	}
 	
 	// save per-level stuff
-	json.unique_id = Math.round(Math.random() * 0xFFFFFFFF);
-	json.start = vecToJSON(world.playerStart.sub(min));
-	json.end = vecToJSON(world.playerGoal.sub(min));
+	json['unique_id'] = Math.round(Math.random() * 0xFFFFFFFF);
+	json['start'] = vecToJSON(world.playerStart.sub(min));
+	json['end'] = vecToJSON(world.playerGoal.sub(min));
 	
 	return JSON.stringify(json);
 }

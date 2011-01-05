@@ -3,38 +3,19 @@ var WORLD_MARGIN = 60;
 // class World
 function World(w, h, spawnPoint, goal) {
 	this.cells = new Array(w);
-	this.width = w;
-	this.height = h;
-    this.safety = new Vector(0, 0);
-
-    // Handle undefined spawn & goal for testing
-    if (spawnPoint !== undefined) {
-        this.spawnPoint = spawnPoint.add(new Vector(0.5, 0.5));
-    } else {
-        this.spawnPoint = new Vector(0.5, 0.5);
-    }
-    if (goal !== undefined) {
-        this.goal = goal.add(new Vector(0.5, 0.5));
-    } else {
-        this.goal = new Vector(3.5, 0.5);
-    }
-
-
 	for (var x = 0; x < w; ++x) {
 		this.cells[x] = new Array(h);
 		for (var y = 0; y < h; ++y) {
-            //this.cells[x][y] = new Cell(x, y, (x > 0 && y > 0 && x + 1 < w && y + 1 < h) * Math.round(Math.random() * 5))
-			this.cells[x][y] = new Cell(x, y, CELL_SOLID);
+			this.cells[x][y] = new Cell(x, y, CELL_EMPTY);
 		}
 	}
+	
+	this.width = w;
+	this.height = h;
+    this.safety = spawnPoint;
 
-    /*
-	for (var x = 0; x < w; ++x) {
-		for (var y = 0; y < h; ++y) {
-			this.cells[x][y].edges = this.createEdges(x, y);
-		}
-	}
-    */
+	this.spawnPoint = spawnPoint.add(new Vector(0.5, 0.5));
+	this.goal = goal.add(new Vector(0.5, 0.5));
 }
 
 function rect(c, x, y, w, h) { c.fillRect(x, y, w, h); c.strokeRect(x, y, w, h); }

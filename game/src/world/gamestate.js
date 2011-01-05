@@ -12,7 +12,8 @@ var STAT_NUM_COGS = 5;
 
 // class GameState
 function GameState() {
-	this.world = new World(50, 50);
+	this.world = new World(50, 50, new Vector(0.5, 0.5), new Vector(0.5, 0.5));
+	
     // Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
 	this.playerA = new Player(this.world.spawnPoint, EDGE_RED);
 	this.playerB = new Player(this.world.spawnPoint, EDGE_BLUE);

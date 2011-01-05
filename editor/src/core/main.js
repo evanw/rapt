@@ -10,18 +10,18 @@ function ajaxGetLevel(onSuccess) {
 	}
 	
 	$.ajax({
-		url: getLevelURL(),
-		type: 'GET',
-		cache: false,
-		dataType: 'json',
-		success: function(data, status, request) {
+		'url': getLevelURL(),
+		'type': 'GET',
+		'cache': false,
+		'dataType': 'json',
+		'success': function(data, status, request) {
 			if (data != null) {
-				onSuccess(JSON.parse(data.level.data));
+				onSuccess(JSON.parse(data['level']['data']));
 			} else {
 				showError();
 			}
 		},
-		error: function(request, status, error) {
+		'error': function(request, status, error) {
 			showError();
 		}
 	});
@@ -33,12 +33,12 @@ function ajaxPutLevel(json) {
 	}
 	
 	$.ajax({
-		url: getLevelURL(),
-		type: 'PUT',
-		dataType: 'json',
-		data: JSON.stringify({ level: { data: json } }),
-		contentType: 'application/json; charset=utf-8',
-		error: function(request, status, error) {
+		'url': getLevelURL(),
+		'type': 'PUT',
+		'dataType': 'json',
+		'data': JSON.stringify({ 'level': { 'data': json } }),
+		'contentType': 'application/json; charset=utf-8',
+		'error': function(request, status, error) {
 			showError();
 		}
 	});
@@ -308,6 +308,34 @@ function loadEditor() {
 	$(canvas).mouseleave(function(e) {
 		editor.mouseOut();
 	});
+	
+	$(window).resize(function() {
+		resizeEditor();
+	});
+	$(document).bind('contextmenu', function(e) {
+		e.preventDefault();
+	});
+	$(document).keydown(function(e) {
+		if (e.ctrlKey || e.metaKey) {
+			if (e.which == 'Z'.charCodeAt(0)) {
+				if (e.shiftKey) editor.redo();
+				else editor.undo();
+				e.preventDefault();
+			} else if (e.which == 'Y'.charCodeAt(0)) {
+				editor.redo();
+				e.preventDefault();
+			} else if (e.which == 'S'.charCodeAt(0)) {
+				e.preventDefault();
+				ajaxPutLevel(editor.save());
+			} else if (e.which == 'A'.charCodeAt(0)) {
+				editor.selectAll();
+				e.preventDefault();
+			}
+		} else if (e.which == 8 /*BACKSPACE*/) {
+			editor.deleteSeleciton();
+			e.preventDefault();
+		}
+	});
 }
 
 $(document).ready(function() {
@@ -318,35 +346,5 @@ $(document).ready(function() {
 			loadEditor();
 			editor.loadFromJSON(data);
 		});
-	}
-});
-
-$(window).resize(function() {
-	resizeEditor();
-});
-
-$(document).bind('contextmenu', function(e) {
-	e.preventDefault();
-});
-
-$(document).keydown(function(e) {
-	if (e.ctrlKey || e.metaKey) {
-		if (e.which == 'Z'.charCodeAt(0)) {
-			if (e.shiftKey) editor.redo();
-			else editor.undo();
-			e.preventDefault();
-		} else if (e.which == 'Y'.charCodeAt(0)) {
-			editor.redo();
-			e.preventDefault();
-		} else if (e.which == 'S'.charCodeAt(0)) {
-			e.preventDefault();
-			ajaxPutLevel(editor.save());
-		} else if (e.which == 'A'.charCodeAt(0)) {
-			editor.selectAll();
-			e.preventDefault();
-		}
-	} else if (e.which == 8 /*BACKSPACE*/) {
-		editor.deleteSeleciton();
-		e.preventDefault();
 	}
 });
