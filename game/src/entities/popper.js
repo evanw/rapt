@@ -101,7 +101,7 @@ Popper.prototype.move = function(seconds) {
         // POPPER_MIN_JUMP_Y <= velocity.y < POPPER_MAX_JUMP_Y
         this.velocity.y = randInRange(POPPER_MIN_JUMP_Y, POPPER_MAX_JUMP_Y);
         // -(POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y) <= velocity.x <= (POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y)
-        this.velocity.x = (randInRange(0, 100000) % 2) === 0 ? POPPER_MAX_JUMP_Y - this.velocity.y : -POPPER_MAX_JUMP_Y + this.velocity.y;
+        this.velocity.x = (Math.random() > 0.5) ? POPPER_MAX_JUMP_Y - this.velocity.y : -POPPER_MAX_JUMP_Y + this.velocity.y;
 
         this.timeToNextJump = POPPER_JUMP_DELAY;
         this.onFloor = false;
