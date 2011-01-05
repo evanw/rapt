@@ -43,7 +43,7 @@ WallAvoider.prototype.move = function(seconds) {
         var closestPointDist = CollisionDetector.closestToEntityWorld(this, 5, ref_shapePoint, ref_worldPoint, gameState.world);
         // If something went horribly, horribly wrong
         if (closestPointDist < 0.001) {
-            return this.accelerate(0, seconds);
+            return this.accelerate(new Vector(0, 0), seconds);
         }
         this.acceleration = targetDelta.unit();
         var closestPointDelta = ref_worldPoint.ref.sub(this.getCenter());
