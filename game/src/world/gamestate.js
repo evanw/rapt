@@ -256,9 +256,6 @@ GameState.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 	drawMaxX = xmax + 2;
 	drawMaxY = ymax + 2;
 	
-	// background (TODO: cache this)
-	this.world.draw(c, xmin, ymin, xmax, ymax);
-	
 	// spawn point and goal
 	var spawnPoint = this.world.spawnPoint.add(this.spawnPointOffset);
 	var goal = this.world.goal;

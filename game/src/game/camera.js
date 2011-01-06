@@ -1,9 +1,15 @@
+var useBackgroundCache = false;
+
 // class SplitScreenCamera
 function SplitScreenCamera(playerA, playerB, width, height) {
 	this.playerA = playerA;
 	this.playerB = playerB;
 	this.width = width;
 	this.height = height;
+	
+	// using a cached image for the background was slower in every case :(
+	this.backgroundCacheA = null;// = new BackgroundCache('a')
+	this.backgroundCacheB = null;// = new BackgroundCache('b');
 }
 
 SplitScreenCamera.prototype.draw = function(c, renderer) {
@@ -19,7 +25,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 	var isSplit = (positionB.sub(positionA).length() > 2*maxLength);
 
 	if(!isSplit) {
-		renderer.render(c, center, this.width, this.height);
+		renderer.render(c, center, this.width, this.height, this.backgroundCacheA);
 	} else {
 		var AtoB = positionB.sub(positionA).unit().mul(99999);
 		var split = AtoB.flip();
@@ -42,7 +48,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 		c.lineTo(split.x - AtoB.x, split.y - AtoB.y);
 		c.lineTo(split.x, split.y);
 		c.clip();
-		renderer.render(c, centerA, this.width, this.height);
+		renderer.render(c, centerA, this.width, this.height, this.backgroundCacheA);
 		c.restore();
 
 		// draw world from b's point of view
@@ -53,7 +59,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 		c.lineTo(split.x + AtoB.x, split.y + AtoB.y);
 		c.lineTo(split.x, split.y);
 		c.clip();
-		renderer.render(c, centerB, this.width, this.height);
+		renderer.render(c, centerB, this.width, this.height, this.backgroundCacheB);
 		c.restore();
 
 		// divide both player's view with a black line

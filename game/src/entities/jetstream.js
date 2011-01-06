@@ -84,7 +84,7 @@ JetStream.prototype.draw = function(c) {
 
 			var pos = position.add(bodyOffset.mul(side)).add(bodyOffset.rotate(theta));
 			c.beginPath();
-			c.arc(pos.x, pos.y, 0.1 * reload, 0, 2*Math.PI);
+			c.arc(pos.x, pos.y, 0.1 * reload, 0, 2*Math.PI, false);
 			c.fill();
 			c.stroke();
         }

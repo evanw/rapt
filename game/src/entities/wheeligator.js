@@ -24,8 +24,8 @@ function Wheeligator(center, angle) {
 
 		c.strokeStyle = 'black';
 		c.beginPath();
-		c.arc(0, 0, WHEELIGATOR_RADIUS, 0, 2*Math.PI);
-		c.arc(0, 0, WHEELIGATOR_RADIUS - rim, Math.PI, 3*Math.PI);
+		c.arc(0, 0, WHEELIGATOR_RADIUS, 0, 2*Math.PI, false);
+		c.arc(0, 0, WHEELIGATOR_RADIUS - rim, Math.PI, 3*Math.PI, false);
 		c.stroke();
 
 		c.fillStyle = 'black';

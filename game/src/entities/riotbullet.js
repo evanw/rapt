@@ -38,7 +38,7 @@ RiotBullet.prototype.draw = function(c) {
 	c.strokeStyle = 'black';
 	c.fillStyle = 'yellow';
 	c.beginPath();
-	c.arc(pos.x, pos.y, RIOT_BULLET_RADIUS, 0, 2*Math.PI);
+	c.arc(pos.x, pos.y, RIOT_BULLET_RADIUS, 0, 2*Math.PI, false);
 	c.fill();
 	c.stroke();
 }

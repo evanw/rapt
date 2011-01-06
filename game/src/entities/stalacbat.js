@@ -19,7 +19,7 @@ function Stalacbat(center, target) {
     this.sprites[STALACBAT_SPRITE_BODY].drawGeometry = function(c) {
         c.strokeStyle = 'black';
         c.beginPath();
-        c.arc(0, 0, 0.1, 0, 2 * Math.PI);
+        c.arc(0, 0, 0.1, 0, 2 * Math.PI, false);
         c.stroke();
         c.fill();
     }
@@ -97,14 +97,6 @@ Stalacbat.prototype.draw = function(c) {
     else {
         c.fillStyle = 'blue';
     }
-
-    /*
-    var pos = this.getCenter();
-    c.beginPath();
-    c.arc(pos.x, pos.y, 0.1, 0, 2 * Math.PI, false);
-    //Circle(sprites[STALACBAT_SPRITE_BODY].offsetBeforeRotation, 0.1).Draw();
-    c.fill();
-    */
 
     // Draw the black wings
     this.sprites[STALACBAT_SPRITE_BODY].draw(c);

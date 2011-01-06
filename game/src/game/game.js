@@ -88,12 +88,24 @@ Game.prototype.tick = function(seconds) {
 	this.fps = lerp(this.fps, 1 / seconds, 0.05);
 };
 
-Game.prototype.render = function(c, center, width, height) {
+Game.prototype.render = function(c, center, width, height, backgroundCache) {
 	var halfWidth = width / 2;
 	var halfHeight = height / 2;
+	var xmin = center.x - halfWidth;
+	var ymin = center.y - halfHeight;
+	var xmax = center.x + halfWidth;
+	var ymax = center.y + halfHeight;
 	c.save();
 	c.translate(-center.x, -center.y);
-	gameState.draw(c, center.x - halfWidth, center.y - halfHeight, center.x + halfWidth, center.y + halfHeight);
+	
+	// draw the background, backgroundCache is an optional argument
+	if (backgroundCache) {
+		backgroundCache.draw(c, xmin, ymin, xmax, ymax);
+	} else {
+		gameState.world.draw(c, xmin, ymin, xmax, ymax);
+	}
+	
+	gameState.draw(c, xmin, ymin, xmax, ymax);
 	Particle.draw(c);
 	c.restore();
 };
@@ -136,10 +148,12 @@ function drawTextBox(c, textArray, xCenter, yCenter, textSize) {
 }
 
 Game.prototype.draw = function(c) {
-	// clear the background
-	c.fillStyle = '#BFBFBF';
-	c.fillRect(0, 0, this.width, this.height);
-
+	if (!useBackgroundCache) {
+		// clear the background
+		c.fillStyle = '#BFBFBF';
+		c.fillRect(0, 0, this.width, this.height);
+	}
+	
 	// draw the game
 	c.save();
 	c.translate(this.width / 2, this.height / 2);
