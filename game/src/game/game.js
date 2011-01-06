@@ -31,6 +31,7 @@ var SILVER_COG_TEXT = "You earned a silver cog!";
 var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new level.";
 var TEXT_BOX_X_MARGIN = 6;
 var TEXT_BOX_Y_MARGIN = 6;
+var SECONDS_BETWEEN_TICKS = 1 / 60;
 
 Game.subclasses(Screen);
 
@@ -39,6 +40,7 @@ function Game() {
 	this.camera = new Camera();
 	this.fps = 0;
     this.gameStatus = GAME_IN_PLAY;
+	this.fixedPhysicsTick = 0;
 
 	gameState = new GameState();
 }
@@ -55,8 +57,32 @@ Game.prototype.tick = function(seconds) {
     } else if (this.gameStatus === GAME_LOST || gameState.gameLost()) {
         this.gameStatus = GAME_LOST;
     }
-	gameState.tick(seconds);
-	Particle.tick(seconds);
+
+	// when the screen isn't split, standing at the original spawn point:
+	// * Triple Threat
+	//   - variable physics tick: 30 FPS
+	//   - fixed physics tick: 25 FPS
+	// * Cube
+	//   - variable physics tick: 35 FPS
+	//   - fixed physics tick: 30 FPS
+	// * Coordinated Panic
+	//   - variable physics tick: 55 FPS
+	//   - fixed physics tick: 50 FPS
+	// overall, a fixed physics tick provides about 5 FPS drop but fixes a lot of
+	// gameplay issues (measurements above approximate but within about +/-1) 
+
+	// variable physics tick
+	// gameState.tick(seconds);
+	// Particle.tick(seconds);
+	
+	// fixed physics tick
+	var count = 0;
+	this.fixedPhysicsTick += seconds;
+	while (++count <= 10 && this.fixedPhysicsTick >= 0) {
+		this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
+		gameState.tick(SECONDS_BETWEEN_TICKS);
+		Particle.tick(SECONDS_BETWEEN_TICKS);
+	}
 
 	// smooth the fps a bit
 	this.fps = lerp(this.fps, 1 / seconds, 0.05);
