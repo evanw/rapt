@@ -28,9 +28,8 @@ h2 {
 .level a {
     color: black;
     text-decoration: none;
-    outline: 0;
 }
 
-.level a:focus {
+.level a:hover {
     color: white;
 }
