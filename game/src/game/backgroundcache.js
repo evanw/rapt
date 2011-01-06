@@ -35,6 +35,7 @@ function BackgroundCache(name) {
 	if (this.canvas === null) {
 		this.canvas = document.createElement('canvas');
 		this.canvas.id = id;
+		this.canvas.style.display = 'none';
 		document.body.appendChild(this.canvas);
 	}
 	this.c = this.canvas.getContext('2d');
@@ -70,7 +71,7 @@ BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 		// set up transform
 		this.c.save();
 		this.c.translate(width / 2, height / 2);
-		this.c.scale(gameScale, gameScale);
+		this.c.scale(gameScale, -gameScale);
 		this.c.lineWidth = 1 / gameScale;
 		
 		// render
@@ -80,23 +81,26 @@ BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 		// undo transform
 		this.c.restore();
 		
-		// draw an X so we can see the cache
-		// TODO: remove this
-		this.c.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+		// draw an X so we can see the cache (for debugging)
+		/*this.c.strokeStyle = 'rgba(0, 0, 0, 0.1)';
 		this.c.lineWidth = 5;
 		this.c.beginPath();
 		this.c.moveTo(0, 0);
 		this.c.lineTo(width, height);
 		this.c.moveTo(width, 0);
 		this.c.lineTo(0, height);
-		this.c.stroke();
+		this.c.stroke();*/
 	}
 	
 	// draw from cache
+	// for performance, we MUST make sure the image is drawn at an integer coordinate to take
+	// advantage of fast blitting, otherwise browsers will use slow software bilinear interpolation
 	c.mozImageSmoothingEnabled = false;
 	c.save();
-	c.translate(this.xmin, this.ymin);
-	c.scale(1 / gameScale, 1 / gameScale);
-	c.drawImage(this.canvas, 0, 0);
+	c.setTransform(1, 0, 0, 1, 0, 0);
+	c.drawImage(this.canvas,
+		Math.round((this.xmin - xmin) * gameScale),
+		Math.round((2 * ymin - ymax - this.ymin) * gameScale)
+	);
 	c.restore();
 };
