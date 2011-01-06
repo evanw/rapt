@@ -1,4 +1,4 @@
-var useBackgroundCache = false;
+var useBackgroundCache = true;
 
 // class SplitScreenCamera
 function SplitScreenCamera(playerA, playerB, width, height) {
@@ -7,9 +7,13 @@ function SplitScreenCamera(playerA, playerB, width, height) {
 	this.width = width;
 	this.height = height;
 	
-	// using a cached image for the background was slower in every case :(
-	this.backgroundCacheA = null;// = new BackgroundCache('a')
-	this.backgroundCacheB = null;// = new BackgroundCache('b');
+	if (useBackgroundCache) {
+		this.backgroundCacheA = new BackgroundCache('a')
+		this.backgroundCacheB = new BackgroundCache('b');
+	} else {
+		this.backgroundCacheA = null;
+		this.backgroundCacheB = null;
+	}
 }
 
 SplitScreenCamera.prototype.draw = function(c, renderer) {
