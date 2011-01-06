@@ -46,30 +46,13 @@ function ajaxGet(what, url, onSuccess) {
 function Menu() {
 	this.username = '';
 	this.levels = [];
-    var selectedLevel = 0;
 }
 
 Menu.prototype.keyDown = function(key) {
     if (key === UP_ARROW) {
         // Move up a level
-        /*if (selectedLevel > 0) {
-            --selectedLevel;
-        }
-        ('.level').each(function(i) {
-            if (i === selectedLevel) {
-                this.focus();
-            }
-        }); */
     } else if (key === DOWN_ARROW) {
         // Move down a level
-        /*if (selectedLevel < levels.length - 1) {
-            ++selectedLevel;
-        }
-        ('.level').each(function(i) {
-            if (i === selectedLevel) {
-                this.focus();
-            }
-        });*/
     }
 }
 
@@ -88,11 +71,6 @@ Menu.prototype.toHTML = function() {
 	var html = '<h2>' + this.username + '\'s Levels</h2><div id="levels">';
 	for (var i = 0; i < this.levels.length; ++i) {
 		html += '<div class="level"><a href="' + this.getHashForLevel(this.levels[i]) + '">' + this.levels[i].title + '</div>';
-
-        // Set first level as in focus
-        if (i === 0) {
-            $('.level').focus();
-        }
 	}
 	html += '</div>';
 	return html;
