@@ -1,7 +1,10 @@
 #require <game.js>
 
+var ENTER_KEY = 13;
 var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
+var UP_ARROW = 38;
+var DOWN_ARROW = 40;
 
 function getMenuURL() {
 	var matches = /^#\/([^\/]+)\//.exec(location.hash);
@@ -43,6 +46,31 @@ function ajaxGet(what, url, onSuccess) {
 function Menu() {
 	this.username = '';
 	this.levels = [];
+    var selectedLevel = 0;
+}
+
+Menu.prototype.keyDown = function(key) {
+    if (key === UP_ARROW) {
+        // Move up a level
+        /*if (selectedLevel > 0) {
+            --selectedLevel;
+        }
+        ('.level').each(function(i) {
+            if (i === selectedLevel) {
+                this.focus();
+            }
+        }); */
+    } else if (key === DOWN_ARROW) {
+        // Move down a level
+        /*if (selectedLevel < levels.length - 1) {
+            ++selectedLevel;
+        }
+        ('.level').each(function(i) {
+            if (i === selectedLevel) {
+                this.focus();
+            }
+        });*/
+    }
 }
 
 Menu.prototype.loadFromJSON = function(json) {
@@ -60,6 +88,11 @@ Menu.prototype.toHTML = function() {
 	var html = '<h2>' + this.username + '\'s Levels</h2><div id="levels">';
 	for (var i = 0; i < this.levels.length; ++i) {
 		html += '<div class="level"><a href="' + this.getHashForLevel(this.levels[i]) + '">' + this.levels[i].title + '</div>';
+
+        // Set first level as in focus
+        if (i === 0) {
+            $('.level').focus();
+        }
 	}
 	html += '</div>';
 	return html;
@@ -227,16 +260,27 @@ function MenuLevel(title, html_title) {
             }
 
 			currentScreen.keyDown(e.which);
- 		}
 
-		// prevents default behaviors like scrolling up/down (F keys start at 112)
-		if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
+            // Prevents default behaviors like scrolling up/down (F keys start at 112)
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) {
+                e.preventDefault();
+            }
+ 		} else if ($('#levelScreen').is(':visible')) {
+            menu.keyDown(e.which);
+
+            // Prevents default behaviors except for tab and enter keys
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111 && e.which !== TAB_KEY && e.which !== ENTER_KEY) {
+                e.preventDefault();
+            }
+        }
 	});
 
 	$(document).keyup(function(e) {
         if (currentScreen !== null) {
             currentScreen.keyUp(e.which);
-            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) e.preventDefault();
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111) {
+                e.preventDefault();
+            }
         }
 	});
 })();
