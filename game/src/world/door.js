@@ -35,6 +35,8 @@ Door.prototype.doorPut = function(i, kill) {
         if (kill) {
             gameState.killAll(this.edges[i]);
         }
+
+		gameState.recordModification();
     }
 }
 
@@ -48,6 +50,8 @@ Door.prototype.doorRemove = function(i) {
         }
 
         cell.removeEdge(this.edges[i]);
+
+		gameState.recordModification();
     }
 }
 

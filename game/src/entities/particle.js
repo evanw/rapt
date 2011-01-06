@@ -56,7 +56,7 @@ ParticleInstance.prototype.tick = function(seconds) {
 	this.m_velocity.y -= this.m_gravity * seconds;
 	this.m_position = this.m_position.add(this.m_velocity.mul(seconds));
 	this.m_angle += this.m_angularVelocity * seconds;
-	if(this.m_alpha < 0.01) {
+	if(this.m_alpha < 0.05) {
 		this.m_bounces = -1;
 	}
 	return (this.m_bounces >= 0);
@@ -138,51 +138,46 @@ ParticleInstance.prototype.velocity = function(velocity) { this.m_velocity = vel
 
 // wrap in anonymous function for private variables
 var Particle = (function() {
-	// particles is a circular buffer starting at firstParticle and ending right before
-	// lastParticle, so if firstParticle == lastParticle then the particle buffer is empty
+	// particles is an array of ParticleInstances where the first count are in use
 	var particles = new Array(3000);
-	var firstParticle = 0;
-	var lastParticle = 0;
+	var maxCount = particles.length;
+	var count = 0;
 
 	for(var i = 0; i < particles.length; i++) {
 		particles[i] = new ParticleInstance();
 	}
 
 	function Particle() {
-		gameState.incrementStat(STAT_NUM_PARTICLES);
-		var particle = particles[lastParticle];
-		lastParticle = (lastParticle + 1) % particles.length;
-		if(firstParticle == lastParticle) {
-			firstParticle = (firstParticle + 1) % particles.length;
-		}
+		var particle = (count < maxCount) ? particles[count++] : particles[maxCount - 1];
 		particle.init();
+		gameState.incrementStat(STAT_NUM_PARTICLES);
 		return particle;
 	}
 
 	Particle.reset = function() {
-		firstParticle = lastParticle = 0;
+		count = 0;
 	};
 
 	Particle.tick = function(seconds) {
-		// strip off all the particles that have died, from the start of the list
-		for(; firstParticle != lastParticle; firstParticle = (firstParticle + 1) % particles.length) {
-			// if the first particle in our slice of the buffer is still alive, don't strip it off
-			if(particles[firstParticle].tick(seconds)) {
-				break;
-			}
-		}
-
-		// loop through all of the particles in our slice of the circular buffer
-		if(firstParticle != lastParticle) {
-			// add one because the first particle has already been ticked above
-			for(var i = (firstParticle + 1) % particles.length; i != lastParticle; i = (i + 1) % particles.length) {
-				particles[i].tick(seconds);
+		for(var i = 0; i < count; i++) {
+			var isAlive = particles[i].tick(seconds);
+			if (!isAlive) {
+				// swap the current particle with the last active particle (this will swap with itself if this is the last active particle)
+				var temp = particles[i];
+				particles[i] = particles[count - 1];
+				particles[count - 1] = temp;
+				
+				// forget about the dead particle that we just moved to the end of the active particle list
+				count--;
+				
+				// don't skip the particle that we just swapped in
+				i--;
 			}
 		}
 	};
 
 	Particle.draw = function(c) {
-		for(var i = firstParticle; i != lastParticle; i = (i + 1) % particles.length) {
+		for(var i = 0; i < count; i++) {
 			var particle = particles[i];
 			var pos = particle.m_position;
 			if (pos.x >= drawMinX && pos.y >= drawMinY && pos.x <= drawMaxX && pos.y <= drawMaxY) {

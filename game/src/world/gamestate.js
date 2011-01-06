@@ -25,6 +25,10 @@ function GameState() {
 
     // keys (will be set automatically)
     this.killKey = false;
+
+	// if you need to tell if the world has been modified (door has been opened/closed), just watch
+	// for changes to this variable, which can be incremented by gameState.recordModification()
+	this.modificationCount = 0;
 }
 
 // global variable for game state, initialized in main.js
@@ -34,6 +38,10 @@ var gameState;
 // so just check that the enemy center is within these bounds, don't bother about adding the radius)
 var drawMinX = 0, drawMinY = 0;
 var drawMaxX = 0, drawMaxY = 0;
+
+GameState.prototype.recordModification = function() {
+	this.modificationCount++;
+};
 
 GameState.prototype.getPlayer = function(i) {
     return (i == 0) ? this.playerA : this.playerB;

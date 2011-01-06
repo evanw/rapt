@@ -1,5 +1,3 @@
-// !!! THIS DIDN'T WORK AT ALL, AS YOU CAN SEE FROM THE PERFORMANCE DATA !!!
-
 // caching strategy: cache the level background around each player on two
 // canvases twice the size of the screen and re-center them as needed
 
@@ -45,11 +43,15 @@ function BackgroundCache(name) {
 	this.ymin = 0;
 	this.xmax = 0;
 	this.ymax = 0;
+	
+	this.modificationCount = -1;
 }
 
 BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 	// if cache is invalid, update cache
-	if (xmin < this.xmin || xmax > this.xmax || ymin < this.ymin || ymax > this.ymax) {
+	if (this.modificationCount != gameState.modificationCount || xmin < this.xmin || xmax > this.xmax || ymin < this.ymin || ymax > this.ymax) {
+		this.modificationCount = gameState.modificationCount;
+		
 		// set bounds of cached image
 		var viewportWidth = 2 * (xmax - xmin);
 		var viewportHeight = 2 * (ymax - ymin);
