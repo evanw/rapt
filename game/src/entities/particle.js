@@ -182,8 +182,12 @@ var Particle = (function() {
 	};
 
 	Particle.draw = function(c) {
-        for(var i = firstParticle; i != lastParticle; i = (i + 1) % particles.length) {
-			particles[i].draw(c);
+		for(var i = firstParticle; i != lastParticle; i = (i + 1) % particles.length) {
+			var particle = particles[i];
+			var pos = particle.m_position;
+			if (pos.x >= drawMinX && pos.y >= drawMinY && pos.x <= drawMaxX && pos.y <= drawMaxY) {
+				particle.draw(c);
+			}
 		}
 	};
 

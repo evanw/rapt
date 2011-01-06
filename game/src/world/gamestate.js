@@ -30,6 +30,11 @@ function GameState() {
 // global variable for game state, initialized in main.js
 var gameState;
 
+// bounding rectangle around all pixels currently being drawn to (also includes 2 cells of padding,
+// so just check that the enemy center is within these bounds, don't bother about adding the radius)
+var drawMinX = 0, drawMinY = 0;
+var drawMaxX = 0, drawMaxY = 0;
+
 GameState.prototype.getPlayer = function(i) {
     return (i == 0) ? this.playerA : this.playerB;
 }
@@ -245,12 +250,35 @@ function drawGoal(c, point, time) {
 }
 
 GameState.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
+	// no enemy or particle is larger than two cells wide
+	drawMinX = xmin - 2;
+	drawMinY = ymin - 2;
+	drawMaxX = xmax + 2;
+	drawMaxY = ymax + 2;
+	
+	// background (TODO: cache this)
 	this.world.draw(c, xmin, ymin, xmax, ymax);
-	drawSpawnPoint(c, this.world.spawnPoint.add(this.spawnPointOffset));
-	drawGoal(c, this.world.goal, this.timeSinceStart);
+	
+	// spawn point and goal
+	var spawnPoint = this.world.spawnPoint.add(this.spawnPointOffset);
+	var goal = this.world.goal;
+	if (spawnPoint.x >= drawMinX && spawnPoint.y >= drawMinY && spawnPoint.x <= drawMaxX && spawnPoint.y <= drawMaxY) {
+		drawSpawnPoint(c, spawnPoint);
+	}
+	if (goal.x >= drawMinX && goal.y >= drawMinY && goal.x <= drawMaxX && goal.y <= drawMaxY) {
+		drawGoal(c, goal, this.timeSinceStart);
+	}
+	
+	// players
 	this.playerA.draw(c);
 	this.playerB.draw(c);
-    for (var i = 0; i < this.enemies.length; ++i) {
-        this.enemies[i].draw(c);
-    }
+	
+	// enemies
+	for (var i = 0; i < this.enemies.length; ++i) {
+		var enemy = this.enemies[i];
+		var center = enemy.getCenter();
+		if (center.x >= drawMinX && center.y >= drawMinY && center.x <= drawMaxX && center.y <= drawMaxY) {
+			enemy.draw(c);
+		}
+	}
 }
