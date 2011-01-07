@@ -655,3 +655,27 @@ Sprites.drawHeadache = function(c, alpha, isRed) {
 	c.fill();
 	c.stroke();
 };
+
+Sprites.drawSign = function(c, alpha, text) {
+	c.save();
+	c.textAlign = "center";
+	c.scale(1 / 50, -1 / 50);
+	c.lineWidth *= 50;
+	
+	c.save();
+	c.font = "bold 34px sans-serif";
+	c.fillStyle = "yellow";
+	c.strokeStyle = "black";
+	c.translate(0, 12);
+	c.fillText('?', 0, 0);
+	c.strokeText('?', 0, 0);
+	c.restore();
+	
+	var textArray = splitUpText(c, text);
+	var fontSize = 13;
+	var xCenter = 0;
+	var yCenter = -0.35 * 50 - fontSize * textArray.length;
+	drawTextBox(c, textArray, xCenter, yCenter, fontSize);
+	
+	c.restore();
+};

@@ -16,6 +16,7 @@ var SPRITE_SHOCK_HAWK = 14;
 var SPRITE_STALACBAT = 15;
 var SPRITE_WALL_AVOIDER = 16;
 var SPRITE_COG = 17;
+var SPRITE_SIGN = 18;
 
 function Sprite(id, radius, drawFunc, anchor, color, angle) {
 	this.id = id;
@@ -24,6 +25,7 @@ function Sprite(id, radius, drawFunc, anchor, color, angle) {
 	this.anchor = anchor || new Vector(0, 0);
 	this.color = color || 0;
 	this.angle = angle || 0;
+	this.text = '';
 }
 
 Sprite.prototype.getAnglePolygon = function() {
@@ -111,5 +113,6 @@ var spriteTemplates = [
 	{ name: 'Wall Avoider', sprite: new Sprite(SPRITE_WALL_AVOIDER, 0.3, function(c, alpha, color) { Sprites.drawWallAvoider(c, alpha, color == 1); }) },
 	
 	// game objects
-	{ name: 'Cog', sprite: new Sprite(SPRITE_COG, 0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); }) }
+	{ name: 'Cog', sprite: new Sprite(SPRITE_COG, 0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); }) },
+	{ name: 'Sign', sprite: new Sprite(SPRITE_SIGN, 0.25, function(c, alpha) { Sprites.drawSign(c, alpha, this.text); }) }
 ];
