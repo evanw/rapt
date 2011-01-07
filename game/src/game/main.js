@@ -149,6 +149,7 @@ function MenuLevel(title, html_title) {
 			ajaxGet('menu', getMenuURL(), function(json) {
 	            showLevelScreen();
                 getMenuFromJSON(json);
+				document.title = menu.username + ' - RAPT';
 			});
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
@@ -167,6 +168,7 @@ function MenuLevel(title, html_title) {
 				jsonForCurrentLevel = JSON.parse(json['level']['data']);
 				showGameScreen();
 				gameState.loadLevelFromJSON(jsonForCurrentLevel);
+				document.title = json['level']['title'] + ' - ' + menu.username + ' - RAPT';
 			});
         }
     }

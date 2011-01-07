@@ -31,7 +31,7 @@ function ajaxGetLevel(onSuccess) {
 	});
 }
 
-function ajaxPutLevel(json) {
+function ajaxPutLevel(json, onSuccess) {
 	function showError() {
 		alert('Could not save level to\n' + getLevelURL());
 	}
@@ -45,6 +45,7 @@ function ajaxPutLevel(json) {
 		'contentType': 'application/json; charset=utf-8',
 		'success': function(data, status, request) {
 			overlay('Saved');
+			if (onSuccess) onSuccess();
 		},
 		'error': function(request, status, error) {
 			showError();
@@ -349,7 +350,10 @@ function loadEditor() {
 				e.preventDefault();
 			} else if (e.which == 'S'.charCodeAt(0)) {
 				e.preventDefault();
-				ajaxPutLevel(editor.save());
+				var cleanIndex = editor.doc.undoStack.getCurrentIndex();
+				ajaxPutLevel(editor.save(), function() {
+					editor.doc.undoStack.setCleanIndex(cleanIndex);
+				});
 			} else if (e.which == 'A'.charCodeAt(0)) {
 				editor.selectAll();
 				e.preventDefault();
@@ -373,6 +377,12 @@ function loadEditor() {
 	});
 	$(window).focusout(function(e) {
 		control = shift = meta = alt = false;
+	});
+
+	$(window).bind('beforeunload', function() {
+		if (!editor.doc.undoStack.isClean()) {
+			return 'Some of your edits are not saved, and will be lost if you close this window.  Continue?';
+		}
 	});
 }
 
