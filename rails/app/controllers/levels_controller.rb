@@ -41,15 +41,12 @@ class LevelsController < ApplicationController
   # POST /levels.xml
   def create
     @level = Level.new(params[:level])
+    @level.user_id = params[:level][:user_id]
 
-    respond_to do |format|
-      if @level.save
-        format.html { redirect_to(@level, :notice => 'Level was successfully created.') }
-        format.xml  { render :xml => @level, :status => :created, :location => @level }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @level.errors, :status => :unprocessable_entity }
-      end
+    if @level.save
+      redirect_to "/users/#{@level.user.username}/#{@level.html_title}"
+    else
+      redirect_to "/users/#{@level.user.username}", :flash => {:error => @level.errors.full_messages.join("<br />")}
     end
   end
 
@@ -73,11 +70,12 @@ class LevelsController < ApplicationController
   # DELETE /levels/1.xml
   def destroy
     @level = Level.find(params[:id])
-    @level.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(levels_url) }
-      format.xml  { head :ok }
+    if @level.user == current_user
+      @level.destroy
+      flash[:notice] = "Successfully deleted level '#{@level.title}'"
+    else
+      flash[:error] = "You can only delete your own lvels"
     end
+    redirect_to "/users/#{current_user.username}"
   end
 end

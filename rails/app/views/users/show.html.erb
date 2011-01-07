@@ -1,1 +1,19 @@
 <!-- TODO: Display User account -->
+
+<% if current_user.present? and current_user == @user %>
+Create new level
+
+<form action="/levels" method="post">
+	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
+	<input type="text" name="level[title]" />
+	<input type="submit" value="Create" />
+</form>
+
+<% end %>
+
+<ul id="levels">
+	<% @user.levels.each do |level| %>
+		<li position="<%= level.position %>" class="draggable"><%= level.title %> <%== edit_links_for_level level %></li>
+	<% end %>
+</ul>

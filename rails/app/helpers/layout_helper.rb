@@ -19,4 +19,12 @@ module LayoutHelper
   def javascript(*args)
     content_for(:head) { javascript_include_tag(*args) }
   end
+  
+  def edit_links_for_level(level)
+    if current_user.present? and level.user == current_user
+      "<span class='links'><a href='/users/#{current_user.username}/#{level.html_title}'>Edit</a> <a href='/levels/#{level.id}' data-confirm='Are you sure?' data-method='delete' rel='nofollow'>Delete</a></span>"
+    else
+      ""
+    end
+  end
 end

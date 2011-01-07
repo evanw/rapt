@@ -34,7 +34,8 @@ class UsersController < ApplicationController
         if current_user.present? and @level.user == current_user
          render :layout => false
        else
-         redirect_to @user, :flash => {:error => "You can only edit levels you created"}
+         redirect_to "/users/#{current_user.username}", :flash => {:error => "You can only edit levels you created"} if current_user.present?
+         redirect_to root_url, :flash => {:error => "You must be logged in to edit levels"}
        end
      end
     end
