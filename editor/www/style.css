@@ -198,3 +198,51 @@ body {
 	text-shadow: 0 1px 2px black;
 	display: none;
 }
+
+#sign-text-modal {
+	display: none;
+	background: rgba(0, 0, 0, 0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 3;
+}
+
+#sign-text-modal > div {
+	width: 300px;
+	margin: 200px auto 0 auto;
+	background: #EFEFEF;
+	padding: 20px 27px 20px 20px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+	-o-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+#sign-text {
+	width: 100%;
+	margin: 8px 0;
+}
+
+#sign-text-modal a {
+	border: 1px solid #5F5F5F;
+	display: inline-block;
+	line-height: 18px;
+	border-radius: 11px;
+	padding: 1px 15px;
+	background: #D7D7D7;
+	background: -moz-linear-gradient(#FFFFFF, #EFEFEF 25%, #E7E7E7 75%, #D7D7D7);
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), color-stop(0.25, #EFEFEF), color-stop(0.75, #E7E7E7), to(#D7D7D7));
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+	-o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+#sign-text-modal a:active {
+	border-color: #7F7F7F;
+	background: white;
+}

@@ -150,7 +150,8 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML() + '<hr>TODO: signs and enemy rotation');
+	$('#help').html(gen.getHTML() + '<hr>The starting direction for Bombers, Jet Streams, Wall Crawlers, and ' +
+		'Wheeligators can be changed by selecting it and dragging the triangle (must be in "Select" mode).');
 }
 
 function fillEnemies() {
