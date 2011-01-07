@@ -6,7 +6,49 @@ var HEADACHE_ELASTICITY = 0;
 var HEADACHE_SPEED = 3;
 var HEADACHE_RANGE = 6;
 
-var CHANGE_GAZE_TIME = 2;
+var HEADACHE_CLOUD_RADIUS = HEADACHE_RADIUS * 0.5;
+
+function HeadacheChain(center) {
+	this.points = [];
+	this.point = new Vector(center.x * gameScale, center.y * gameScale);
+	this.point.x += (Math.random() - 0.5) * HEADACHE_RADIUS;
+	this.point.y += (Math.random() - 0.5) * HEADACHE_RADIUS;
+	this.angle = Math.random() * Math.PI * 2;
+}
+
+HeadacheChain.prototype.tick = function(seconds, center) {
+	var speed = 600;
+	
+	var dx = this.point.x - center.x * gameScale;
+	var dy = this.point.y - center.y * gameScale;
+	var percentFromCenter = Math.min(1, Math.sqrt(dx*dx + dy*dy) / HEADACHE_CLOUD_RADIUS);
+	
+	var angleFromCenter = Math.atan2(dy, dx) - this.angle;
+	while (angleFromCenter < -Math.PI) angleFromCenter += Math.PI * 2;
+	while (angleFromCenter > Math.PI) angleFromCenter -= Math.PI * 2;
+	var percentHeading = (Math.PI - Math.abs(angleFromCenter)) / Math.PI;
+	
+	var randomOffset = speed * (Math.random() - 0.5) * seconds;
+	this.angle += randomOffset * (1 - percentFromCenter * 0.8) + percentHeading * percentFromCenter * (angleFromCenter > 0 ? -2 : 2);
+	this.angle -= Math.floor(this.angle / (Math.PI * 2)) * Math.PI * 2;
+	
+	this.point.x += speed * Math.cos(this.angle) * seconds;
+	this.point.y += speed * Math.sin(this.angle) * seconds;
+	this.points.push(new Vector(this.point.x, this.point.y));
+	if (this.points.length > 15) this.points.shift();
+};
+
+HeadacheChain.prototype.draw = function(c) {
+	for (var i = 1; i < this.points.length; i++) {
+		var a = this.points[i - 1];
+		var b = this.points[i];
+		c.strokeStyle = 'rgba(0, 0, 0, ' + (i / this.points.length).toFixed(3) + ')';
+		c.beginPath();
+		c.moveTo(a.x / gameScale, a.y / gameScale);
+		c.lineTo(b.x / gameScale, b.y / gameScale);
+		c.stroke();
+	}
+};
 
 Headache.subclasses(HoveringEnemy);
 
@@ -17,7 +59,11 @@ function Headache(center, target) {
     this.isAttached = false;
     this.isTracking = false;
     this.restingOffset = new Vector(0, -10);
-    this.timeUntilNewRestingOffset = randInRange(0, CHANGE_GAZE_TIME);
+
+	this.chains = [];
+	for (var i = 0; i < 4; i++) {
+		this.chains.push(new HeadacheChain(center));
+	}
 }
 
 Headache.prototype.move = function(seconds) {
@@ -69,21 +115,21 @@ Headache.prototype.onDeath = function() {
     
     var position = this.getCenter();
 
-    // body
-    var direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
-    Particle().position(position).velocity(direction).radius(HEADACHE_RADIUS).bounces(3).elasticity(0.5).decay(0.01).circle().gravity(5);
+	// body
+	var direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
+	var body = Particle().position(position).velocity(direction).radius(HEADACHE_RADIUS).bounces(3).elasticity(0.5).decay(0.01).circle().gravity(5);
+	if (this.target == gameState.playerA) {
+		body.color(1, 0, 0, 1);
+	} else {
+		body.color(0, 0, 1, 1);
+	}
 
-    // eyes
-    direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
-    Particle().position(position.add(new Vector(-0.075, 0.075))).velocity(direction).radius(0.075).bounces(3).elasticity(0.5).decay(0.01).color(1, 1, 1, 1).circle().gravity(3);
-    direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
-    Particle().position(position.add(new Vector(0.075, 0.075))).velocity(direction).radius(0.075).bounces(3).elasticity(0.5).decay(0.01).color(1, 1, 1, 1).circle().gravity(1);
-
-    // pupils
-    direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
-    Particle().position(position.add(new Vector(-0.075, 0.075))).velocity(direction).radius(0.0375).bounces(3).elasticity(0.5).decay(0.01).circle().gravity(4);
-    direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
-    Particle().position(position.add(new Vector(0.075, 0.075))).velocity(direction).radius(0.0375).bounces(3).elasticity(0.5).decay(0.01).circle().gravity(2);
+	// black lines out from body
+	for (var i = 0; i < 50; ++i) {
+		var rotationAngle = randInRange(0, 2 * Math.PI);
+		var direction = Vector.fromAngle(rotationAngle).mul(randInRange(3, 5));
+		Particle().position(this.getCenter()).velocity(direction).angle(rotationAngle).radius(0.05).bounces(3).elasticity(0.5).decay(0.01).line().color(0, 0, 0, 1);
+	}
 };
 
 Headache.prototype.reactToPlayer = function(player) {
@@ -100,58 +146,23 @@ Headache.prototype.getTarget = function() {
 };
 
 Headache.prototype.afterTick = function(seconds) {
-    // periodically update the resting gaze offset
-    this.timeUntilNewRestingOffset -= seconds;
-    if (this.timeUntilNewRestingOffset < 0)
-    {
-        this.restingOffset = Vector(randInRange(-5, 5), randInRange(-5, 5));
-        this.timeUntilNewRestingOffset += CHANGE_GAZE_TIME;
-    }
-
-    //bodySprite.SetOffsetBeforeRotation(GetCenter().x, GetCenter().y);
+    var center = this.getCenter();
+	for (var i = 0; i < this.chains.length; i++) {
+		this.chains[i].tick(seconds, center);
+	}
 };
 
 Headache.prototype.draw = function(c) {
-    var position = this.getCenter();
-
-    c.fillStyle = 'black';
-    c.fillRect(position.x - HEADACHE_RADIUS, position.y - HEADACHE_RADIUS, HEADACHE_RADIUS, HEADACHE_RADIUS)
-
-    /*
-    //bodySprite.Draw();
-
-    if (this.target === gameState.playerA) glColor3ub(205, 0, 0);
-    else glColor3ub(0, 0, 255);
-    var leftEye = position.add(new Vector(-0.075, 0.075));
-    var rightEye = position.add(new Vector(0.075, 0.075));
-    var leftTarget = leftEye.add(restingOffset);
-    var rightTarget = rightEye.add(restingOffset);
-    if (this.isTracking || this.isAttached) leftTarget = rightTarget = this.target.getCenter();
-
-    glPointSize(0.075f * 50);
-    glBegin(GL_POINTS);
-    glVertex2fv((leftEye + (leftTarget - leftEye).Unit() * 0.025f).xy);
-    glVertex2fv((rightEye + (rightTarget - rightEye).Unit() * 0.025f).xy);
-    glEnd();
-
-    // draw the mouth
-    glColor3ub(255, 255, 255);
-    if (this.isAttached) {
-        // smile
-        glBegin(GL_LINE_STRIP);
-        Arc(position.x, position.y, 0.125f, M_PI*1.25f, M_PI*1.75f);
-        glEnd();
-    } else if (this.isTracking) {
-        // "o" shape
-        glBegin(GL_LINE_STRIP);
-        Arc(position.x, position.y - 0.1f, 0.05f, 0, 2*M_PI);
-        glEnd();
-    } else {
-        // flat line
-        glBegin(GL_LINES);
-        glVertex2f(position.x - 0.1f, position.y - 0.1f);
-        glVertex2f(position.x + 0.1f, position.y - 0.1f);
-        glEnd();
-    }
-    */
+    var center = this.getCenter();
+	
+	c.strokeStyle = 'black';
+	for (var i = 0; i < this.chains.length; i++) {
+		this.chains[i].draw(c);
+	}
+	
+	c.fillStyle = (this.target == gameState.playerA) ? 'red' : 'blue';
+	c.beginPath();
+	c.arc(center.x, center.y, HEADACHE_RADIUS * 0.75, 0, Math.PI * 2, false);
+	c.fill();
+	c.stroke();
 };
