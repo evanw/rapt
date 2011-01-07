@@ -766,7 +766,7 @@ CollisionDetector.closestToCircleSegment = function(circle, ref_shapePoint, ref_
 	{
 		// this returns the distance of the circle from the segment, along the normal
 		// since the normal is a unit vector and is also the shortest path, this works.
-		ref_shapePoint.ref = circle.center.add(segment.normal).mul(circle.radius * (ref_projectProportion.ref > 0 ? 1 : -1));
+		ref_shapePoint.ref = circle.center.sub(segment.normal.mul(circle.radius * (ref_projectProportion.ref > 0 ? 1 : -1)));
 		return ref_segmentPoint.ref.sub(circle.center).length() - circle.radius;
 	}
 
@@ -778,13 +778,15 @@ CollisionDetector.closestToCircleSegment = function(circle, ref_shapePoint, ref_
 	if(distanceSquaredToStart < distanceSquaredToEnd)
 	{
 		ref_segmentPoint.ref = segment.start;
-		ref_shapePoint.ref = ref_segmentPoint.ref.sub(circle.center).unit().mul(circle.radius);
+		// this was WAY off in the version before the port, was relative to circle.center instead of absolute:
+		ref_shapePoint.ref = circle.center.add(ref_segmentPoint.ref.sub(circle.center).unit().mul(circle.radius));
 		return Math.sqrt(distanceSquaredToStart) - circle.radius;
 	}
 
 	// otherwise, the end is closer
 	ref_segmentPoint.ref = segment.end;
-	ref_shapePoint.ref = ref_segmentPoint.ref.sub(circle.center).unit().mul(circle.radius);
+	// this was WAY off in the version before the port, was relative to circle.center instead of absolute:
+	ref_shapePoint.ref = circle.center.add(ref_segmentPoint.ref.sub(circle.center).unit().mul(circle.radius));
 	return Math.sqrt(distanceSquaredToEnd) - circle.radius;
 };
 CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, ref_segmentPoint, segment) {

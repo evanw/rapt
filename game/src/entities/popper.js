@@ -123,7 +123,6 @@ Popper.prototype.afterTick = function(seconds) {
     var position = this.getCenter();
     this.sprites[POPPER_BODY].offsetBeforeRotation = position;
 
-	// TODO: this isn't working??
     // unfortunate hax because poppers bounce a little bit because of the way Enemy::Tick() works
     var ref_shapePoint = {}, ref_worldPoint = {};
     var distance = CollisionDetector.closestToEntityWorld(this, 2 * POPPER_RADIUS, ref_shapePoint, ref_worldPoint, gameState.world);

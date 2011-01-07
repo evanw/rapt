@@ -148,17 +148,20 @@ function SelectionTool(doc) {
 	this.doc = doc;
 	this.mode = SELECTION_MODE_NONE;
 	this.start = this.end = null;
+	this.modifierKeyPressed = false;
+	this.originalSelection = [];
 }
 
 SelectionTool.prototype.mouseDown = function(point) {
+	this.originalSelection = this.doc.world.getSelection();
+	
 	// Check if we clicked on an existing selection
 	var clickedOnSelection = false;
 	var padding = new Vector(0.2, 0.2);
-	var selection = this.doc.world.getSelection();
 	var selectionUnderMouse = this.doc.world.selectionInRect(new Rectangle(point.sub(padding), point.add(padding)));
 	for (var i = 0; i < selectionUnderMouse.length; i++) {
-		for (var j = 0; j < selection.length; j++) {
-			if (selectionUnderMouse[i] == selection[j]) {
+		for (var j = 0; j < this.originalSelection.length; j++) {
+			if (selectionUnderMouse[i] == this.originalSelection[j]) {
 				clickedOnSelection = true;
 				break;
 			}
@@ -180,7 +183,26 @@ SelectionTool.prototype.mouseDown = function(point) {
 SelectionTool.prototype.mouseMoved = function(point) {
 	this.end = point;
 	if (this.mode == SELECTION_MODE_SELECT) {
-		this.doc.setSelection(this.doc.world.selectionInRect(new Rectangle(this.start, this.end)));
+		var newSelection = this.doc.world.selectionInRect(new Rectangle(this.start, this.end));
+		if (this.modifierKeyPressed) {
+			// add anything in original but not in new (additive), and remove anything in both (subtractive)
+			for (var i = 0; i < this.originalSelection.length; i++) {
+				var s = this.originalSelection[i];
+				for (var j = 0; j < newSelection.length; j++) {
+					if (s == newSelection[j]) {
+						break;
+					}
+				}
+				if (j == newSelection.length) {
+					// add element in original but not in new (additive)
+					newSelection.push(s);
+				} else {
+					// remove element in both (subtractive)
+					newSelection.splice(j--, 1);
+				}
+			}
+		}
+		this.doc.setSelection(newSelection);
 	} else if (this.mode == SELECTION_MODE_MOVE) {
 		this.doc.moveSelection(point.sub(this.start));
 		this.start = point;

@@ -208,13 +208,14 @@ Editor.prototype.drawGrid = function() {
 	c.stroke();
 };
 
-Editor.prototype.mouseDown = function(point, buttons) {
+Editor.prototype.mouseDown = function(point, buttons, modifierKeyPressed) {
 	if (buttons == MOUSE_RIGHT) {
 		// Camera pan on right click
 		this.activeTool = new CameraPanTool(this.worldCenter);
 		this.activeTool.mouseDown(this.viewportToWorld(point));
 	} else if (buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
+		this.selectedTool.modifierKeyPressed = modifierKeyPressed;
 		this.activeTool = this.selectedTool;
 		
 		if (this.activeTool != null) {

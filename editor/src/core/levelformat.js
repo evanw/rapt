@@ -73,7 +73,7 @@ function loadWorldFromJSON(json) {
 			break;
 			
 		case 'enemy':
-			world.placeables.push(spriteTemplates[enemyToSpriteMap[e['type']]].sprite.clone(jsonToVec(e['pos']), e['color']));
+			world.placeables.push(spriteTemplates[enemyToSpriteMap[e['type']]].sprite.clone(jsonToVec(e['pos']), e['color'], e['angle']));
 			break;
 		}
 	}
@@ -198,7 +198,7 @@ function saveWorldToJSON(world) {
 				'type': spriteTypeFromId(p.id),
 				'pos': vecToJSON(p.anchor.sub(min)),
 				'color': p.color,
-				'angle': 0 // TODO
+				'angle': p.angle
 			});
 		}
 	}

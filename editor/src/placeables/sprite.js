@@ -17,18 +17,19 @@ var SPRITE_STALACBAT = 15;
 var SPRITE_WALL_AVOIDER = 16;
 var SPRITE_COG = 17;
 
-function Sprite(id, radius, drawFunc, anchor, color) {
+function Sprite(id, radius, drawFunc, anchor, color, angle) {
 	this.id = id;
 	this.radius = radius;
 	this.drawFunc = drawFunc;
 	this.anchor = anchor || new Vector(0, 0);
 	this.color = color || 0;
+	this.angle = angle || 0;
 }
 
 Sprite.prototype.draw = function(c, alpha) {
 	c.save();
 	c.translate(this.anchor.x, this.anchor.y);
-	this.drawFunc(c, alpha || 1, this.color);
+	this.drawFunc(c, alpha || 1, this.color, this.angle);
 	c.restore();
 };
 
@@ -37,6 +38,23 @@ Sprite.prototype.drawSelection = function(c) {
 	c.arc(this.anchor.x, this.anchor.y, this.radius + 0.1, 0, Math.PI * 2, false);
 	c.fill();
 	c.stroke();
+	
+	if (this.id == SPRITE_JET_STREAM ||
+		this.id == SPRITE_WALL_CRAWLER ||
+		this.id == SPRITE_WHEELIGATOR ||
+		this.id == SPRITE_BOMBER) {
+		var direction = Vector.fromAngle(this.angle);
+		var tip = this.anchor.add(direction.mul(this.radius + 0.4));
+		var cornerA = this.anchor.add(direction.mul(this.radius + 0.2).add(direction.flip().mul(0.2)));
+		var cornerB = this.anchor.add(direction.mul(this.radius + 0.2).sub(direction.flip().mul(0.2)));
+		c.beginPath();
+		c.moveTo(tip.x, tip.y);
+		c.lineTo(cornerA.x, cornerA.y);
+		c.lineTo(cornerB.x, cornerB.y);
+		c.closePath();
+		c.fill();
+		c.stroke();
+	}
 };
 
 Sprite.prototype.touchesRect = function(rect) {
@@ -54,8 +72,8 @@ Sprite.prototype.setAnchor = function(anchor) {
 Sprite.prototype.resetAnchor = function() {
 };
 
-Sprite.prototype.clone = function(newAnchor, newColor) {
-	return new Sprite(this.id, this.radius, this.drawFunc, newAnchor, newColor);
+Sprite.prototype.clone = function(newAnchor, newColor, newAngle) {
+	return new Sprite(this.id, this.radius, this.drawFunc, newAnchor, newColor, newAngle);
 };
 
 Sprite.prototype.getCenter = function() {
@@ -69,7 +87,7 @@ var spriteTemplates = [
 	{ name: 'Hunter', sprite: new Sprite(SPRITE_HUNTER, 0.3, function(c, alpha) { Sprites.drawHunter(c, alpha); }) },
 	{ name: 'Multi-Gun', sprite: new Sprite(SPRITE_MULTI_GUN, 0.45, function(c, alpha) { Sprites.drawMultiGun(c, alpha); }) },
 	{ name: 'Popper', sprite: new Sprite(SPRITE_POPPER, 0.5, function(c, alpha) { Sprites.drawPopper(c, alpha); }) },
-	{ name: 'Jet Stream', sprite: new Sprite(SPRITE_JET_STREAM, 0.45, function(c, alpha) { Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
+	{ name: 'Jet Stream', sprite: new Sprite(SPRITE_JET_STREAM, 0.45, function(c, alpha, color, angle) { c.rotate(angle - Math.PI / 2); Sprites.drawRiotGun(c, alpha, 0.75, Math.PI / 2); }) },
 	{ name: 'Rocket Spider', sprite: new Sprite(SPRITE_ROCKET_SPIDER, 0.5, function(c, alpha) { Sprites.drawSpider(c, alpha); }) },
 	{ name: 'Spike Ball', sprite: new Sprite(SPRITE_SPIKE_BALL, 0.3, function(c, alpha) { Sprites.drawSpikeBall(c, alpha); }) },
 	{ name: 'Wall Crawler', sprite: new Sprite(SPRITE_WALL_CRAWLER, 0.25, function(c, alpha) { Sprites.drawWallCrawler(c, alpha); }) },

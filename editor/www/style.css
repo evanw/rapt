@@ -184,7 +184,7 @@ body {
 	bottom: 0;
 }
 
-#saved {
+#overlay {
 	position: absolute;
 	top: 50%;
 	left: 50%;

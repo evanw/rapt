@@ -1,5 +1,9 @@
 #require <editor.js>
 
+function overlay(text) {
+	$('#overlay').html(text).show().stop().fadeTo(0, 1).fadeOut();
+}
+
 function getLevelURL() {
 	return 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
 }
@@ -32,6 +36,7 @@ function ajaxPutLevel(json) {
 		alert('Could not save level to\n' + getLevelURL());
 	}
 	
+	overlay('Saving');
 	$.ajax({
 		'url': getLevelURL(),
 		'type': 'PUT',
@@ -39,8 +44,7 @@ function ajaxPutLevel(json) {
 		'data': JSON.stringify({ 'level': { 'data': json } }),
 		'contentType': 'application/json; charset=utf-8',
 		'success': function(data, status, request) {
-			$('#saved').show();
-			setTimeout(function(){ $('#saved').fadeOut(); }, 250);
+			overlay('Saved');
 		},
 		'error': function(request, status, error) {
 			showError();
@@ -286,10 +290,20 @@ function loadEditor() {
 	fillWalls();
 	fillHelp();
 	
+	// Keep track of modifier key states
+	var KEY_CONTROL = 17;
+	var KEY_SHIFT = 16;
+	var KEY_META = 91;
+	var KEY_ALT = 18;
+	var control = false;
+	var shift = false;
+	var meta = false;
+	var alt = false;
+	
 	// Connect canvas events to editor events
 	$(canvas).mousedown(function(e) {
 		buttons |= (1 << e.which);
-		editor.mouseDown(mousePoint(e), buttons);
+		editor.mouseDown(mousePoint(e), buttons, control | shift | meta | alt);
 		e.preventDefault();
 	});
 	$(canvas).mousemove(function(e) {
@@ -313,6 +327,7 @@ function loadEditor() {
 		editor.mouseOut();
 	});
 	
+	// Add handlers for window/document events
 	$(window).resize(function() {
 		resizeEditor();
 	});
@@ -320,7 +335,11 @@ function loadEditor() {
 		e.preventDefault();
 	});
 	$(document).keydown(function(e) {
-		if (e.ctrlKey || e.metaKey) {
+		if (e.which == KEY_CONTROL) control = true;
+		else if (e.which == KEY_SHIFT) shift = true;
+		else if (e.which == KEY_META) meta = true;
+		else if (e.which == KEY_ALT) alt = true;
+		else if (e.ctrlKey || e.metaKey) {
 			if (e.which == 'Z'.charCodeAt(0)) {
 				if (e.shiftKey) editor.redo();
 				else editor.undo();
@@ -339,6 +358,21 @@ function loadEditor() {
 			editor.deleteSeleciton();
 			e.preventDefault();
 		}
+	});
+	$(document).keyup(function(e) {
+		if (e.which == KEY_CONTROL) control = false;
+		else if (e.which == KEY_SHIFT) shift = false;
+		else if (e.which == KEY_META) meta = false;
+		else if (e.which == KEY_ALT) alt = false;
+	});
+
+	// If user does something like alt-tab, we will get a keydown
+	// but not a keyup, so reset the keyboard state in that case
+	$(window).blur(function(e) {
+		control = shift = meta = alt = false;
+	});
+	$(window).focusout(function(e) {
+		control = shift = meta = alt = false;
 	});
 }
 
