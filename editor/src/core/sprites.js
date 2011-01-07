@@ -655,3 +655,17 @@ Sprites.drawHeadache = function(c, alpha, isRed) {
 	c.fill();
 	c.stroke();
 };
+
+Sprites.drawSign = function(c, alpha) {
+	c.save();
+	c.textAlign = "center";
+	c.scale(1 / 50, -1 / 50);
+	c.lineWidth *= 50;
+	c.font = "bold 34px sans-serif";
+	c.fillStyle = "yellow";
+	c.strokeStyle = "black";
+	c.translate(0, 12);
+	c.fillText('?', 0, 0);
+	c.strokeText('?', 0, 0);
+	c.restore();
+};

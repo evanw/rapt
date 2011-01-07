@@ -69,7 +69,9 @@ function loadWorldFromJSON(json) {
 			break;
 			
 		case 'sign':
-			// TODO
+			var sign = spriteTemplates[SPRITE_SIGN].sprite.clone(jsonToVec(e['pos']), COLOR_NEUTRAL, 0);
+			sign.text = e['text'];
+			world.placeables.push(sign);
 			break;
 			
 		case 'enemy':
@@ -191,6 +193,12 @@ function saveWorldToJSON(world) {
 			json['entities'].push({
 				'class': 'cog',
 				'pos': vecToJSON(p.anchor.sub(min))
+			});
+		} else if ((p instanceof Sprite) && p.id == SPRITE_SIGN) {
+			json['entities'].push({
+				'class': 'sign',
+				'pos': vecToJSON(p.anchor.sub(min)),
+				'text': p.text
 			});
 		} else if (p instanceof Sprite) {
 			json['entities'].push({
