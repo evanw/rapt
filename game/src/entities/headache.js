@@ -93,7 +93,7 @@ Headache.prototype.move = function(seconds) {
             this.setDead(true);
         }
         // Otherwise it moves with the player
-        var delta = this.target.getCenter().add(new Vector(0, 0.5)).sub(this.getCenter());
+        var delta = this.target.getCenter().add(new Vector(0, 0.45)).sub(this.getCenter());
         // If player is crouching, adjust position
         if (this.target.getCrouch() && this.target.isOnFloor())
         {
