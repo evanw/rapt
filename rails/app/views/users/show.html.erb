@@ -14,6 +14,53 @@ Create new level
 
 <ul id="levels">
 	<% @user.levels.each do |level| %>
-		<li position="<%= level.position %>" class="draggable"><a href="/play#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a> <%== edit_links_for_level level %></li>
+		<li html_title="<%= level.html_title %>" position="<%= level.position %>" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><a href="/play#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a> <%== edit_links_for_level level %></li>
 	<% end %>
 </ul>
+
+
+<% if current_user and @user == current_user %>
+
+	<% content_for :head do %>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
+		<style>
+			#levels { list-style-type: none; margin: 0; padding: 0; }
+			#levels li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1em; height: 1.2em; }
+			#levels li span { position: absolute; margin-left: -1.3em; }
+			#levels li span.links { position: relative; float: right; }
+		</style>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
+	<% end %>
+
+	<% content_for :javascript do %>
+			function savePosition(element){
+				$.ajax({
+					url: '/users/<%= @user.username %>/'+element.attr('html_title'),
+					type: 'PUT',
+					data: ({ levelname: element.attr('html_title'), level: { position: element.attr('position') }})
+				});
+			}
+		
+			$( "#levels" ).sortable({
+				update: function(e, ui){
+					var numItems = $("#levels li").size();
+					var idx = $(ui.item).index();
+					var pos = parseFloat($(ui.item).attr('position'));
+					if(idx == 0 && numItems > 1)
+					{
+						var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
+						pos = after / 2.0;
+					}else if(idx > 0 && idx < numItems - 1 ){
+						var before = parseFloat($("#levels li:nth-child("+idx+")").attr('position'));
+						var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
+						pos = (before + after) / 2.0;
+					}else if(idx == numItems -1){
+						pos = parseFloat($("#levels li:nth-child("+idx+")").attr('position')) + 1.0;
+					}
+					$(ui.item).attr('position', pos);
+					savePosition(ui.item);
+				}
+			});
+			$( "#levels" ).disableSelection();
+	<% end %>
+<% end %>
