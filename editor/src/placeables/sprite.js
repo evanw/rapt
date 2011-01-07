@@ -114,5 +114,5 @@ var spriteTemplates = [
 	
 	// game objects
 	{ name: 'Cog', sprite: new Sprite(SPRITE_COG, 0.25, function(c, alpha) { Sprites.drawCog(c, alpha, 0.25); }) },
-	{ name: 'Sign', sprite: new Sprite(SPRITE_SIGN, 0.25, function(c, alpha) { Sprites.drawSign(c, alpha); }) }
+	{ name: 'Sign', sprite: new Sprite(SPRITE_SIGN, 0.25, function(c, alpha) { Sprites.drawSign(c, alpha, this.text); }) }
 ];
