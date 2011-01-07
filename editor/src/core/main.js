@@ -38,6 +38,10 @@ function ajaxPutLevel(json) {
 		'dataType': 'json',
 		'data': JSON.stringify({ 'level': { 'data': json } }),
 		'contentType': 'application/json; charset=utf-8',
+		'success': function(data, status, request) {
+			$('#saved').show();
+			setTimeout(function(){ $('#saved').fadeOut(); }, 250);
+		},
 		'error': function(request, status, error) {
 			showError();
 		}
@@ -141,7 +145,7 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML() + '<hr>TODO: signs, enemy rotation, and headache graphics');
+	$('#help').html(gen.getHTML() + '<hr>TODO: signs and enemy rotation');
 }
 
 function fillEnemies() {

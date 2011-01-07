@@ -183,3 +183,18 @@ body {
 	left: 0;
 	bottom: 0;
 }
+
+#saved {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	margin-left: -100px;
+	text-align: center;
+	background: rgba(0, 0, 0, 0.25);
+	color: white;
+	border-radius: 10px;
+	font: bold 20px/40px Helvetica, Arial, sans-serif;
+	text-shadow: 0 1px 2px black;
+	display: none;
+}
