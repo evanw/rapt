@@ -109,8 +109,12 @@ UndoStack.prototype.isClean = function() {
 	return this.cleanIndex == this.currentIndex;
 };
 
-UndoStack.prototype.setClean = function() {
-	this.cleanIndex = this.currentIndex;
+UndoStack.prototype.getCurrentIndex = function() {
+	return this.currentIndex;
+};
+
+UndoStack.prototype.setCleanIndex = function(index) {
+	this.cleanIndex = index;
 };
 
 UndoStack.prototype.clear = function() {
