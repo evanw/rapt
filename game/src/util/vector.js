@@ -4,14 +4,24 @@ function Vector(x, y) {
 	this.y = y;
 }
 
-// binary operations
+// math operations
+Vector.prototype.neg = function() { return new Vector(-this.x, -this.y); };
 Vector.prototype.add = function(v) { return new Vector(this.x + v.x, this.y + v.y); };
 Vector.prototype.sub = function(v) { return new Vector(this.x - v.x, this.y - v.y); };
 Vector.prototype.mul = function(f) { return new Vector(this.x * f, this.y * f); };
 Vector.prototype.div = function(f) { return new Vector(this.x / f, this.y / f); };
 Vector.prototype.eq = function(v) { return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) < 0.001; };
 
+// inplace operations
+Vector.prototype.inplaceNeg = function() { this.x += -this.x; this.y = -this.y; };
+Vector.prototype.inplaceAdd = function(v) { this.x += v.x; this.y += v.y; };
+Vector.prototype.inplaceSub = function(v) { this.x -= v.x; this.y -= v.y; };
+Vector.prototype.inplaceMul = function(f) { this.x *= f; this.y *= f; };
+Vector.prototype.inplaceDiv = function(f) { this.x /= f; this.y /= f; };
+Vector.prototype.inplaceFlip = function() { var t = this.x; this.x = this.y; this.y = -t; }; // turns 90 degrees right
+
 // other functions
+Vector.prototype.clone = function() { return new Vector(this.x, this.y); };
 Vector.prototype.dot = function(v) { return this.x*v.x + this.y*v.y; };
 Vector.prototype.lengthSquared = function() { return this.dot(this); };
 Vector.prototype.length = function() { return Math.sqrt(this.lengthSquared()); };
