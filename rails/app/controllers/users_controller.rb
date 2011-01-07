@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => [:show, :edit_level]
   respond_to :html, :json
   
   def show
@@ -14,10 +14,29 @@ class UsersController < ApplicationController
   
   # show the editor
   def edit_level
-    @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
+    begin
+      @user = User.find_by_username(params[:username])
+    rescue
+      render :text => "Couldn't find user", :status => 404 if @user.nil
+      return
+    end
+    
+    begin
+      @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
+    rescue
+      render :text => "Couldn't find level", :status => 404 if @level.nil
+      return
+    end
+    
     respond_with @level do |format|
       format.json { render :json => @level, :methods => [:html_title] }
-      format.html { render :layout => false }
+      format.html do
+        if current_user.present? and @user == current_user
+         render :layout => false
+       else
+         redirect_to @user, :flash => {:error => "You can only edit levels you created"}
+       end
+     end
     end
   end
   
