@@ -32,6 +32,7 @@ var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new le
 var TEXT_BOX_X_MARGIN = 6;
 var TEXT_BOX_Y_MARGIN = 6;
 var SECONDS_BETWEEN_TICKS = 1 / 60;
+var useFixedPhysicsTick = true;
 
 Game.subclasses(Screen);
 
@@ -71,17 +72,19 @@ Game.prototype.tick = function(seconds) {
 	// overall, a fixed physics tick provides about 5 FPS drop but fixes a lot of
 	// gameplay issues (measurements above approximate but within about +/-1) 
 
-	// variable physics tick
-	// gameState.tick(seconds);
-	// Particle.tick(seconds);
-	
-	// fixed physics tick
-	var count = 0;
-	this.fixedPhysicsTick += seconds;
-	while (++count <= 10 && this.fixedPhysicsTick >= 0) {
-		this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
-		gameState.tick(SECONDS_BETWEEN_TICKS);
-		Particle.tick(SECONDS_BETWEEN_TICKS);
+	if (useFixedPhysicsTick) {
+		// fixed physics tick
+		var count = 0;
+		this.fixedPhysicsTick += seconds;
+		while (++count <= 10 && this.fixedPhysicsTick >= 0) {
+			this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
+			gameState.tick(SECONDS_BETWEEN_TICKS);
+			Particle.tick(SECONDS_BETWEEN_TICKS);
+		}
+	} else {
+		// variable physics tick
+		gameState.tick(seconds);
+		Particle.tick(seconds);
 	}
 
 	// smooth the fps a bit
