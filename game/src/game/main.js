@@ -50,9 +50,16 @@ function Menu() {
 
 Menu.prototype.keyDown = function(key) {
     if (key === UP_ARROW) {
-        // Move up a level
-    } else if (key === DOWN_ARROW) {
-        // Move down a level
+        var levelNum = parseInt(selectedLevel.attr('id'), 10);
+        if (levelNum !== 0) {
+            $('#' + (levelNum - 1)).focus();
+        }
+    }
+    if (key === DOWN_ARROW) {
+        var levelNum = parseInt(selectedLevel.attr('id'), 10);
+        if (levelNum !== (this.levels.length - 1)) {
+            $('#' + (levelNum + 1)).focus();
+        }
     }
 }
 
@@ -70,7 +77,9 @@ Menu.prototype.loadFromJSON = function(json) {
 Menu.prototype.toHTML = function() {
 	var html = '<h2>' + this.username + '\'s Levels</h2><div id="levels">';
 	for (var i = 0; i < this.levels.length; ++i) {
-		html += '<div class="level"><a href="' + this.getHashForLevel(this.levels[i]) + '">' + this.levels[i].title + '</div>';
+        //html += '<div class="level" id="' + i + '" onMouseOver="levelHover();" onClick="levelClick();">';
+        html += '<div class="level" id="' + i + '">';
+        html += '<a href="' + this.getHashForLevel(this.levels[i]) + '">' + this.levels[i].title + '</div>';
 	}
 	html += '</div>';
 	return html;
@@ -115,6 +124,21 @@ function MenuLevel(title, html_title) {
         }
 	}
 
+    function levelBlur() {
+		$(this).css('background-color', '#C7C7C7');
+    }
+
+    function levelFocus() {
+        selectedLevel.blur();
+        selectedLevel = $(this);
+        selectedLevel.css('background-color', 'white');
+        selectedLevel.children().get(0).focus();
+    }
+
+    function levelClick() {
+        location.href = $(this).children().attr('href');
+    }
+
     function processHash(hash) {
 		if (currentHash === hash) return;
 		currentHash = location.hash;
@@ -124,8 +148,7 @@ function MenuLevel(title, html_title) {
             showLoadingScreen();
 			ajaxGet('menu', getMenuURL(), function(json) {
 	            showLevelScreen();
-				menu.loadFromJSON(json['user']);
-		        $('#levelScreen').html(menu.toHTML());
+                getMenuFromJSON(json);
 			});
         } else if (hash.split('/').length === 4) {
             // #/[User]/[Level]/
@@ -137,11 +160,7 @@ function MenuLevel(title, html_title) {
 			// if the user refreshes while in a level, we also need to load the menu in the background
 			// so that when the user beats the level they can press space to advance to the next level
 			// (without loading the menu we wouldn't know what the next level is)
-			ajaxGet('menu', getMenuURL(), function(json) {
-				// don't go to the menu screen because we are loading the menu in the background
-				menu.loadFromJSON(json['user']);
-		        $('#levelScreen').html(menu.toHTML());
-			});
+			ajaxGet('menu', getMenuURL(), getMenuFromJSON);
 			
 			// finally, load the level
 			ajaxGet('level', getLevelURL(), function(json) {
@@ -150,6 +169,17 @@ function MenuLevel(title, html_title) {
 				gameState.loadLevelFromJSON(jsonForCurrentLevel);
 			});
         }
+    }
+
+    function getMenuFromJSON(json) {
+        menu.loadFromJSON(json['user']);
+        $('#levelScreen').html(menu.toHTML());
+        $('.level').blur(levelBlur);
+        $('.level').focus(levelFocus);
+        $('.level').hover(levelFocus);
+        $('.level').click(levelClick);
+        selectedLevel = $('#0');
+        selectedLevel.focus();
     }
 
     function showLevelScreen() {
@@ -246,8 +276,8 @@ function MenuLevel(title, html_title) {
  		} else if ($('#levelScreen').is(':visible')) {
             menu.keyDown(e.which);
 
-            // Prevents default behaviors except for tab and enter keys
-            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111 && e.which !== TAB_KEY && e.which !== ENTER_KEY) {
+            // Prevents default behaviors except for enter key
+            if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111 && e.which !== ENTER_KEY) {
                 e.preventDefault();
             }
         }

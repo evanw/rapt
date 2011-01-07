@@ -23,13 +23,11 @@ h2 {
 
 .level {
     font: 14px/24px "Lucida Grande", Arial, sans-serif;
+	cursor: pointer 
 }
 
 .level a {
     color: black;
     text-decoration: none;
-}
-
-.level a:hover {
-    color: white;
+	outline: none;
 }
