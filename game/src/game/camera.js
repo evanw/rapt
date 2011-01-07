@@ -8,12 +8,38 @@ function SplitScreenCamera(playerA, playerB, width, height) {
 	this.height = height;
 	
 	if (useBackgroundCache) {
-		this.backgroundCacheA = new BackgroundCache('a')
+		this.backgroundCacheA = new BackgroundCache('a');
 		this.backgroundCacheB = new BackgroundCache('b');
 	} else {
 		this.backgroundCacheA = null;
 		this.backgroundCacheB = null;
 	}
+}
+
+// Clip a rectangular w by h polygon by a line passing though split and the origin:
+//
+//  +-----+---+
+//  | A  /  B |
+//  +---+-----+
+//
+// Pass split to get region A and -split to get region B.  This is necessary likely
+// because Firefox 4.0b8 renders to an internal buffer bounding the clipping polygon,
+// but the polygon isn't clipped to the canvas before being bounded.  Before this,
+// we were just drawing a huge polygon 99999 units across and not bothering to tightly
+// wrap the canvas, but Firefox was crashing.
+function clipHelper(c, w, h, split) {
+	var tx = h / split.y;
+	var ty = w / split.x;
+	c.beginPath();
+	if ((-w) * split.y - (-h) * split.x >= 0) c.lineTo(-w, -h);
+	if (Math.abs(split.y * ty) <= h) c.lineTo(-split.x * ty, -split.y * ty);
+	if ((-w) * split.y - (+h) * split.x >= 0) c.lineTo(-w, +h);
+	if (Math.abs(split.x * tx) <= w) c.lineTo(split.x * tx, split.y * tx);
+	if ((+w) * split.y - (+h) * split.x >= 0) c.lineTo(+w, +h);
+	if (Math.abs(split.y * ty) <= h) c.lineTo(split.x * ty, split.y * ty);
+	if ((+w) * split.y - (-h) * split.x >= 0) c.lineTo(+w, -h);
+	if (Math.abs(split.x * tx) <= w) c.lineTo(-split.x * tx, -split.y * tx);
+	c.clip();
 }
 
 SplitScreenCamera.prototype.draw = function(c, renderer) {
@@ -46,23 +72,13 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 
 		// draw world from a's point of view
 		c.save();
-		c.beginPath();
-		c.moveTo(-split.x, -split.y);
-		c.lineTo(-split.x - AtoB.x, -split.y - AtoB.y);
-		c.lineTo(split.x - AtoB.x, split.y - AtoB.y);
-		c.lineTo(split.x, split.y);
-		c.clip();
+		clipHelper(c, this.width / 2, this.height / 2, split);
 		renderer.render(c, centerA, this.width, this.height, this.backgroundCacheA);
 		c.restore();
 
 		// draw world from b's point of view
 		c.save();
-		c.beginPath();
-		c.moveTo(-split.x, -split.y);
-		c.lineTo(-split.x + AtoB.x, -split.y + AtoB.y);
-		c.lineTo(split.x + AtoB.x, split.y + AtoB.y);
-		c.lineTo(split.x, split.y);
-		c.clip();
+		clipHelper(c, this.width / 2, this.height / 2, split.mul(-1));
 		renderer.render(c, centerB, this.width, this.height, this.backgroundCacheB);
 		c.restore();
 
