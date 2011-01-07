@@ -288,7 +288,7 @@ function AddPlaceableTool(doc, placeableTemplate) {
 
 AddPlaceableTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(this.placeableTemplate.clone(this.point));
+	this.doc.addPlaceable(this.placeableTemplate.clone(this.point, this.placeableTemplate.color));
 };
 
 AddPlaceableTool.prototype.mouseMoved = function(point) {
@@ -300,7 +300,7 @@ AddPlaceableTool.prototype.mouseUp = function(point) {
 
 AddPlaceableTool.prototype.draw = function(c) {
 	if (this.point != null) {
-		this.placeableTemplate.clone(this.point).draw(c, 0.5);
+		this.placeableTemplate.clone(this.point, this.placeableTemplate.color).draw(c, 0.5);
 	}
 };
 

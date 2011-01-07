@@ -5,16 +5,6 @@
 function Sprites() {
 }
 
-Sprites.drawQuestionMark = function(c, alpha) {
-	// TODO: remove this when all enemies are drawn
-	c.fillStyle = rgba(0, 0, 0, alpha * 0.25);
-	c.save();
-	c.scale(1 / 50, -1 / 50);
-	c.font = '50px Arial';
-	c.fillText('?', -c.measureText('?').width / 2, 20);
-	c.restore();
-};
-
 Sprites.drawSpawnPoint = function(c, alpha, point) {
 	// Outer bubble
 	c.strokeStyle = c.fillStyle = rgba(255, 255, 255, alpha * 0.1);
@@ -634,4 +624,34 @@ Sprites.drawButton = function(c, alpha) {
        c.lineTo(nextPos.x, nextPos.y);
    }
    c.stroke();
+};
+
+var headachePoints = [];
+for (var i = 0; i < 50; i++) {
+	var angle = randInRange(0, Math.PI * 2);
+	var radius = Math.sqrt(Math.random()) * 0.3;
+	headachePoints.push({
+		x: Math.cos(angle) * radius,
+		y: Math.sin(angle) * radius
+	});
+}
+
+Sprites.drawHeadache = function(c, alpha, isRed) {
+	var headacheRadius = 0.15 * 0.75;
+	
+	// draw the ache
+	c.strokeStyle = rgba(0, 0, 0, alpha);
+	c.beginPath();
+	for (var i = 0; i < headachePoints.length; i++) {
+		var p = headachePoints[i];
+		c.lineTo(p.x, p.y);
+	}
+	c.stroke();
+	
+	// draw the head
+	c.fillStyle = rgba(255 * isRed, 0, 255 * !isRed, alpha);
+	c.beginPath();
+	c.arc(0, 0, headacheRadius, 0, 2 * Math.PI, false);
+	c.fill();
+	c.stroke();
 };

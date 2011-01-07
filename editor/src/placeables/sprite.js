@@ -62,10 +62,6 @@ Sprite.prototype.getCenter = function() {
 	return this.anchor;
 };
 
-function todo(c, alpha) {
-	Sprites.drawQuestionMark(c, alpha);
-}
-
 var spriteTemplates = [
 	// color-neutral enemies
 	{ name: 'Bomber', sprite: new Sprite(SPRITE_BOMBER, 0.3, function(c, alpha) { Sprites.drawBomber(c, alpha, 0.7); }) },
@@ -83,7 +79,7 @@ var spriteTemplates = [
 	{ name: 'Bouncy Rockets', sprite: new Sprite(SPRITE_BOUNCY_ROCKET_LAUNCHER, 0.3, function(c, alpha, color) { Sprites.drawBouncyRocketLauncher(c, alpha, color == 1); }) },
 	{ name: 'Corrosion Cloud', sprite: new Sprite(SPRITE_CORROSION_CLOUD, 0.5, function(c, alpha, color) { Sprites.drawCloud(c, alpha, color == 1); }) },
 	{ name: 'Grenadier', sprite: new Sprite(SPRITE_GRENADIER, 0.35, function(c, alpha, color) { Sprites.drawGrenadier(c, alpha, color == 1); }) },
-	{ name: 'Headache', sprite: new Sprite(SPRITE_HEADACHE, 0.5, todo) },
+	{ name: 'Headache', sprite: new Sprite(SPRITE_HEADACHE, 0.5, function(c, alpha, color) { Sprites.drawHeadache(c, alpha, color == 1); }) },
 	{ name: 'Shock Hawk', sprite: new Sprite(SPRITE_SHOCK_HAWK, 0.3, function(c, alpha, color) { Sprites.drawShockHawk(c, alpha, color == 1); }) },
 	{ name: 'Stalacbat', sprite: new Sprite(SPRITE_STALACBAT, 0.2, function(c, alpha, color) { Sprites.drawStalacbat(c, alpha, color == 1); }) },
 	{ name: 'Wall Avoider', sprite: new Sprite(SPRITE_WALL_AVOIDER, 0.3, function(c, alpha, color) { Sprites.drawWallAvoider(c, alpha, color == 1); }) },

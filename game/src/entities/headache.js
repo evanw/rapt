@@ -75,7 +75,7 @@ Headache.prototype.move = function(seconds) {
         var delta = this.target.getCenter().sub(this.getCenter());
         if (delta.lengthSquared() < (HEADACHE_RANGE * HEADACHE_RANGE) && !CollisionDetector.lineOfSightWorld(this.getCenter(), this.target.getCenter(), gameState.world)) {
             // Seeks the top of the Player, not the center
-            delta.y += 0.5;
+            delta.y += 0.45;
             // Multiply be 3 so it attaches more easily if its close to a player
             if (delta.lengthSquared() > (HEADACHE_SPEED * seconds * HEADACHE_SPEED * seconds * 3))
             {
@@ -97,7 +97,7 @@ Headache.prototype.move = function(seconds) {
         // If player is crouching, adjust position
         if (this.target.getCrouch() && this.target.isOnFloor())
         {
-            delta.y -= 0.3;
+            delta.y -= 0.25;
             if (this.target.facingRight) delta.x += 0.15;
             else delta.x -= 0.15;
         }
