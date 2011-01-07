@@ -83,3 +83,20 @@ Document.prototype.toggleInitiallyOpen = function(door) {
 Document.prototype.setSignText = function(sign, text) {
 	this.undoStack.push(new SetSignTextCommand(sign, text));
 };
+
+Document.prototype.isClean = function() {
+	var index = this.undoStack.currentIndex;
+	var clean = this.undoStack.cleanIndex;
+	
+	// back up to ignore all selection commands, because changing the selection shouldn't count as a modification
+	while (index > clean) {
+		var c = this.undoStack.commands[index - 1];
+		if (c instanceof SetSelectionCommand || (c instanceof MacroCommand && c.commands.length == 1 && c.commands[0] instanceof SetSelectionCommand)) {
+			index--;
+		} else {
+			break;
+		}
+	}
+	
+	return index == clean;
+};

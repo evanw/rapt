@@ -105,10 +105,6 @@ UndoStack.prototype.redo = function() {
 	if (this.canRedo()) this.commands[this.currentIndex++].redo();
 };
 
-UndoStack.prototype.isClean = function() {
-	return this.cleanIndex == this.currentIndex;
-};
-
 UndoStack.prototype.getCurrentIndex = function() {
 	return this.currentIndex;
 };

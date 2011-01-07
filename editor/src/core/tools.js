@@ -339,7 +339,17 @@ function AddPlaceableTool(doc, placeableTemplate) {
 
 AddPlaceableTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	this.doc.addPlaceable(this.placeableTemplate.clone(this.point, this.placeableTemplate.color));
+	
+	var placeable = this.placeableTemplate.clone(this.point, this.placeableTemplate.color);
+	this.doc.addPlaceable(placeable);
+	
+	if (this.placeableTemplate.id == SPRITE_SIGN) {
+		this.doc.setSelection([placeable]);
+		showSignTextDialog(placeable.text, function(text) {
+			editor.doc.setSignText(placeable, text);
+			editor.draw();
+		});
+	}
 };
 
 AddPlaceableTool.prototype.mouseMoved = function(point) {

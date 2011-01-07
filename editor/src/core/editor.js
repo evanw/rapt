@@ -270,6 +270,8 @@ Editor.prototype.doubleClick = function(point) {
 	if (selection.length > 1) {
 		overlay('Multiple selection');
 	} else if (selection.length == 1 && (selection[0] instanceof Sprite) && selection[0].id == SPRITE_SIGN) {
+		this.doc.setSelection(selection);
+		this.draw();
 		showSignTextDialog(selection[0].text, function(text) {
 			editor.doc.setSignText(selection[0], text);
 			editor.draw();

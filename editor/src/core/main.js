@@ -452,7 +452,7 @@ function loadEditor() {
 	});
 
 	$(window).bind('beforeunload', function() {
-		if (!editor.doc.undoStack.isClean()) {
+		if (!editor.doc.isClean()) {
 			return 'Some of your edits are not saved, and will be lost if you close this window.  Continue?';
 		}
 	});
