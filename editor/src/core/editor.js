@@ -102,6 +102,9 @@ Editor.prototype.setMode = function(mode) {
 	case MODE_COG:
 		this.selectedTool = new AddPlaceableTool(this.doc, spriteTemplates[SPRITE_COG].sprite);
 		break;
+	case MODE_SIGN:
+		this.selectedTool = new AddPlaceableTool(this.doc, spriteTemplates[SPRITE_SIGN].sprite);
+		break;
 	case MODE_ENEMIES:
 	case MODE_WALLS_BUTTONS:
 		this.setSidePanelTool();
@@ -215,12 +218,12 @@ Editor.prototype.mouseDown = function(point, buttons, modifierKeyPressed) {
 		this.activeTool.mouseDown(this.viewportToWorld(point));
 	} else if (buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
-		this.selectedTool.modifierKeyPressed = modifierKeyPressed;
 		this.activeTool = this.selectedTool;
 		
 		if (this.activeTool != null) {
 			// Need to clear macro stack here if we get a mousedown event without a mouseup event
 			this.doc.undoStack.endAllMacros();
+			this.activeTool.modifierKeyPressed = modifierKeyPressed;
 			this.activeTool.mouseDown(this.viewportToWorld(point));
 		}
 	}
@@ -259,6 +262,19 @@ Editor.prototype.mouseOver = function() {
 Editor.prototype.mouseOut = function() {
 	this.isMouseOver = false;
 	this.draw();
+};
+
+Editor.prototype.doubleClick = function(point) {
+	var worldPoint = this.viewportToWorld(point);
+	var selection = this.doc.world.selectionInRect(new Rectangle(worldPoint, worldPoint));
+	if (selection.length > 1) {
+		overlay('Multiple selection');
+	} else if (selection.length == 1 && (selection[0] instanceof Sprite) && selection[0].id == SPRITE_SIGN) {
+		showSignTextDialog(selection[0].text, function(text) {
+			editor.doc.setSignText(selection[0], text);
+			editor.draw();
+		});
+	}
 };
 
 Editor.prototype.viewportToWorld = function(viewportPoint) {

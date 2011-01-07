@@ -221,3 +221,21 @@ RotateSelectionCommand.prototype.mergeWith = function(command) {
 	}
 	return false;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class SetSignTextCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function SetSignTextCommand(sign, text) {
+	this.sign = sign;
+	this.text = text;
+	this.oldText = sign.text;
+}
+
+SetSignTextCommand.prototype.undo = function() {
+	this.sign.text = this.oldText;
+};
+
+SetSignTextCommand.prototype.redo = function() {
+	this.sign.text = this.text;
+};

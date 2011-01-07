@@ -48,7 +48,7 @@ function splitUpText(c, phrase) {
 		if (measure < maxWidth) {
 			lastPhrase += " " + word;
 		} else {
-			phraseArray.push(lastPhrase);
+			if (lastPhrase.length > 0) phraseArray.push(lastPhrase);
 			lastPhrase = word;
 		}
 		if (i == words.length - 1) {

@@ -38,7 +38,7 @@ HelpSign.prototype.splitUpText = function(c, phrase) {
         if (measure < maxWidth) {
             lastPhrase += " " + word;
         } else {
-            phraseArray.push(lastPhrase);
+            if (lastPhrase.length > 0) phraseArray.push(lastPhrase);
             lastPhrase = word;
         }
         if (i == words.length - 1) {
@@ -105,7 +105,7 @@ HelpSign.prototype.draw = function(c) {
     if (this.drawText) {
         var fontSize = 13;
         var xCenter = pos.x * gameScale;
-        var yCenter = -this.hitBox.getTop() * gameScale - fontSize * this.textArray.length;
+        var yCenter = -(pos.y + 0.5) * gameScale - (fontSize + 2) * this.textArray.length / 2;
         drawTextBox(c, this.textArray, xCenter, yCenter, fontSize);
     }
 

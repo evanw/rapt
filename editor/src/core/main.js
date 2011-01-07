@@ -1,7 +1,20 @@
 #require <editor.js>
 
+var KEY_ENTER = 13;
+var KEY_ESCAPE = 27;
+var KEY_CONTROL = 17;
+var KEY_SHIFT = 16;
+var KEY_META = 91;
+var KEY_ALT = 18;
+
+var overlayTimeout = null;
+
 function overlay(text) {
-	$('#overlay').html(text).show().stop().fadeTo(0, 1).fadeOut();
+	clearTimeout(overlayTimeout);
+	overlayTimeout = setTimeout(function() {
+		$('#overlay').fadeOut();
+	}, 600);
+	$('#overlay').html(text).show().stop().fadeTo(0, 1);
 }
 
 function getLevelURL() {
@@ -271,6 +284,36 @@ function fillWalls() {
 	});
 }
 
+var signTextFocused = false;
+var signTextCallback = null;
+
+function showSignTextDialog(text, callback) {
+	signTextCallback = callback;
+	$('#sign-text-modal button').removeClass('sign-text-active');
+	$('#sign-text-modal').show().animate({ top: 0 });
+	$('#darken').fadeIn();
+	$('#sign-text').val(text).focus().select();
+}
+
+function hideSignTextDialog() {
+	$('#sign-text-modal').animate({ top: -115 }, function() {
+		$('#sign-text-modal').hide();
+	});
+	$('#darken').fadeOut();
+	return $('#sign-text').blur().val();
+}
+
+function changeSignText() {
+	$('#sign-text-change').addClass('sign-text-active');
+	var text = hideSignTextDialog();
+	if (signTextCallback) signTextCallback(text);
+}
+
+function cancelSignText() {
+	$('#sign-text-cancel').addClass('sign-text-active');
+	hideSignTextDialog();
+}
+
 function loadEditor() {
 	// Add an action to each toolbar button
 	$('#toolbar .section a').mousedown(function(e) {
@@ -280,6 +323,32 @@ function loadEditor() {
 		$(this).addClass('toolbar-current');
 		e.preventDefault();
 		showOrHidePanels(mode);
+	});
+	
+	// Add actions to buttons on sign text dialog
+	$('#sign-text-modal button').mousedown(function(e) {
+		e.preventDefault();
+	});
+	$('#sign-text-change').mouseup(function(e) {
+		changeSignText();
+		e.preventDefault();
+	});
+	$('#sign-text-cancel').mouseup(function(e) {
+		cancelSignText();
+		e.preventDefault();
+	});
+	$('#sign-text').focus(function(e) {
+		signTextFocused = true;
+	});
+	$('#sign-text').blur(function(e) {
+		signTextFocused = false;
+	});
+	$('#sign-text').keydown(function(e) {
+		if (e.which == KEY_ENTER) {
+			changeSignText();
+		} else if (e.which == KEY_ESCAPE) {
+			cancelSignText();
+		}
 	});
 	
 	// Connect the canvas and the editor
@@ -293,10 +362,6 @@ function loadEditor() {
 	fillHelp();
 	
 	// Keep track of modifier key states
-	var KEY_CONTROL = 17;
-	var KEY_SHIFT = 16;
-	var KEY_META = 91;
-	var KEY_ALT = 18;
 	var control = false;
 	var shift = false;
 	var meta = false;
@@ -328,6 +393,10 @@ function loadEditor() {
 	$(canvas).mouseleave(function(e) {
 		editor.mouseOut();
 	});
+	$(canvas).dblclick(function(e) {
+		e.preventDefault();
+		editor.doubleClick(mousePoint(e));
+	});
 	
 	// Add handlers for window/document events
 	$(window).resize(function() {
@@ -341,27 +410,29 @@ function loadEditor() {
 		else if (e.which == KEY_SHIFT) shift = true;
 		else if (e.which == KEY_META) meta = true;
 		else if (e.which == KEY_ALT) alt = true;
-		else if (e.ctrlKey || e.metaKey) {
-			if (e.which == 'Z'.charCodeAt(0)) {
-				if (e.shiftKey) editor.redo();
-				else editor.undo();
-				e.preventDefault();
-			} else if (e.which == 'Y'.charCodeAt(0)) {
-				editor.redo();
-				e.preventDefault();
-			} else if (e.which == 'S'.charCodeAt(0)) {
-				e.preventDefault();
-				var cleanIndex = editor.doc.undoStack.getCurrentIndex();
-				ajaxPutLevel(editor.save(), function() {
-					editor.doc.undoStack.setCleanIndex(cleanIndex);
-				});
-			} else if (e.which == 'A'.charCodeAt(0)) {
-				editor.selectAll();
+		else if (!signTextFocused) {
+			if (e.ctrlKey || e.metaKey) {
+				if (e.which == 'Z'.charCodeAt(0)) {
+					if (e.shiftKey) editor.redo();
+					else editor.undo();
+					e.preventDefault();
+				} else if (e.which == 'Y'.charCodeAt(0)) {
+					editor.redo();
+					e.preventDefault();
+				} else if (e.which == 'S'.charCodeAt(0)) {
+					e.preventDefault();
+					var cleanIndex = editor.doc.undoStack.getCurrentIndex();
+					ajaxPutLevel(editor.save(), function() {
+						editor.doc.undoStack.setCleanIndex(cleanIndex);
+					});
+				} else if (e.which == 'A'.charCodeAt(0)) {
+					editor.selectAll();
+					e.preventDefault();
+				}
+			} else if (e.which == 8 /*BACKSPACE*/) {
+				editor.deleteSeleciton();
 				e.preventDefault();
 			}
-		} else if (e.which == 8 /*BACKSPACE*/) {
-			editor.deleteSeleciton();
-			e.preventDefault();
 		}
 	});
 	$(document).keyup(function(e) {

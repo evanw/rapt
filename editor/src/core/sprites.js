@@ -674,7 +674,7 @@ Sprites.drawSign = function(c, alpha, text) {
 	var textArray = splitUpText(c, text);
 	var fontSize = 13;
 	var xCenter = 0;
-	var yCenter = -0.35 * 50 - fontSize * textArray.length;
+	var yCenter = -0.5 * 50 - (fontSize + 2) * textArray.length / 2;
 	drawTextBox(c, textArray, xCenter, yCenter, fontSize);
 	
 	c.restore();

@@ -79,3 +79,7 @@ Document.prototype.setPlayerGoal = function(playerGoal) {
 Document.prototype.toggleInitiallyOpen = function(door) {
 	this.undoStack.push(new ToggleInitiallyOpenCommand(door));
 };
+
+Document.prototype.setSignText = function(sign, text) {
+	this.undoStack.push(new SetSignTextCommand(sign, text));
+};
