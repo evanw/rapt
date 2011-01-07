@@ -4,6 +4,7 @@ class Level < ActiveRecord::Base
   belongs_to :user
   
   validate :title_content, :on => :create
+  validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_uniqueness_of :title, :scope => :user_id
   
   attr_accessible :data, :position, :title
