@@ -67,3 +67,10 @@ Door.prototype.resetAnchor = function() {
 Door.prototype.getCenter = function() {
 	return this.edge.start.add(this.edge.end).div(2);
 };
+
+Door.prototype.getAngle = function() {
+	return 0;
+};
+
+Door.prototype.setAngle = function(newAngle) {
+};

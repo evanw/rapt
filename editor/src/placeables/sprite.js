@@ -26,6 +26,19 @@ function Sprite(id, radius, drawFunc, anchor, color, angle) {
 	this.angle = angle || 0;
 }
 
+Sprite.prototype.getAnglePolygon = function() {
+	var direction = Vector.fromAngle(this.angle);
+	return new Polygon(
+		this.anchor.add(direction.mul(this.radius + 0.4)),
+		this.anchor.add(direction.mul(this.radius + 0.2).add(direction.flip().mul(0.2))),
+		this.anchor.add(direction.mul(this.radius + 0.2).sub(direction.flip().mul(0.2)))
+	);
+};
+
+Sprite.prototype.hasAnglePolygon = function() {
+	return (this.id == SPRITE_JET_STREAM || this.id == SPRITE_WALL_CRAWLER || this.id == SPRITE_WHEELIGATOR || this.id == SPRITE_BOMBER);
+};
+
 Sprite.prototype.draw = function(c, alpha) {
 	c.save();
 	c.translate(this.anchor.x, this.anchor.y);
@@ -39,21 +52,8 @@ Sprite.prototype.drawSelection = function(c) {
 	c.fill();
 	c.stroke();
 	
-	if (this.id == SPRITE_JET_STREAM ||
-		this.id == SPRITE_WALL_CRAWLER ||
-		this.id == SPRITE_WHEELIGATOR ||
-		this.id == SPRITE_BOMBER) {
-		var direction = Vector.fromAngle(this.angle);
-		var tip = this.anchor.add(direction.mul(this.radius + 0.4));
-		var cornerA = this.anchor.add(direction.mul(this.radius + 0.2).add(direction.flip().mul(0.2)));
-		var cornerB = this.anchor.add(direction.mul(this.radius + 0.2).sub(direction.flip().mul(0.2)));
-		c.beginPath();
-		c.moveTo(tip.x, tip.y);
-		c.lineTo(cornerA.x, cornerA.y);
-		c.lineTo(cornerB.x, cornerB.y);
-		c.closePath();
-		c.fill();
-		c.stroke();
+	if (this.hasAnglePolygon()) {
+		this.getAnglePolygon().draw(c);
 	}
 };
 
@@ -78,6 +78,14 @@ Sprite.prototype.clone = function(newAnchor, newColor, newAngle) {
 
 Sprite.prototype.getCenter = function() {
 	return this.anchor;
+};
+
+Sprite.prototype.getAngle = function() {
+	return this.angle;
+};
+
+Sprite.prototype.setAngle = function(newAngle) {
+	this.angle = newAngle;
 };
 
 var spriteTemplates = [

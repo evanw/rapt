@@ -143,6 +143,7 @@ PlaceDoorTool.prototype.draw = function(c) {
 var SELECTION_MODE_NONE = 0;
 var SELECTION_MODE_SELECT = 1;
 var SELECTION_MODE_MOVE = 2;
+var SELECTION_MODE_ROTATE = 3;
 
 function SelectionTool(doc) {
 	this.doc = doc;
@@ -150,17 +151,21 @@ function SelectionTool(doc) {
 	this.start = this.end = null;
 	this.modifierKeyPressed = false;
 	this.originalSelection = [];
+	this.rotationOrigin = null;
 }
 
 SelectionTool.prototype.mouseDown = function(point) {
+	var i, j;
+	
 	this.originalSelection = this.doc.world.getSelection();
+	this.doc.undoStack.beginMacro();
 	
 	// Check if we clicked on an existing selection
 	var clickedOnSelection = false;
-	var padding = new Vector(0.2, 0.2);
+	var padding = new Vector(0.1, 0.1);
 	var selectionUnderMouse = this.doc.world.selectionInRect(new Rectangle(point.sub(padding), point.add(padding)));
-	for (var i = 0; i < selectionUnderMouse.length; i++) {
-		for (var j = 0; j < this.originalSelection.length; j++) {
+	for (i = 0; i < selectionUnderMouse.length; i++) {
+		for (j = 0; j < this.originalSelection.length; j++) {
 			if (selectionUnderMouse[i] == this.originalSelection[j]) {
 				clickedOnSelection = true;
 				break;
@@ -169,9 +174,29 @@ SelectionTool.prototype.mouseDown = function(point) {
 	}
 	
 	// If we clicked on an existing selection, move it around instead
-	this.doc.undoStack.beginMacro();
 	if (clickedOnSelection) {
 		this.mode = SELECTION_MODE_MOVE;
+		this.start = point;
+		return;
+	}
+	
+	// Next, check if we clicked on an angle polygon
+	var clickedOnAnglePolygon = false;
+	for (i = 0; i < this.originalSelection.length; i++) {
+		var s = this.originalSelection[i];
+		if (s.hasAnglePolygon()) {
+			var p = s.getAnglePolygon();
+			if (p.containsPoint(point)) {
+				clickedOnAnglePolygon = true;
+				this.rotationOrigin = s.anchor;
+				break;
+			}
+		}
+	}
+	
+	// If we clicked on an angle polygon, rotate the selection instead (about that sprite)
+	if (clickedOnAnglePolygon) {
+		this.mode = SELECTION_MODE_ROTATE;
 		this.start = point;
 	} else {
 		this.mode = SELECTION_MODE_SELECT;
@@ -205,6 +230,10 @@ SelectionTool.prototype.mouseMoved = function(point) {
 		this.doc.setSelection(newSelection);
 	} else if (this.mode == SELECTION_MODE_MOVE) {
 		this.doc.moveSelection(point.sub(this.start));
+		this.start = point;
+	} else if (this.mode == SELECTION_MODE_ROTATE) {
+		var deltaAngle = point.sub(this.rotationOrigin).atan2() - this.start.sub(this.rotationOrigin).atan2();
+		this.doc.rotateSelection(deltaAngle);
 		this.start = point;
 	}
 };

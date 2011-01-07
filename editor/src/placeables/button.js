@@ -53,3 +53,10 @@ Button.prototype.clone = function(newAnchor) {
 Button.prototype.getCenter = function() {
 	return this.anchor;
 };
+
+Button.prototype.getAngle = function() {
+	return 0;
+};
+
+Button.prototype.setAngle = function(newAngle) {
+};

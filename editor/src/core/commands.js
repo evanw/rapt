@@ -187,3 +187,37 @@ ToggleInitiallyOpenCommand.prototype.undo = function() {
 ToggleInitiallyOpenCommand.prototype.redo = function() {
 	this.door.isInitiallyOpen = !this.isInitiallyOpen;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class RotateSelectionCommand
+////////////////////////////////////////////////////////////////////////////////
+
+function RotateSelectionCommand(world, deltaAngle) {
+	this.world = world;
+	this.deltaAngle = deltaAngle;
+	this.oldAngles = [];
+	this.selection = world.getSelection();
+	for (var i = 0; i < this.selection.length; i++) {
+		this.oldAngles.push(this.selection[i].getAngle());
+	}
+}
+
+RotateSelectionCommand.prototype.undo = function() {
+	for (var i = 0; i < this.selection.length; i++) {
+		this.selection[i].setAngle(this.oldAngles[i]);
+	}
+};
+
+RotateSelectionCommand.prototype.redo = function() {
+	for (var i = 0; i < this.selection.length; i++) {
+		this.selection[i].setAngle(this.oldAngles[i] + this.deltaAngle);
+	}
+};
+
+RotateSelectionCommand.prototype.mergeWith = function(command) {
+	if (command instanceof RotateSelectionCommand) {
+		this.deltaAngle += command.deltaAngle;
+		return true;
+	}
+	return false;
+};

@@ -41,3 +41,10 @@ Link.prototype.setAnchor = function(anchor) {
 
 Link.prototype.resetAnchor = function() {
 };
+
+Link.prototype.getAngle = function() {
+	return 0;
+};
+
+Link.prototype.setAngle = function(newAngle) {
+};

@@ -68,3 +68,34 @@ Circle.prototype.intersectsEdge = function(edge) {
 Circle.prototype.containsPoint = function(point) {
 	return this.center.sub(point).lengthSquared() < this.radius * this.radius;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// class Polygon
+////////////////////////////////////////////////////////////////////////////////
+
+function Polygon() {
+	this.vertices = Array.prototype.slice.call(arguments);
+}
+
+Polygon.prototype.draw = function(c) {
+	c.beginPath();
+	for (var i = 0; i < this.vertices.length; i++) {
+		var v = this.vertices[i];
+		c.lineTo(v.x, v.y);
+	}
+	c.closePath();
+	c.fill();
+	c.stroke();
+};
+
+Polygon.prototype.containsPoint = function(point) {
+	// Use winding number test (sum of angles == +/-2PI iff point in polygon)
+	var total = 0;
+	for (var i = 0; i < this.vertices.length; i++) {
+		var j = (i + 1) % this.vertices.length;
+		var di = this.vertices[i].sub(point).unit();
+		var dj = this.vertices[j].sub(point).unit();
+		total += Math.acos(di.dot(dj));
+	}
+	return Math.abs(Math.abs(total) - 2 * Math.PI) < 0.001;
+};

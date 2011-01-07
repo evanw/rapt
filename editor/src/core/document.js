@@ -64,6 +64,10 @@ Document.prototype.moveSelection = function(delta) {
 	this.undoStack.push(new MoveSelectionCommand(this.world, delta));
 };
 
+Document.prototype.rotateSelection = function(deltaAngle) {
+	this.undoStack.push(new RotateSelectionCommand(this.world, deltaAngle));
+};
+
 Document.prototype.setPlayerStart = function(playerStart) {
 	this.undoStack.push(new SetPlayerStartCommand(this.world, playerStart));
 };

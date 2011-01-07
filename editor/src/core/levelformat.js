@@ -198,7 +198,7 @@ function saveWorldToJSON(world) {
 				'type': spriteTypeFromId(p.id),
 				'pos': vecToJSON(p.anchor.sub(min)),
 				'color': p.color,
-				'angle': p.angle
+				'angle': p.angle - Math.floor(p.angle / (2 * Math.PI)) * (2 * Math.PI) // 0 <= angle < 2PI
 			});
 		}
 	}
