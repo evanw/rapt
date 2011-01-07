@@ -113,6 +113,12 @@ function RocketSpider(center, angle) {
     gameState.addEnemy(this.legs, this.legs.getShape().getCenter());
 
 	this.sprites = createSpiderSprites();
+	
+	// spiders periodically "twitch" when their animation resets because the
+	// collision detection doesn't see them as on the floor, so only change
+	// to a falling animation if we haven't been on the floor for a few ticks
+	this.animationDelay = 0;
+	this.animationIsOnFloor = 0;
 }
 
 RocketSpider.prototype.canCollide = function() { return false; }
@@ -169,9 +175,21 @@ RocketSpider.prototype.afterTick = function(seconds) {
     this.sprites[SPIDER_BODY].offsetBeforeRotation = position;
     this.sprites[SPIDER_BODY].flip = (this.legs.velocity.x > 0);
 
+	// work out whether the spider is on the floor (walking animation) or in the air (falling animation)
+	var isOnFloor = this.legs.isOnFloor();
+	if (isOnFloor != this.animationIsOnFloor) {
+		// wait 1 tick before changing the animation to avoid "twitching"
+		if (++this.animationDelay > 1) {
+			this.animationIsOnFloor = isOnFloor;
+			this.animationDelay = 0;
+		}
+	} else {
+		this.animationDelay = 0;
+	}
+
     this.timeSinceStart += seconds * 0.5;
     var frame;
-    if(!this.legs.isOnFloor())
+    if(!this.animationIsOnFloor)
     {
         var percent = this.legs.velocity.y * -0.25;
         percent = (percent < 0.01) ? 0 : 1 - 1 / (1 + percent);
