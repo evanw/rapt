@@ -412,14 +412,16 @@ Player.prototype.tickPhysics = function(seconds) {
 	if(this.state == PLAYER_STATE_FLOOR) {
 		if (this.crouchKey) {
 			this.velocity = this.velocity.mul(Math.pow(0.000001, seconds));
-		} else if (!this.jumpKey && this.leftKey != this.rightKey && this.onDiagLastTick && edgeQuad.edges[EDGE_FLOOR].segment.normal.y < 0.99) {
-			// If on a diagonal floor, dont let the player run off
-			this.velocity.y -= PLAYER_GRAVITY * seconds;
-			this.velocity = this.velocity.projectOntoAUnitVector(edgeQuad.edges[EDGE_FLOOR].segment.normal.flip()).mul(0.99);
 		} else {
-			this.velocity.y -= PLAYER_GRAVITY * seconds;
-		}
-	} else {
+            this.velocity.y -= PLAYER_GRAVITY * seconds;
+            if (!this.jumpKey && this.leftKey != this.rightKey && 
+                this.onDiagLastTick && edgeQuad.edges[EDGE_FLOOR].segment.normal.y < 0.99) {
+                // If running down on a diagonal floor, dont let the player run off
+                this.velocity = this.velocity.projectOntoAUnitVector(edgeQuad.edges[EDGE_FLOOR].segment.normal.flip()).mul(0.99);
+                this.velocity.y += .001;
+            }
+        }
+    } else {
 		this.velocity.y -= PLAYER_GRAVITY * seconds;
 	}
 
