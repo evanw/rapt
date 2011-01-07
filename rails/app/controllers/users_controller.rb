@@ -31,7 +31,7 @@ class UsersController < ApplicationController
     respond_with @level do |format|
       format.json { render :json => @level, :methods => [:html_title] }
       format.html do
-        if current_user.present? and @user == current_user
+        if current_user.present? and @level.user == current_user
          render :layout => false
        else
          redirect_to @user, :flash => {:error => "You can only edit levels you created"}
