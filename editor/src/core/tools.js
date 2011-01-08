@@ -184,7 +184,7 @@ SelectionTool.prototype.mouseDown = function(point) {
 	var clickedOnAnglePolygon = false;
 	for (i = 0; i < this.originalSelection.length; i++) {
 		var s = this.originalSelection[i];
-		if (s.hasAnglePolygon()) {
+		if ((s instanceof Sprite) && s.hasAnglePolygon()) {
 			var p = s.getAnglePolygon();
 			if (p.containsPoint(point)) {
 				clickedOnAnglePolygon = true;
