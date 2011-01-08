@@ -36,8 +36,7 @@ class Scope:
 
 	# free a local variable (to minimize the number used)
 	def free(self, var):
-		pass # TODO: why doesn't this work? it causes the game to behave oddly
-		# self.vars[-1].remove(var)
+		self.vars[-1].remove(var)
 
 # global scope object, each SCRIPT node pushes one more level on this
 scope = Scope()
@@ -46,42 +45,69 @@ scope = Scope()
 # code generation functions
 ################################################################################
 
-def flip(a):
-	va, vr = scope.alloc(), scope.alloc()
+def unit(a):
+	va, vr, vlen = scope.alloc(), scope.alloc(), scope.alloc()
 	r = [
-		"%s = %s" % (va, a),
+		"%s = %s" % (va, o(a)),
 		"%s = new Vector(0, 0)" % vr,
-		"%s.x = %s.y" % (vr, va),
-		"%s.y = -%s.x" % (vr, va),
+		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va),
+		"%s.x = %s.x / %s" % (vr, va, vlen),
+		"%s.y = %s.y / %s" % (vr, va, vlen),
 		vr
 	]
-	scope.free(va), scope.free(vr)
+	scope.free(va), scope.free(vr), scope.free(vlen)
 	return r
 
-def length(a):
-	va = scope.alloc()
+def normalize(a):
+	va, vlen = scope.alloc(), scope.alloc()
 	r = [
-		"%s = %s" % (va, a),
-		"Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (va, va, va, va)
+		"%s = %s" % (va, o(a)),
+		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va),
+		"%s.x /= %s" % (va, vlen),
+		"%s.y /= %s" % (va, vlen),
+		va
 	]
-	scope.free(va)
+	scope.free(va), scope.free(vlen)
 	return r
 
-def lengthSquared(a):
-	va = scope.alloc()
-	r = [
-		"%s = %s" % (va, a),
-		"%s.x*%s.x + %s.y*%s.y" % (va, va, va, va)
-	]
-	scope.free(va)
-	return r
+def simple_unary_to_num(func):
+	def custom(a):
+		va = scope.alloc()
+		r = ["%s = %s" % (va, o(a))] + func(va)
+		scope.free(va)
+		return r
+	return custom
 
-def componentwise_binary(func):
+def simple_unary_to_vec(func):
+	def custom(a):
+		va, vr = scope.alloc(), scope.alloc()
+		r = [
+			"%s = %s" % (va, o(a)),
+			"%s = new Vector(0, 0)" % vr
+			] + func(vr, va) + [
+			vr
+		]
+		scope.free(va), scope.free(vr)
+		return r
+	return custom
+
+def simple_binary_to_num(func):
+	def custom(a, b):
+		va, vb = scope.alloc(), scope.alloc()
+		r = [
+			"%s = %s" % (va, o(a)),
+			"%s = %s" % (vb, o(b)),
+			] + func(va, vb)
+		scope.free(va), scope.free(vb)
+		return r
+	return custom
+
+def simple_binary_to_vec(func):
 	def custom(a, b):
 		va, vb, vr = scope.alloc(), scope.alloc(), scope.alloc()
 		r = [
-			"%s = %s" % (va, a),
-			"%s = %s" % (vb, b),
+			"%s = %s" % (va, o(a)),
+			"%s = %s" % (vb, o(b)),
 			"%s = new Vector(0, 0)" % vr
 			] + func(vr, va, vb) + [
 			vr
@@ -91,35 +117,51 @@ def componentwise_binary(func):
 	return custom
 
 unary_funcs = {
-	"flip": flip,
-	"length": length,
-	"lengthSquared": lengthSquared
+	"unit": unit,
+	"normalize": normalize,
+	"neg": simple_unary_to_vec(lambda a, b: [
+		"%s.x = -%s.x" % (a, b),
+		"%s.y = -%s.y" % (a, b)
+	]),
+	"flip": simple_unary_to_vec(lambda a, b: [
+		"%s.x = %s.y" % (a, b),
+		"%s.y = -%s.x" % (a, b)
+	]),
+	"length": simple_unary_to_num(lambda a: [
+		"Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (a, a, a, a)
+	]),
+	"lengthSquared": simple_unary_to_num(lambda a: [
+		"%s.x*%s.x + %s.y*%s.y" % (a, a, a, a)
+	]),
 }
 
 binary_funcs = {
-	"add": componentwise_binary(lambda a, b, c: [
+	"add": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = %s.x + %s.x" % (a, b, c),
 		"%s.y = %s.y + %s.y" % (a, b, c)
 	]),
-	"sub": componentwise_binary(lambda a, b, c: [
+	"sub": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = %s.x - %s.x" % (a, b, c),
 		"%s.y = %s.y - %s.y" % (a, b, c)
 	]),
-	"mul": componentwise_binary(lambda a, b, c: [
+	"mul": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = %s.x * %s" % (a, b, c),
 		"%s.y = %s.y * %s" % (a, b, c)
 	]),
-	"div": componentwise_binary(lambda a, b, c: [
+	"div": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = %s.x / %s" % (a, b, c),
 		"%s.y = %s.y / %s" % (a, b, c)
 	]),
-	"minComponent": componentwise_binary(lambda a, b, c: [
+	"minComponent": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = Math.min(%s.x, %s.x)" % (a, b, c),
 		"%s.y = Math.min(%s.y, %s.y)" % (a, b, c)
 	]),
-	"maxComponent": componentwise_binary(lambda a, b, c: [
+	"maxComponent": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = Math.max(%s.x, %s.x)" % (a, b, c),
 		"%s.y = Math.max(%s.y, %s.y)" % (a, b, c)
+	]),
+	"dot": simple_binary_to_num(lambda a, b: [
+		"%s.x * %s.x + %s.y * %s.y" % (a, b, a, b)
 	]),
 }
 
@@ -161,10 +203,14 @@ opmap = {
 	"MOD": "%"
 }
 
+# interesting to know how many function calls got inlined
+inline_count = 0
+
 # modified from s-expr output example, just turns the parse tree back
 # into javascript except specific function calls, which it inlines
 # (sexp.py can be found at http://code.google.com/p/pynarcissus/)
 def o(n, handledattrs=[]):
+	global inline_count
 	attrs_ = {}
 	for attr in handledattrs:
 		attrs_[attr] = True
@@ -209,11 +255,15 @@ def o(n, handledattrs=[]):
 		elif n.type == "CALL":
 			check(subnodes=2)
 			if n[0].type == "DOT" and n[0][1].type == "IDENTIFIER":
+				# must pass n[0][0] and n[1] directly to unary_funcs[func] or binary_funcs[func]
+				# because of required order of scope.alloc() and scope.free()
 				func = o(n[0][1])
 				if len(n[1]) == 0 and func in unary_funcs:
-					return "(%s)" % ", ".join(unary_funcs[func](o(n[0][0])))
+					inline_count += 1
+					return "(%s)" % ", ".join(unary_funcs[func](n[0][0]))
 				elif len(n[1]) == 1 and func in binary_funcs:
-					return "(%s)" % ", ".join(binary_funcs[func](o(n[0][0]), o(n[1])))
+					inline_count += 1
+					return "(%s)" % ", ".join(binary_funcs[func](n[0][0], n[1]))
 			return "%s(%s)" % (o(n[0]), o(n[1]))
 
 		elif n.type == "CASE":
@@ -400,7 +450,7 @@ def o(n, handledattrs=[]):
 			raise UnknownNode, "Unknown type %s" % n.type
 	except Exception, e:
 		had_error = True
-		raise e
+		raise
 	finally:
 		if not had_error:
 			realkeys = [x for x in dir(n) if x[:2] != "__"]
@@ -418,4 +468,11 @@ def o(n, handledattrs=[]):
 						"%s" % (len(subnodes_), len(n), n.type))
 
 def js_inline(js):
-	return o(jsparser.parse(js))
+	global inline_count
+	inline_count = 0
+	result = o(jsparser.parse(js))
+	print "inlined %d function calls" % inline_count
+	return result
+
+if __name__ == "__main__":
+	print js_inline(open("./src/util/vector.js").read())
