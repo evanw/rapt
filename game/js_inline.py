@@ -311,6 +311,7 @@ def o(n, handledattrs=[]):
 			elif n[0].type == "IDENTIFIER":
 				func = o(n[0])
 				if func in global_funcs:
+					inline_count += 1
 					return "(%s)" % ", ".join(global_funcs[func](*n[1]))
 			return "%s(%s)" % (o(n[0]), o(n[1]))
 
