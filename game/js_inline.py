@@ -116,6 +116,19 @@ def simple_binary_to_vec(func):
 		return r
 	return custom
 
+def simple_inplace_binary_to_vec(func):
+	def custom(a, b):
+		va, vb = scope.alloc(), scope.alloc()
+		r = [
+			"%s = %s" % (va, o(a)),
+			"%s = %s" % (vb, o(b)),
+			] + func(va, vb) + [
+			va
+		]
+		scope.free(va), scope.free(vb)
+		return r
+	return custom
+
 unary_funcs = {
 	"unit": unit,
 	"normalize": normalize,
@@ -152,16 +165,32 @@ binary_funcs = {
 		"%s.x = %s.x / %s" % (a, b, c),
 		"%s.y = %s.y / %s" % (a, b, c)
 	]),
-	"minComponent": simple_binary_to_vec(lambda a, b, c: [
+	"minComponents": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = Math.min(%s.x, %s.x)" % (a, b, c),
 		"%s.y = Math.min(%s.y, %s.y)" % (a, b, c)
 	]),
-	"maxComponent": simple_binary_to_vec(lambda a, b, c: [
+	"maxComponents": simple_binary_to_vec(lambda a, b, c: [
 		"%s.x = Math.max(%s.x, %s.x)" % (a, b, c),
 		"%s.y = Math.max(%s.y, %s.y)" % (a, b, c)
 	]),
 	"dot": simple_binary_to_num(lambda a, b: [
 		"%s.x * %s.x + %s.y * %s.y" % (a, b, a, b)
+	]),
+	"inplaceAdd": simple_inplace_binary_to_vec(lambda a, b: [
+		"%s.x += %s.x" % (a, b),
+		"%s.y += %s.y" % (a, b)
+	]),
+	"inplaceSub": simple_inplace_binary_to_vec(lambda a, b: [
+		"%s.x -= %s.x" % (a, b),
+		"%s.y -= %s.y" % (a, b)
+	]),
+	"inplaceMul": simple_inplace_binary_to_vec(lambda a, b: [
+		"%s.x *= %s" % (a, b),
+		"%s.y *= %s" % (a, b)
+	]),
+	"inplaceDiv": simple_inplace_binary_to_vec(lambda a, b: [
+		"%s.x /= %s" % (a, b),
+		"%s.y /= %s" % (a, b)
 	]),
 }
 
@@ -475,4 +504,4 @@ def js_inline(js):
 	return result
 
 if __name__ == "__main__":
-	print js_inline(open("./src/util/vector.js").read())
+	print js_inline(open("js_inline.test.js").read())

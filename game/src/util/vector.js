@@ -26,7 +26,7 @@ Vector.prototype.dot = function(v) { return this.x*v.x + this.y*v.y; };
 Vector.prototype.lengthSquared = function() { return this.dot(this); };
 Vector.prototype.length = function() { return Math.sqrt(this.lengthSquared()); };
 Vector.prototype.unit = function() { return this.div(this.length()); };
-Vector.prototype.normalize = function() { var len = this.length(); this.x /= len; this.y /= len; return this; };
+Vector.prototype.normalize = function() { var len = this.length(); this.x /= len; this.y /= len; };
 Vector.prototype.flip = function() { return new Vector(this.y, -this.x); }; // turns 90 degrees right
 Vector.prototype.atan2 = function() { return Math.atan2(this.y, this.x); };
 Vector.prototype.angleBetween = function(v) { return this.atan2() - v.atan2(); };
