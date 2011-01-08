@@ -48,21 +48,6 @@ function Menu() {
 	this.levels = [];
 }
 
-Menu.prototype.keyDown = function(key) {
-    if (key === UP_ARROW) {
-        var levelNum = parseInt(selectedLevel.attr('id'), 10);
-        if (levelNum !== 0) {
-            $('#' + (levelNum - 1)).focus();
-        }
-    }
-    if (key === DOWN_ARROW) {
-        var levelNum = parseInt(selectedLevel.attr('id'), 10);
-        if (levelNum !== (this.levels.length - 1)) {
-            $('#' + (levelNum + 1)).focus();
-        }
-    }
-}
-
 Menu.prototype.loadFromJSON = function(json) {
 	// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
 	
@@ -107,7 +92,7 @@ function MenuLevel(title, html_title) {
 	var jsonForCurrentLevel = null;
 	var currentScreen = null;
     var currentHash = '';
-    var selectedLevel = null;
+    var selectedLevel;
     var menu = new Menu();
 
 	function tick() {
@@ -201,7 +186,7 @@ function MenuLevel(title, html_title) {
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
         // Don't use === here, comparing a string with an int
-        var lastLevel = selectedLevel.attr('id') == (menu.levels.length - 1);
+        var lastLevel = (selectedLevel !== null && selectedLevel.attr('id') == (menu.levels.length - 1));
         changeScreen(new Game(lastLevel));
     }
 
@@ -225,6 +210,8 @@ function MenuLevel(title, html_title) {
         $('#canvas').hide();
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
+
+        selectedLevel = null;
 
         // Load the official level menu if it doesn't start with '#/'
 		if (location.hash.indexOf('#/') != 0) location.hash = '#/rapt/';
