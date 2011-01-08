@@ -261,6 +261,7 @@ function MenuLevel(title, html_title) {
                             if (i < menu.levels.length - 1) {
                                 // go to the next level on the list
                                 location.hash = menu.getHashForLevel(menu.levels[i + 1]);
+                                selectedLevel = $('#' + (i + 1));
                                 // Don't return because we want to prevent default
                                 break;
                             } else {
