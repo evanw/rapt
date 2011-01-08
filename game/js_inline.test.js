@@ -55,6 +55,9 @@ a.inplaceDiv(b);
 'lerp(a, b, c);';
 lerp(a, b, c);
 
+'randInRange(a, b);';
+randInRange(a, b);
+
 'var a = b.sub(c).unit().neg().flip(); // should only have one new vector';
 var a = b.sub(c).unit().neg().flip(); // should only have one new vector
 

@@ -139,8 +139,19 @@ def lerp(a, b, c):
 	scope.free(va), scope.free(vb), scope.free(vc)
 	return r
 
+def randInRange(a, b):
+	va = o(a) if isid(a) else scope.alloc()
+	vb = o(b) if isid(b) else scope.alloc()
+	r = []
+	if not isid(a): r.append("%s = %s" % (va, o(a)))
+	if not isid(b): r.append("%s = %s" % (vb, o(b)))
+	r.append("%s + (%s - %s) * Math.random()" % (va, vb, va))
+	scope.free(va), scope.free(vb)
+	return r
+
 global_funcs = {
-	"lerp": lerp
+	"lerp": lerp,
+	"randInRange": randInRange
 }
 
 unary_funcs = {
