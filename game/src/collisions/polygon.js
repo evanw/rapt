@@ -68,8 +68,8 @@ Polygon.prototype.initializeBounds = function() {
 		this.boundingBox = this.boundingBox.include(vertex);
 
 		// expand the bounding circle to include this vertex
-		if(vertex.lengthSquared() > this.circle.radius * this.circle.radius)
-		circle = new Circle(new Vector(0, 0), vertex.length());
+		//if(vertex.lengthSquared() > this.circle.radius * this.circle.radius)
+        //    this.circle = new Circle(new Vector(0, 0), vertex.length());
 	}
 };
 

@@ -92,7 +92,7 @@ function MenuLevel(title, html_title) {
 	var jsonForCurrentLevel = null;
 	var currentScreen = null;
     var currentHash = '';
-    var selectedLevel;
+    var selectedLevel = null;
     var menu = new Menu();
 
 	function tick() {
@@ -210,8 +210,6 @@ function MenuLevel(title, html_title) {
         $('#canvas').hide();
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
-
-        selectedLevel = null;
 
         // Load the official level menu if it doesn't start with '#/'
 		if (location.hash.indexOf('#/') != 0) location.hash = '#/rapt/';

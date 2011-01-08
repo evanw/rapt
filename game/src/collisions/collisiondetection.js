@@ -607,19 +607,21 @@ CollisionDetector.overlapShapes = function(shape0, shape1) {
 	}
 
 	var result;
+    var shape0Type = shape0Pointer.getType();
+    var shape1Type = shape1Pointer.getType();
 
 	// if they're both circles
-	if(shape0Pointer.getType() == SHAPE_CIRCLE && shape1Pointer.getType() == SHAPE_CIRCLE) {
+	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
 		result = this.overlapCircles(shape0Pointer, shape1Pointer);
 	}
 
 	// if one is a circle and one is a polygon
-	else if(shape0Pointer.getType() == SHAPE_CIRCLE && shape1Pointer.getType() == SHAPE_POLYGON) {
+	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
 		result = this.overlapCirclePolygon(shape0Pointer, shape1Pointer);
 	}
 
 	// if both are polygons
-	else if(shape0Pointer.getType() == SHAPE_POLYGON && shape1Pointer.getType() == SHAPE_POLYGON) {
+	else if(shape0Type == SHAPE_POLYGON && shape1Type == SHAPE_POLYGON) {
 		result = this.overlapPolygons(shape0Pointer, shape1Pointer);
 	}
 
@@ -635,7 +637,8 @@ CollisionDetector.overlapCircles = function(circle0, circle1) {
 };
 CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	// see if any point on the border of the the polygon is in the circle
-	for(var i = 0; i < polygon.vertices.length; i++)
+    var len = polygon.vertices.length;
+	for(var i = 0; i < len; ++i)
 	{
 		// if a segment of the polygon crosses the edge of the circle
 		if(this.intersectCircleSegment(circle, polygon.getSegment(i))) {
@@ -650,7 +653,6 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 
 	// otherwise, the circle could be completely inside the polygon
     var point = circle.center;
-    var len = polygon.vertices.length;
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
 		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
