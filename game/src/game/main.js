@@ -5,7 +5,6 @@ var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
 var UP_ARROW = 38;
 var DOWN_ARROW = 40;
-var selectedLevel = null;
 
 function getMenuURL() {
 	var matches = /^#\/([^\/]+)\//.exec(location.hash);
@@ -108,6 +107,7 @@ function MenuLevel(title, html_title) {
 	var jsonForCurrentLevel = null;
 	var currentScreen = null;
     var currentHash = '';
+    var selectedLevel = null;
     var menu = new Menu();
 
 	function tick() {
@@ -200,7 +200,10 @@ function MenuLevel(title, html_title) {
         $('#canvas').show();
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
-        changeScreen(new Game());
+        // Don't use === here, comparing a string with an int
+        var lastLevel = selectedLevel.attr('id') == (menu.levels.length - 1);
+        console.log(lastLevel);
+        changeScreen(new Game(lastLevel));
     }
 
 	function showLoadingScreen() {
@@ -282,7 +285,18 @@ function MenuLevel(title, html_title) {
                 e.preventDefault();
             }
  		} else if ($('#levelScreen').is(':visible')) {
-            menu.keyDown(e.which);
+            if (e.which === UP_ARROW) {
+                var levelNum = parseInt(selectedLevel.attr('id'), 10);
+                if (levelNum !== 0) {
+                    $('#' + (levelNum - 1)).focus();
+                }
+            }
+            if (e.which === DOWN_ARROW) {
+                var levelNum = parseInt(selectedLevel.attr('id'), 10);
+                if (levelNum !== (menu.levels.length - 1)) {
+                    $('#' + (levelNum + 1)).focus();
+                }
+            }
 
             // Prevents default behaviors except for enter key
             if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111 && e.which !== ENTER_KEY) {
