@@ -26,6 +26,7 @@ def compile(a, b):
 	compile = ' '.join([
 		'java -jar ./closure_compiler/compiler.jar',
 		'--compilation_level ADVANCED_OPTIMIZATIONS',
+		# '--formatting PRETTY_PRINT',
 		'--externs ./closure_compiler/jquery-1.4.4.externs.js',
 		'--externs ./closure_compiler/jquery.mousewheel.externs.js',
 		'--externs ./closure_compiler/editor.externs.js',

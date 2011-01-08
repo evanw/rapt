@@ -27,7 +27,7 @@ Entity.prototype.getCenter = function(){ return this.getShape().getCenter(); }
 Entity.prototype.setCenter = function(center){ this.getShape().moveTo(center) }
 
 Entity.prototype.isOnFloor = function() {
-    var edgeQuad = new EdgeQuad();
+    // THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
     CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
     return (edgeQuad.edges[EDGE_FLOOR] != null);
 }

@@ -23,3 +23,6 @@ EdgeQuad.prototype.throwOutIfGreaterThan = function(minimum) {
 		}
 	}
 };
+
+// this is a global because we only ever need one and allocations are expensive
+var edgeQuad = new EdgeQuad();

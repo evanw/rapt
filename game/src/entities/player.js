@@ -28,29 +28,29 @@ var PLAYER_STATE_LEFT_WALL = 3;
 var PLAYER_STATE_RIGHT_WALL = 4;
 
 var runningKeyframes = [
-	new Keyframe(0, -5 / 50).add(5, -10).add(65, -55, 20, 40).add(-20, -30, -30, 10),
-	new Keyframe(0, -2 / 50).add(5, -10).add(35, -25, 0, 30).add(18, -110, 0, 20),
-	new Keyframe(0, 0).add(5, -10).add(10, -30, -20, 20).add(60, -100, 10, 30),
+	new Keyframe(0, -5 / 50).add(5, -10, 65, -55, 20, 40, -20, -30, -30, 10),
+	new Keyframe(0, -2 / 50).add(5, -10, 35, -25, 0, 30, 18, -110, 0, 20),
+	new Keyframe(0, 0).add(5, -10, 10, -30, -20, 20, 60, -100, 10, 30),
 
-	new Keyframe(0, -5 / 50).add(5, -10).add(-20, -30, -30, 10).add(65, -55, 20, 40),
-	new Keyframe(0, -2 / 50).add(5, -10).add(18, -110, 0, 20).add(35, -25, 0, 30),
-	new Keyframe(0, 0).add(5, -10).add(60, -100, 10, 30).add(10, -30, -20, 20)
+	new Keyframe(0, -5 / 50).add(5, -10, -20, -30, -30, 10, 65, -55, 20, 40),
+	new Keyframe(0, -2 / 50).add(5, -10, 18, -110, 0, 20, 35, -25, 0, 30),
+	new Keyframe(0, 0).add(5, -10, 60, -100, 10, 30, 10, -30, -20, 20)
 ];
 var jumpingKeyframes = [
-	new Keyframe(0, 0).add(0, -10).add(150, -170, -40, 30).add(-30, -20, 20, 150),
-	new Keyframe(0, 0).add(-20, 10).add(60, -100, -80, 30).add(30, -20, 30, 30)
+	new Keyframe(0, 0).add(0, -10, 150, -170, -40, 30, -30, -20, 20, 150),
+	new Keyframe(0, 0).add(-20, 10, 60, -100, -80, 30, 30, -20, 30, 30)
 ];
 var wallSlidingKeyframe =
-	new Keyframe((0.4 - PLAYER_WIDTH) / 2, 0).add(0, -10).add(150, -130, 140, 50).add(50, -30, 50, 130);
+	new Keyframe((0.4 - PLAYER_WIDTH) / 2, 0).add(0, -10, 150, -130, 140, 50, 50, -30, 50, 130);
 var crouchingKeyframe =
-	new Keyframe(0, -0.2).add(30, -30).add(130, -110, -30, 40).add(60, -120, 20, 20);
+	new Keyframe(0, -0.2).add(30, -30, 130, -110, -30, 40, 60, -120, 20, 20);
 var fallingKeyframes = [
-	new Keyframe(0, 0).add(-20, 5).add(10, -30, -120, -30).add(40, -20, 120, 30),
-	new Keyframe(0, 0).add(-20, 5).add(10, -30, -130, -60).add(40, -20, 150, 50)
+	new Keyframe(0, 0).add(-20, 5, 10, -30, -120, -30, 40, -20, 120, 30),
+	new Keyframe(0, 0).add(-20, 5, 10, -30, -130, -60, 40, -20, 150, 50)
 ];
 var clamberingKeyframes = [
-	new Keyframe((0.4 - PLAYER_WIDTH) / 2, 0).add(0, -10).add(150, -130, 140, 50).add(50, -30, 50, 130),
-	new Keyframe(0, -0.2).add(30, -30).add(160, -180, -30, 40).add(20, -10, 20, 20)
+	new Keyframe((0.4 - PLAYER_WIDTH) / 2, 0).add(0, -10, 150, -130, 140, 50, 50, -30, 50, 130),
+	new Keyframe(0, -0.2).add(30, -30, 160, -180, -30, 40, 20, -10, 20, 20)
 ];
 
 // enum PlayerSpriteIndex
@@ -289,7 +289,7 @@ Player.prototype.tickPhysics = function(seconds) {
 
 	// check for edge collisions.  sometimes if we hit an edge hard, we won't actually be within the margin
     // but we will have a contact so we use both methods to detect an edge contact
-	var edgeQuad = new EdgeQuad();
+    // THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
     CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
 
 	var onGround = (edgeQuad.edges[EDGE_FLOOR] != null) || (this.lastContact != null && Edge.getOrientation(this.lastContact.normal) == EDGE_FLOOR);
