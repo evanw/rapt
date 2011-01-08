@@ -16,10 +16,10 @@ var POPPER_LEG4_LOWER = 8;
 var POPPER_NUM_SPRITES = 9;
 
 var popperStandingKeyframe =
-	new Keyframe(0, 0.1).add(0).add(-80, -80, 80, 80).add(100, 100, -100, -100);
+	new Keyframe(0, 0.1).add(0, -80, -80, 80, 80, 100, 100, -100, -100);
 var popperJumpingKeyframes = [
-	new Keyframe(0, 0.2).add(0).add(-40, -30, 30, 40).add(40, 40, -40, -40),
-	new Keyframe(0, 0.1).add(0).add(-80, -80, 80, 80).add(100, 100, -100, -100)
+	new Keyframe(0, 0.2).add(0, -40, -30, 30, 40, 40, 40, -40, -40),
+	new Keyframe(0, 0.1).add(0, -80, -80, 80, 80, 100, 100, -100, -100)
 ];
 
 var POPPER_RADIUS = 0.4;
