@@ -4,6 +4,9 @@ function EdgeQuad() {
 	this.quantities = [0, 0, 0, 0];
 }
 
+// this is a global because we only ever need one and allocations are expensive
+var edgeQuad = new EdgeQuad();
+
 EdgeQuad.prototype.nullifyEdges = function() {
 	this.edges = [null, null, null, null];
 };

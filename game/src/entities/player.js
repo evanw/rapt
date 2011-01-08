@@ -289,7 +289,7 @@ Player.prototype.tickPhysics = function(seconds) {
 
 	// check for edge collisions.  sometimes if we hit an edge hard, we won't actually be within the margin
     // but we will have a contact so we use both methods to detect an edge contact
-	var edgeQuad = new EdgeQuad();
+    // THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
     CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
 
 	var onGround = (edgeQuad.edges[EDGE_FLOOR] != null) || (this.lastContact != null && Edge.getOrientation(this.lastContact.normal) == EDGE_FLOOR);
