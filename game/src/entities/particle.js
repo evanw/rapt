@@ -150,7 +150,6 @@ var Particle = (function() {
 	function Particle() {
 		var particle = (count < maxCount) ? particles[count++] : particles[maxCount - 1];
 		particle.init();
-		gameState.incrementStat(STAT_NUM_PARTICLES);
 		return particle;
 	}
 

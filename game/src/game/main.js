@@ -107,6 +107,7 @@ function MenuLevel(title, html_title) {
 	var jsonForCurrentLevel = null;
 	var currentScreen = null;
     var currentHash = '';
+    var selectedLevel = null;
     var menu = new Menu();
 
 	function tick() {
@@ -180,7 +181,11 @@ function MenuLevel(title, html_title) {
         $('.level').focus(levelFocus);
         $('.level').hover(levelFocus);
         $('.level').click(levelClick);
-        selectedLevel = $('#0');
+        if (selectedLevel === null) {
+            selectedLevel = $('#0');
+        } else {
+            selectedLevel = $('#' + selectedLevel.attr('id'));
+        }
         selectedLevel.focus();
     }
 
@@ -195,7 +200,9 @@ function MenuLevel(title, html_title) {
         $('#canvas').show();
         $('#levelScreen').hide();
         $('#loadingScreen').hide();
-        changeScreen(new Game());
+        // Don't use === here, comparing a string with an int
+        var lastLevel = selectedLevel.attr('id') == (menu.levels.length - 1);
+        changeScreen(new Game(lastLevel));
     }
 
 	function showLoadingScreen() {
@@ -245,17 +252,18 @@ function MenuLevel(title, html_title) {
 
         if (currentScreen !== null) {
             if (e.which === SPACEBAR) {
-                if (currentScreen.gameStatus === GAME_LOST) {
+                if (gameState.gameStatus === GAME_LOST) {
                     // if the level is being restarted, reload the level
 					showGameScreen();
 					gameState.loadLevelFromJSON(jsonForCurrentLevel);
-                } else if (currentScreen.gameStatus === GAME_WON) {
+                } else if (gameState.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
                     for (var i = 0; i < menu.levels.length; ++i) {
                         if (menu.getHashForLevel(menu.levels[i]) === location.hash) {
                             if (i < menu.levels.length - 1) {
                                 // go to the next level on the list
                                 location.hash = menu.getHashForLevel(menu.levels[i + 1]);
+                                selectedLevel = $('#' + (i + 1));
                                 // Don't return because we want to prevent default
                                 break;
                             } else {
@@ -276,7 +284,18 @@ function MenuLevel(title, html_title) {
                 e.preventDefault();
             }
  		} else if ($('#levelScreen').is(':visible')) {
-            menu.keyDown(e.which);
+            if (e.which === UP_ARROW) {
+                var levelNum = parseInt(selectedLevel.attr('id'), 10);
+                if (levelNum !== 0) {
+                    $('#' + (levelNum - 1)).focus();
+                }
+            }
+            if (e.which === DOWN_ARROW) {
+                var levelNum = parseInt(selectedLevel.attr('id'), 10);
+                if (levelNum !== (menu.levels.length - 1)) {
+                    $('#' + (levelNum + 1)).focus();
+                }
+            }
 
             // Prevents default behaviors except for enter key
             if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey && e.which >= 0 && e.which <= 111 && e.which !== ENTER_KEY) {

@@ -19,16 +19,11 @@ var keyMapGame = {
 };
 var gameScale = 50;
 
-// enum GameStatus
-var GAME_IN_PLAY = 0;
-var GAME_WON = 1;
-var GAME_LOST = 2;
-
 // text constants
 var GAME_WIN_TEXT = "You won!  Hit SPACE to play the next level or ESC for the level selection menu.";
 var GOLDEN_COG_TEXT = "You earned a golden cog!";
 var SILVER_COG_TEXT = "You earned a silver cog!";
-var GAME_LOSS_TEXT = "You lost!  Hit SPACE to restart, or ESC to select a new level.";
+var GAME_LOSS_TEXT = "You lost.  Hit SPACE to restart, or ESC to select a new level.";
 var TEXT_BOX_X_MARGIN = 6;
 var TEXT_BOX_Y_MARGIN = 6;
 var SECONDS_BETWEEN_TICKS = 1 / 60;
@@ -37,11 +32,11 @@ var useFixedPhysicsTick = true;
 Game.subclasses(Screen);
 
 // class Game extends Screen
-function Game() {
+function Game(lastLevel) {
 	this.camera = new Camera();
 	this.fps = 0;
-    this.gameStatus = GAME_IN_PLAY;
 	this.fixedPhysicsTick = 0;
+    this.lastLevel = lastLevel;
 
 	gameState = new GameState();
 }
@@ -53,12 +48,6 @@ Game.prototype.resize = function(w, h) {
 };
 
 Game.prototype.tick = function(seconds) {
-    if (this.gameStatus === GAME_WON || gameState.gameWon()) {
-        this.gameStatus = GAME_WON;
-    } else if (this.gameStatus === GAME_LOST || gameState.gameLost()) {
-        this.gameStatus = GAME_LOST;
-    }
-
 	// when the screen isn't split, standing at the original spawn point:
 	// * Triple Threat
 	//   - variable physics tick: 30 FPS
@@ -165,12 +154,14 @@ Game.prototype.draw = function(c) {
 	this.camera.draw(c, this);
 	c.restore();
 
-    if (this.gameStatus === GAME_WON) {
+    if (gameState.gameStatus === GAME_WON) {
         // draw winning text
         c.save();
-        drawTextBox(c, [GAME_WIN_TEXT], this.width / 2, this.height / 2, 14);
+        var gameWinText = (this.lastLevel ? "Congratulations, you beat the last level in this set!  Press SPACE or ESC to return to the level selection menu." : GAME_WIN_TEXT);
+        var cogsCollectedText = "Cogs Collected: " + gameState.stats[STAT_COGS_COLLECTED] + "/" + gameState.stats[STAT_NUM_COGS];
+        drawTextBox(c, [gameWinText, "", cogsCollectedText], this.width / 2, this.height / 2, 14);
         c.restore();
-    } else if (this.gameStatus === GAME_LOST) {
+    } else if (gameState.gameStatus === GAME_LOST) {
         // draw losing text
         c.save();
         drawTextBox(c, [GAME_LOSS_TEXT], this.width / 2, this.height / 2, 14);

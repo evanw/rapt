@@ -325,7 +325,6 @@ Player.prototype.tickPhysics = function(seconds) {
 				this.velocity.y = PLAYER_SUPER_JUMP_SPEED;
 				this.isSuperJumping = true;
 			}
-			gameState.incrementStat(STAT_PLAYER_JUMPS);
 		}
 		// wall jump off the left wall
 		else if(onLeft && !moveLeft && this.boostTime < 0)
@@ -334,7 +333,6 @@ Player.prototype.tickPhysics = function(seconds) {
 			this.boostTime = JUMP_MIN_WAIT;
 			this.boost = 2.5;
 			this.boostMagnitude = 1;
-			gameState.incrementStat(STAT_PLAYER_JUMPS);
 		}
 		// wall jump off the right wall
 		else if(onRight && !moveRight && this.boostTime < 0)
@@ -343,7 +341,6 @@ Player.prototype.tickPhysics = function(seconds) {
 			this.boostTime = JUMP_MIN_WAIT;
 			this.boost = -2.5;
 			this.boostMagnitude = 1;
-			gameState.incrementStat(STAT_PLAYER_JUMPS);
 		}
 	}
 
