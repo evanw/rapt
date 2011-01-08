@@ -36,7 +36,8 @@ class Scope:
 
 	# free a local variable (to minimize the number used)
 	def free(self, var):
-		self.vars[-1].remove(var)
+		if var in self.vars[-1]:
+			self.vars[-1].remove(var)
 
 # global scope object, each SCRIPT node pushes one more level on this
 scope = Scope()
@@ -45,95 +46,105 @@ scope = Scope()
 # code generation functions
 ################################################################################
 
+# if a node is just an identifier, don't bother making a local variable for it
+def isid(n):
+	return n.type == "IDENTIFIER"
+
 def unit(a):
-	va, vr, vlen = scope.alloc(), scope.alloc(), scope.alloc()
-	r = [
-		"%s = %s" % (va, o(a)),
-		"%s = new Vector(0, 0)" % vr,
-		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va),
-		"%s.x = %s.x / %s" % (vr, va, vlen),
-		"%s.y = %s.y / %s" % (vr, va, vlen),
-		vr
-	]
+	va = o(a) if isid(a) else scope.alloc()
+	vr, vlen = scope.alloc(), scope.alloc()
+	r = []
+	if not isid(a): r.append("%s = %s" % (va, o(a)))
+	r.append("%s = new Vector(0, 0)" % vr)
+	r.append("%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va))
+	r.append("%s.x = %s.x / %s" % (vr, va, vlen))
+	r.append("%s.y = %s.y / %s" % (vr, va, vlen))
+	r.append(vr)
 	scope.free(va), scope.free(vr), scope.free(vlen)
 	return r
 
 def normalize(a):
-	va, vlen = scope.alloc(), scope.alloc()
-	r = [
-		"%s = %s" % (va, o(a)),
-		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va),
-		"%s.x /= %s" % (va, vlen),
-		"%s.y /= %s" % (va, vlen)
-	]
+	va = o(a) if isid(a) else scope.alloc()
+	vlen = scope.alloc()
+	r = []
+	if not isid(a): r.append("%s = %s" % (va, o(a)))
+	r.append("%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va))
+	r.append("%s.x /= %s" % (va, vlen))
+	r.append("%s.y /= %s" % (va, vlen))
 	scope.free(va), scope.free(vlen)
 	return r
 
 def simple_unary_to_num(func):
 	def custom(a):
-		va = scope.alloc()
-		r = ["%s = %s" % (va, o(a))] + func(va)
+		va = o(a) if isid(a) else scope.alloc()
+		r = []
+		if not isid(a): r.append("%s = %s" % (va, o(a)))
+		r += func(va)
 		scope.free(va)
 		return r
 	return custom
 
 def simple_unary_to_vec(func):
 	def custom(a):
-		va, vr = scope.alloc(), scope.alloc()
-		r = [
-			"%s = %s" % (va, o(a)),
-			"%s = new Vector(0, 0)" % vr
-			] + func(vr, va) + [
-			vr
-		]
+		va = o(a) if isid(a) else scope.alloc()
+		vr = scope.alloc()
+		r = []
+		if not isid(a): r.append("%s = %s" % (va, o(a)))
+		r.append("%s = new Vector(0, 0)" % vr)
+		r += func(vr, va)
+		r.append(vr)
 		scope.free(va), scope.free(vr)
 		return r
 	return custom
 
 def simple_binary_to_num(func):
 	def custom(a, b):
-		va, vb = scope.alloc(), scope.alloc()
-		r = [
-			"%s = %s" % (va, o(a)),
-			"%s = %s" % (vb, o(b)),
-			] + func(va, vb)
+		va = o(a) if isid(a) else scope.alloc()
+		vb = o(b) if isid(b) else scope.alloc()
+		r = []
+		if not isid(a): r.append("%s = %s" % (va, o(a)))
+		if not isid(b): r.append("%s = %s" % (vb, o(b)))
+		r += func(va, vb)
 		scope.free(va), scope.free(vb)
 		return r
 	return custom
 
 def simple_binary_to_vec(func):
 	def custom(a, b):
-		va, vb, vr = scope.alloc(), scope.alloc(), scope.alloc()
-		r = [
-			"%s = %s" % (va, o(a)),
-			"%s = %s" % (vb, o(b)),
-			"%s = new Vector(0, 0)" % vr
-			] + func(vr, va, vb) + [
-			vr
-		]
+		va = o(a) if isid(a) else scope.alloc()
+		vb = o(b) if isid(b) else scope.alloc()
+		vr = scope.alloc()
+		r = []
+		if not isid(a): r.append("%s = %s" % (va, o(a)))
+		if not isid(b): r.append("%s = %s" % (vb, o(b)))
+		r.append("%s = new Vector(0, 0)" % vr)
+		r += func(vr, va, vb)
+		r.append(vr)
 		scope.free(va), scope.free(vb), scope.free(vr)
 		return r
 	return custom
 
 def simple_inplace_binary_to_vec(func):
 	def custom(a, b):
-		va, vb = scope.alloc(), scope.alloc()
-		r = [
-			"%s = %s" % (va, o(a)),
-			"%s = %s" % (vb, o(b)),
-			] + func(va, vb)
+		va = o(a) if isid(a) else scope.alloc()
+		vb = o(b) if isid(b) else scope.alloc()
+		r = []
+		if not isid(a): r.append("%s = %s" % (va, o(a)))
+		if not isid(b): r.append("%s = %s" % (vb, o(b)))
+		r += func(va, vb)
 		scope.free(va), scope.free(vb)
 		return r
 	return custom
 
 def lerp(a, b, c):
-	va, vb, vc = scope.alloc(), scope.alloc(), scope.alloc()
-	r = [
-		"%s = %s" % (va, o(a)),
-		"%s = %s" % (vb, o(b)),
-		"%s = %s" % (vc, o(c)),
-		"%s + (%s - %s) * %s" % (va, vb, va, vc)
-	]
+	va = o(a) if isid(a) else scope.alloc()
+	vb = o(b) if isid(b) else scope.alloc()
+	vc = o(c) if isid(c) else scope.alloc()
+	r = []
+	if not isid(a): r.append("%s = %s" % (va, o(a)))
+	if not isid(b): r.append("%s = %s" % (vb, o(b)))
+	if not isid(b): r.append("%s = %s" % (vc, o(c)))
+	r.append("%s + (%s - %s) * %s" % (va, vb, va, vc))
 	scope.free(va), scope.free(vb), scope.free(vc)
 	return r
 
@@ -296,7 +307,7 @@ def o(n, handledattrs=[]):
 		elif n.type == "CALL":
 			check(subnodes=2)
 			if n[0].type == "DOT" and n[0][1].type == "IDENTIFIER":
-				# must pass n[0][0] and n[1] directly to unary_funcs[func] or binary_funcs[func]
+				# must pass n[0][0] and n[1][0] directly to unary_funcs[func] or binary_funcs[func]
 				# because of required order of scope.alloc() and scope.free()
 				func = o(n[0][1])
 				if len(n[1]) == 0 and func in unary_funcs:
@@ -304,7 +315,7 @@ def o(n, handledattrs=[]):
 					return "(%s)" % ", ".join(unary_funcs[func](n[0][0]))
 				elif len(n[1]) == 1 and func in binary_funcs:
 					inline_count += 1
-					return "(%s)" % ", ".join(binary_funcs[func](n[0][0], n[1]))
+					return "(%s)" % ", ".join(binary_funcs[func](n[0][0], n[1][0]))
 			elif n[0].type == "IDENTIFIER":
 				func = o(n[0])
 				if func in global_funcs:

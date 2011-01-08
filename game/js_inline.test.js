@@ -1,8 +1,8 @@
 'var a = b.unit();';
 var a = b.unit();
 
-'var a = b.normalize();';
-var a = b.normalize();
+'b.normalize();';
+b.normalize();
 
 'var a = b.neg();';
 var a = b.neg();
