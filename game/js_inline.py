@@ -483,8 +483,8 @@ def o(n, handledattrs=[]):
 
 		elif n.type == "RETURN":
 			if type(n.value) == str:
-				return "return"
-			return "return %s" % o(n.value)
+				return "return;"
+			return "return %s;" % o(n.value)
 
 		elif n.type == "SCRIPT":
 			check(attrs=["funDecls","varDecls"], subnodes=len(n))

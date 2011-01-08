@@ -39,6 +39,7 @@ function clipHelper(c, w, h, split) {
 	if (Math.abs(split.y * ty) <= h) c.lineTo(split.x * ty, split.y * ty);
 	if ((+w) * split.y - (-h) * split.x >= 0) c.lineTo(+w, -h);
 	if (Math.abs(split.x * tx) <= w) c.lineTo(-split.x * tx, -split.y * tx);
+	c.closePath();
 	c.clip();
 }
 
@@ -57,7 +58,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 	if(!isSplit) {
 		renderer.render(c, center, this.width, this.height, this.backgroundCacheA);
 	} else {
-		var AtoB = positionB.sub(positionA).unit().mul(99999);
+		var AtoB = positionB.sub(positionA).unit().mul(99);
 		var split = AtoB.flip();
 
 		// make sure a's center isn't more than maxLength from positionA
@@ -83,16 +84,15 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 		c.restore();
 
 		// divide both player's view with a black line
-		AtoB = positionB.sub(positionA);
-		var splitSize = (AtoB.length() - 1.9 * maxLength) * 0.01;
-		AtoB = AtoB.unit().mul(Math.min(splitSize, 0.1));
-		c.fillStyle = 'black';
+		var splitSize = Math.min(0.1, (positionB.sub(positionA).length() - 1.9 * maxLength) * 0.01);
+		c.save();
+		c.lineWidth = 2 * splitSize;
+		c.strokeStyle = 'black';
 		c.beginPath();
-		c.moveTo(-split.x - AtoB.x, -split.y - AtoB.x);
-		c.lineTo(-split.x + AtoB.x, -split.y + AtoB.y);
-		c.lineTo(split.x + AtoB.x, split.y + AtoB.y);
-		c.lineTo(split.x - AtoB.x, split.y - AtoB.x);
-		c.fill();
+		c.moveTo(-split.x, -split.y);
+		c.lineTo(split.x, split.y);
+		c.stroke();
+		c.restore();
 	}
 };
 
