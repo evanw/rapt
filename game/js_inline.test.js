@@ -37,6 +37,9 @@ var a = b.maxComponents(c);
 'var a = b.dot(c);';
 var a = b.dot(c);
 
+'a.inplaceNeg();';
+a.inplaceNeg();
+
 'a.inplaceAdd(b);';
 a.inplaceAdd(b);
 
@@ -51,3 +54,9 @@ a.inplaceDiv(b);
 
 'lerp(a, b, c);';
 lerp(a, b, c);
+
+'var a = b.sub(c).unit().neg().flip(); // should only have one new vector';
+var a = b.sub(c).unit().neg().flip(); // should only have one new vector
+
+'var a = b.sub(c).add(d).mul(2).div(3); // should only have one new vector';
+var a = b.sub(c).add(d).mul(2).div(3); // should only have one new vector

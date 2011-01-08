@@ -38,9 +38,16 @@ class Scope:
 	def free(self, var):
 		if var in self.vars[-1]:
 			self.vars[-1].remove(var)
+		self.last_freed_var = var
 
 # global scope object, each SCRIPT node pushes one more level on this
 scope = Scope()
+
+# used to implement reuse of locals
+result_var = None
+
+# interesting to know how many new vector allocations were avoided
+allocations_avoided = 0
 
 ################################################################################
 # code generation functions
@@ -48,93 +55,77 @@ scope = Scope()
 
 # if a node is just an identifier, don't bother making a local variable for it
 def isid(n):
-	return n.type == "IDENTIFIER" or n.type == "THIS"
+	return n.type == "IDENTIFIER" or n.type == "THIS" or n.type == "NUMBER"
 
-def unit(a):
-	va = o(a) if isid(a) else scope.alloc()
-	vr, vlen = scope.alloc(), scope.alloc()
-	r = []
-	if not isid(a): r.append("%s = %s" % (va, o(a)))
-	r.append("%s = new Vector(0, 0)" % vr)
-	r.append("%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va))
-	r.append("%s.x = %s.x / %s" % (vr, va, vlen))
-	r.append("%s.y = %s.y / %s" % (vr, va, vlen))
-	r.append(vr)
-	scope.free(va), scope.free(vr), scope.free(vlen)
-	return r
+# we can reuse temporaries created by inner computations
+def isinline(n):
+	if n.type != "CALL":
+		return False
+	if n[0].type == "DOT" and n[0][1].type == "IDENTIFIER":
+		func = o(n[0][1])
+		if len(n[1]) == 0 and func in unary_funcs:
+			return True
+		elif len(n[1]) == 1 and func in binary_funcs:
+			return True
+	elif n[0].type == "IDENTIFIER":
+		func = o(n[0])
+		if func in global_funcs:
+			return True
+	return False
 
-def normalize(a):
-	va = o(a) if isid(a) else scope.alloc()
-	vlen = scope.alloc()
-	r = []
-	if not isid(a): r.append("%s = %s" % (va, o(a)))
-	r.append("%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va))
-	r.append("%s.x /= %s" % (va, vlen))
-	r.append("%s.y /= %s" % (va, vlen))
-	scope.free(va), scope.free(vlen)
-	return r
+NEED_TEMP = 1
+NEED_RESULT = 2
 
-def simple_unary_to_num(func):
-	def custom(a):
-		va = o(a) if isid(a) else scope.alloc()
+def wrap_unary(flags, func, inplace=None):
+	def convert(a):
+		global result_var, allocations_avoided
+		if inplace and isinline(a):
+			allocations_avoided += 1
+			r = unary_funcs[inplace](a)
+			r.append(result_var)
+			return r
 		r = []
-		if not isid(a): r.append("%s = %s" % (va, o(a)))
-		r += func(va)
-		scope.free(va)
-		return r
-	return custom
-
-def simple_unary_to_vec(func):
-	def custom(a):
 		va = o(a) if isid(a) else scope.alloc()
-		vr = scope.alloc()
-		r = []
-		if not isid(a): r.append("%s = %s" % (va, o(a)))
-		r.append("%s = new Vector(0, 0)" % vr)
-		r += func(vr, va)
-		r.append(vr)
-		scope.free(va), scope.free(vr)
+		vr = scope.alloc() if flags & NEED_RESULT else None
+		vtemp = scope.alloc() if flags & NEED_TEMP else None
+		if not isid(a):
+			r.append("%s = %s" % (va, o(a)))
+		if vr:
+			r.append("%s = new Vector(0, 0)" % vr)
+			r += (func(vr, va, vtemp) if vtemp else func(vr, va)) + [vr]
+		else:
+			r += func(va, vtemp) if vtemp else func(va)
+		scope.free(va), scope.free(vr), scope.free(vtemp)
+		result_var = vr if vr else va
 		return r
-	return custom
+	return convert
 
-def simple_binary_to_num(func):
-	def custom(a, b):
-		va = o(a) if isid(a) else scope.alloc()
-		vb = o(b) if isid(b) else scope.alloc()
+def wrap_binary(flags, func, inplace = None):
+	def convert(a, b):
+		global result_var, allocations_avoided
+		if inplace and isinline(a):
+			allocations_avoided += 1
+			r = binary_funcs[inplace](a, b)
+			r.append(result_var)
+			return r
 		r = []
-		if not isid(a): r.append("%s = %s" % (va, o(a)))
-		if not isid(b): r.append("%s = %s" % (vb, o(b)))
-		r += func(va, vb)
-		scope.free(va), scope.free(vb)
-		return r
-	return custom
-
-def simple_binary_to_vec(func):
-	def custom(a, b):
 		va = o(a) if isid(a) else scope.alloc()
 		vb = o(b) if isid(b) else scope.alloc()
-		vr = scope.alloc()
-		r = []
-		if not isid(a): r.append("%s = %s" % (va, o(a)))
-		if not isid(b): r.append("%s = %s" % (vb, o(b)))
-		r.append("%s = new Vector(0, 0)" % vr)
-		r += func(vr, va, vb)
-		r.append(vr)
-		scope.free(va), scope.free(vb), scope.free(vr)
+		vr = scope.alloc() if flags & NEED_RESULT else None
+		vtemp = scope.alloc() if flags & NEED_TEMP else None
+		if not isid(a):
+			r.append("%s = %s" % (va, o(a)))
+		if not isid(b):
+			r.append("%s = %s" % (vb, o(b)))
+		if vr:
+			r.append("%s = new Vector(0, 0)" % vr)
+			r += (func(vr, va, vb, vtemp) if vtemp else func(vr, va, vb)) + [vr]
+		else:
+			r += func(va, vb, vtemp) if vtemp else func(va, vb)
+		scope.free(va), scope.free(vr), scope.free(vb), scope.free(vtemp)
+		result_var = vr if vr else va
 		return r
-	return custom
-
-def simple_inplace_binary_to_vec(func):
-	def custom(a, b):
-		va = o(a) if isid(a) else scope.alloc()
-		vb = o(b) if isid(b) else scope.alloc()
-		r = []
-		if not isid(a): r.append("%s = %s" % (va, o(a)))
-		if not isid(b): r.append("%s = %s" % (vb, o(b)))
-		r += func(va, vb)
-		scope.free(va), scope.free(vb)
-		return r
-	return custom
+	return convert
 
 def lerp(a, b, c):
 	va = o(a) if isid(a) else scope.alloc()
@@ -153,67 +144,92 @@ global_funcs = {
 }
 
 unary_funcs = {
-	"unit": unit,
-	"normalize": normalize,
-	"neg": simple_unary_to_vec(lambda a, b: [
-		"%s.x = -%s.x" % (a, b),
-		"%s.y = -%s.y" % (a, b)
+	"unit": wrap_unary(NEED_RESULT | NEED_TEMP, lambda r, a, length: [
+		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
+		"%s.x = %s.x / %s" % (r, a, length),
+		"%s.y = %s.y / %s" % (r, a, length)
+	], "normalize"),
+	"normalize": wrap_unary(NEED_TEMP, lambda a, length: [
+		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
+		"%s.x /= %s" % (a, length),
+		"%s.y /= %s" % (a, length)
 	]),
-	"flip": simple_unary_to_vec(lambda a, b: [
-		"%s.x = %s.y" % (a, b),
-		"%s.y = -%s.x" % (a, b)
-	]),
-	"length": simple_unary_to_num(lambda a: [
+	"neg": wrap_unary(NEED_RESULT, lambda r, a: [
+		"%s.x = -%s.x" % (r, a),
+		"%s.y = -%s.y" % (r, a)
+	], "inplaceNeg"),
+	"flip": wrap_unary(NEED_RESULT, lambda r, a: [
+		"%s.x = %s.y" % (r, a),
+		"%s.y = -%s.x" % (r, a)
+	], "inplaceFlip"),
+	"length": wrap_unary(0, lambda a: [
 		"Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (a, a, a, a)
 	]),
-	"lengthSquared": simple_unary_to_num(lambda a: [
+	"lengthSquared": wrap_unary(0, lambda a: [
 		"%s.x*%s.x + %s.y*%s.y" % (a, a, a, a)
+	]),
+	"inplaceNeg": wrap_unary(0, lambda a: [
+		"%s.x = -%s.x" % (a, a),
+		"%s.y = -%s.y" % (a, a)
+	]),
+	"inplaceFlip": wrap_unary(NEED_TEMP, lambda a, temp: [
+		"%s = %s.x" % (temp, a),
+		"%s.x = %s.y" % (a, a),
+		"%s.y = -%s" % (a, temp)
 	]),
 }
 
 binary_funcs = {
-	"add": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = %s.x + %s.x" % (a, b, c),
-		"%s.y = %s.y + %s.y" % (a, b, c)
-	]),
-	"sub": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = %s.x - %s.x" % (a, b, c),
-		"%s.y = %s.y - %s.y" % (a, b, c)
-	]),
-	"mul": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = %s.x * %s" % (a, b, c),
-		"%s.y = %s.y * %s" % (a, b, c)
-	]),
-	"div": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = %s.x / %s" % (a, b, c),
-		"%s.y = %s.y / %s" % (a, b, c)
-	]),
-	"minComponents": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = Math.min(%s.x, %s.x)" % (a, b, c),
-		"%s.y = Math.min(%s.y, %s.y)" % (a, b, c)
-	]),
-	"maxComponents": simple_binary_to_vec(lambda a, b, c: [
-		"%s.x = Math.max(%s.x, %s.x)" % (a, b, c),
-		"%s.y = Math.max(%s.y, %s.y)" % (a, b, c)
-	]),
-	"dot": simple_binary_to_num(lambda a, b: [
+	"add": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = %s.x + %s.x" % (r, a, b),
+		"%s.y = %s.y + %s.y" % (r, a, b)
+	], "inplaceAdd"),
+	"sub": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = %s.x - %s.x" % (r, a, b),
+		"%s.y = %s.y - %s.y" % (r, a, b)
+	], "inplaceSub"),
+	"mul": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = %s.x * %s" % (r, a, b),
+		"%s.y = %s.y * %s" % (r, a, b)
+	], "inplaceMul"),
+	"div": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = %s.x / %s" % (r, a, b),
+		"%s.y = %s.y / %s" % (r, a, b)
+	], "inplaceDiv"),
+	"minComponents": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = Math.min(%s.x, %s.x)" % (r, a, b),
+		"%s.y = Math.min(%s.y, %s.y)" % (r, a, b)
+	], "inplaceMinComponents"),
+	"maxComponents": wrap_binary(NEED_RESULT, lambda r, a, b: [
+		"%s.x = Math.max(%s.x, %s.x)" % (r, a, b),
+		"%s.y = Math.max(%s.y, %s.y)" % (r, a, b)
+	], "inplaceMaxComponents"),
+	"dot": wrap_binary(0, lambda a, b: [
 		"%s.x * %s.x + %s.y * %s.y" % (a, b, a, b)
 	]),
-	"inplaceAdd": simple_inplace_binary_to_vec(lambda a, b: [
+	"inplaceAdd": wrap_binary(0, lambda a, b: [
 		"%s.x += %s.x" % (a, b),
 		"%s.y += %s.y" % (a, b)
 	]),
-	"inplaceSub": simple_inplace_binary_to_vec(lambda a, b: [
+	"inplaceSub": wrap_binary(0, lambda a, b: [
 		"%s.x -= %s.x" % (a, b),
 		"%s.y -= %s.y" % (a, b)
 	]),
-	"inplaceMul": simple_inplace_binary_to_vec(lambda a, b: [
+	"inplaceMul": wrap_binary(0, lambda a, b: [
 		"%s.x *= %s" % (a, b),
 		"%s.y *= %s" % (a, b)
 	]),
-	"inplaceDiv": simple_inplace_binary_to_vec(lambda a, b: [
+	"inplaceDiv": wrap_binary(0, lambda a, b: [
 		"%s.x /= %s" % (a, b),
 		"%s.y /= %s" % (a, b)
+	]),
+	"inplaceMinComponents": wrap_binary(0, lambda a, b: [
+		"%s.x = Math.min(%s.x, %s.x)" % (a, a, b),
+		"%s.y = Math.min(%s.y, %s.y)" % (a, a, b)
+	]),
+	"inplaceMaxComponents": wrap_binary(0, lambda a, b: [
+		"%s.x = Math.max(%s.x, %s.x)" % (a, a, b),
+		"%s.y = Math.max(%s.y, %s.y)" % (a, a, b)
 	]),
 }
 
@@ -529,6 +545,7 @@ def js_inline(js):
 	inline_count = 0
 	result = o(jsparser.parse(js))
 	print "inlined %d function calls" % inline_count
+	print "avoided allocating %d new vectors" % allocations_avoided
 	return result
 
 if __name__ == "__main__":
