@@ -12,6 +12,10 @@ class User < ActiveRecord::Base
   
   validates_uniqueness_of :username, :on => :create, :message => "must be unique"
   
+  def normalize_level_positions
+    self.levels.each_with_index { |level, idx| level.update_attributes({:position => idx + 1})}
+  end
+  
   protected
   
   def self.find_for_authentication(conditions)
@@ -26,4 +30,5 @@ class User < ActiveRecord::Base
   def email=(str)
     write_attribute(:email, str.downcase)
   end
+  
 end
