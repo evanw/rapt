@@ -225,13 +225,24 @@ CollisionDetector.containsPointShape = function(point, shape) {
 	switch(shape.getType())
 	{
 	case SHAPE_CIRCLE:
-		return this.containsPointCircle(point, shape);
+        return point.sub(shape.center).lengthSquared() < shape.radius * shape.radius;
 
 	case SHAPE_AABB:
-		return this.containsPointAabb(point, shape);
+        return point.x >= shape.lowerLeft.x &&
+			   point.x <= shape.lowerLeft.x + shape.size.x &&
+               point.y >= shape.lowerLeft.y &&
+               point.y <= shape.lowerLeft.y + shape.size.y;
 
 	case SHAPE_POLYGON:
-		return this.containsPointPolygon(point, shape);
+        var len = shape.vertices.length;
+        for (var i = 0; i < len; ++i) {
+            // Is this point outside this edge?  if so, it's not inside the polygon
+            if (point.sub(shape.vertices[i].add(shape.center)).dot(shape.segments[i].normal) > 0) {
+                return false;
+            }
+        }
+        // if the point was inside all of the edges, then it's inside the polygon.
+        return true;
 	}
 
 	alert('assertion failed in CollisionDetector.containsPointShape');
@@ -637,23 +648,33 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	}
 
 	// otherwise, the circle could be completely inside the polygon
-	return this.containsPointPolygon(circle.center, polygon);
+    var point = circle.center;
+    var len = polygon.vertices.length;
+	for (var i = 0; i < len; ++i) {
+		// Is this point outside this edge?  if so, it's not inside the polygon
+		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
+            return false;
+		}
+	}
+	// if the point was inside all of the edges, then it's inside the polygon.
+	return true;
 };
+
 CollisionDetector.overlapPolygons = function(polygon0, polygon1) {
 	var i;
+    var len0 = polygon0.vertices.length;
+    var len1 = polygon1.vertices.length;
 
 	// see if any corner of polygon 0 is inside of polygon 1
-	for(i = 0; i < polygon0.vertices.length; i++)
-	{
-		if(this.containsPointPolygon(polygon0.getVertex(i), polygon1)) {
+	for(i = 0; i < len0; ++i) {
+		if(this.containsPointPolygon(polygon0.vertices[i].add(polygon0.center), polygon1)) {
 			return true;
 		}
 	}
 
 	// see if any corner of polygon 1 is inside of polygon 0
-	for(i = 0; i < polygon1.vertices.length; i++)
-	{
-		if(this.containsPointPolygon(polygon1.getVertex(i), polygon0)) {
+	for(i = 0; i < len1; ++i) {
+		if(this.containsPointPolygon(polygon1.vertices[i].add(polygon1.center), polygon0)) {
 			return true;
 		}
 	}
@@ -662,23 +683,14 @@ CollisionDetector.overlapPolygons = function(polygon0, polygon1) {
 };
 
 // CONTAINS
-CollisionDetector.containsPointCircle = function(point, circle) {
-	return point.sub(circle.center).lengthSquared() < circle.radius * circle.radius;
-};
-CollisionDetector.containsPointAabb = function(point, aabb) {
-	return point.x >= aabb.lowerLeft.x &&
-			point.x <= aabb.lowerLeft.x + aabb.size.x &&
-			point.y >= aabb.lowerLeft.y &&
-			point.y <= aabb.lowerLeft.y + aabb.size.y;
-};
 CollisionDetector.containsPointPolygon = function(point, polygon) {
-	for(var i = 0; i < polygon.vertices.length; i++) {
-		// is this point outside this edge?  if so, it's not inside the polygon
-		if(point.sub(polygon.getVertex(i)).dot(polygon.getSegment(i).normal) > 0) {
-			return false;
+    var len = polygon.vertices.length;
+	for (var i = 0; i < len; ++i) {
+		// Is this point outside this edge?  if so, it's not inside the polygon
+		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
+            return false;
 		}
 	}
-
 	// if the point was inside all of the edges, then it's inside the polygon.
 	return true;
 };
