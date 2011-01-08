@@ -64,8 +64,7 @@ def normalize(a):
 		"%s = %s" % (va, o(a)),
 		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (vlen, va, va, va, va),
 		"%s.x /= %s" % (va, vlen),
-		"%s.y /= %s" % (va, vlen),
-		va
+		"%s.y /= %s" % (va, vlen)
 	]
 	scope.free(va), scope.free(vlen)
 	return r
@@ -122,9 +121,7 @@ def simple_inplace_binary_to_vec(func):
 		r = [
 			"%s = %s" % (va, o(a)),
 			"%s = %s" % (vb, o(b)),
-			] + func(va, vb) + [
-			va
-		]
+			] + func(va, vb)
 		scope.free(va), scope.free(vb)
 		return r
 	return custom
