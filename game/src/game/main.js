@@ -5,6 +5,7 @@ var ESCAPE_KEY = 27;
 var SPACEBAR = 32;
 var UP_ARROW = 38;
 var DOWN_ARROW = 40;
+var selectedLevel = null;
 
 function getMenuURL() {
 	var matches = /^#\/([^\/]+)\//.exec(location.hash);
@@ -180,7 +181,11 @@ function MenuLevel(title, html_title) {
         $('.level').focus(levelFocus);
         $('.level').hover(levelFocus);
         $('.level').click(levelClick);
-        selectedLevel = $('#0');
+        if (selectedLevel === null) {
+            selectedLevel = $('#0');
+        } else {
+            selectedLevel = $('#' + selectedLevel.attr('id'));
+        }
         selectedLevel.focus();
     }
 
