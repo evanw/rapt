@@ -48,7 +48,7 @@ scope = Scope()
 
 # if a node is just an identifier, don't bother making a local variable for it
 def isid(n):
-	return n.type == "IDENTIFIER"
+	return n.type == "IDENTIFIER" or n.type == "THIS"
 
 def unit(a):
 	va = o(a) if isid(a) else scope.alloc()
@@ -143,7 +143,7 @@ def lerp(a, b, c):
 	r = []
 	if not isid(a): r.append("%s = %s" % (va, o(a)))
 	if not isid(b): r.append("%s = %s" % (vb, o(b)))
-	if not isid(b): r.append("%s = %s" % (vc, o(c)))
+	if not isid(c): r.append("%s = %s" % (vc, o(c)))
 	r.append("%s + (%s - %s) * %s" % (va, vb, va, vc))
 	scope.free(va), scope.free(vb), scope.free(vc)
 	return r
@@ -532,4 +532,8 @@ def js_inline(js):
 	return result
 
 if __name__ == "__main__":
-	print js_inline(open("js_inline.test.js").read())
+	if len(sys.argv) > 1:
+		for arg in sys.argv[1:]:
+			print js_inline(open(arg).read())
+	else:
+		print js_inline(open("js_inline.test.js").read())
