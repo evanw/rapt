@@ -250,11 +250,11 @@ function MenuLevel(title, html_title) {
 
         if (currentScreen !== null) {
             if (e.which === SPACEBAR) {
-                if (currentScreen.gameStatus === GAME_LOST) {
+                if (gameState.gameStatus === GAME_LOST) {
                     // if the level is being restarted, reload the level
 					showGameScreen();
 					gameState.loadLevelFromJSON(jsonForCurrentLevel);
-                } else if (currentScreen.gameStatus === GAME_WON) {
+                } else if (gameState.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
                     for (var i = 0; i < menu.levels.length; ++i) {
                         if (menu.getHashForLevel(menu.levels[i]) === location.hash) {

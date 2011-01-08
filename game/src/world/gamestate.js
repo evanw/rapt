@@ -1,13 +1,16 @@
 // constants
 var SPAWN_POINT_PARTICLE_FREQ = 0.3;
 
+// enum GameStatus
+var GAME_IN_PLAY = 0;
+var GAME_WON = 1;
+var GAME_LOST = 2;
+
 // enum StatIndex
 var STAT_PLAYER_DEATHS = 0;
 var STAT_ENEMY_DEATHS = 1;
-var STAT_PLAYER_JUMPS = 2;
-var STAT_NUM_PARTICLES = 3;
-var STAT_COGS_COLLECTED = 4;
-var STAT_NUM_COGS = 5;
+var STAT_COGS_COLLECTED = 2;
+var STAT_NUM_COGS = 3;
 
 
 // class GameState
@@ -29,6 +32,9 @@ function GameState() {
 	// if you need to tell if the world has been modified (door has been opened/closed), just watch
 	// for changes to this variable, which can be incremented by gameState.recordModification()
 	this.modificationCount = 0;
+
+    this.gameStatus = GAME_IN_PLAY;
+    this.stats = [0, 0, 0, 0];
 }
 
 // global variable for game state, initialized in main.js
@@ -79,6 +85,7 @@ GameState.prototype.gameLost = function() {
 }
 
 GameState.prototype.incrementStat = function(stat) {
+    ++this.stats[stat];
 }
 
 GameState.prototype.addEnemy = function(enemy, spawnerPosition) {
@@ -182,6 +189,12 @@ GameState.prototype.killAll = function(edge) {
 }
 
 GameState.prototype.tick = function(seconds) {
+    if (this.gameStatus === GAME_WON || this.gameWon()) {
+        this.gameStatus = GAME_WON;
+    } else if (this.gameStatus === GAME_LOST || this.gameLost()) {
+        this.gameStatus = GAME_LOST;
+    }
+
     this.timeSinceStart += seconds;
 
     if (this.killKey) {

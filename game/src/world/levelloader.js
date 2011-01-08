@@ -55,6 +55,9 @@ function jsonToEnemy(json) {
 GameState.prototype.loadLevelFromJSON = function(json) {
 	// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
 	
+    // Reset stats
+    this.stats = [0, 0, 0, 0];
+
 	// Load size, spawn point, and goal
     this.world = new World(json['width'], json['height'], jsonToVec(json['start']), jsonToVec(json['end']));
 	

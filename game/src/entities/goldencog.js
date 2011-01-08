@@ -23,7 +23,9 @@ GoldenCog.prototype.reactToPlayer = function(player) {
 };
 
 GoldenCog.prototype.onDeath = function() {
-    gameState.incrementStat(STAT_COGS_COLLECTED);
+    if (gameState.gameStatus === GAME_IN_PLAY) {
+        gameState.incrementStat(STAT_COGS_COLLECTED);
+    }
     // Golden particle goodness
     var position = this.getCenter();
     for (var i = 0; i < 100; ++i) {
