@@ -48,3 +48,6 @@ a.inplaceMul(b);
 
 'a.inplaceDiv(b);';
 a.inplaceDiv(b);
+
+'lerp(a, b, c);';
+lerp(a, b, c);

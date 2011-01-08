@@ -129,6 +129,21 @@ def simple_inplace_binary_to_vec(func):
 		return r
 	return custom
 
+def lerp(a, b, c):
+	va, vb, vc = scope.alloc(), scope.alloc(), scope.alloc()
+	r = [
+		"%s = %s" % (va, o(a)),
+		"%s = %s" % (vb, o(b)),
+		"%s = %s" % (vc, o(c)),
+		"%s + (%s - %s) * %s" % (va, vb, va, vc)
+	]
+	scope.free(va), scope.free(vb), scope.free(vc)
+	return r
+
+global_funcs = {
+	"lerp": lerp
+}
+
 unary_funcs = {
 	"unit": unit,
 	"normalize": normalize,
@@ -293,6 +308,10 @@ def o(n, handledattrs=[]):
 				elif len(n[1]) == 1 and func in binary_funcs:
 					inline_count += 1
 					return "(%s)" % ", ".join(binary_funcs[func](n[0][0], n[1]))
+			elif n[0].type == "IDENTIFIER":
+				func = o(n[0])
+				if func in global_funcs:
+					return "(%s)" % ", ".join(global_funcs[func](*n[1]))
 			return "%s(%s)" % (o(n[0]), o(n[1]))
 
 		elif n.type == "CASE":
