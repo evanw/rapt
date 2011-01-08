@@ -55,12 +55,15 @@ Edge.prototype.draw = function(c) {
 	}
 	this.segment.draw(c);
 
-	c.beginPath();
-	for(var i = 1, num = 10; i < num - 1; i++) {
-		var fraction = i / (num - 1);
-		var start = this.segment.start.mul(fraction).add(this.segment.end.mul(1 - fraction));
-		c.moveTo(start.x, start.y);
-		c.lineTo(start.x - this.segment.normal.x * 0.1, start.y - this.segment.normal.y * 0.1);
-	}
-	c.stroke();
+    var xOffset = this.segment.normal.x * 0.1;
+    var yOffset = this.segment.normal.y * 0.1;
+
+    c.beginPath();
+    for(var i = 1, num = 10; i < num - 1; ++i) {
+        var fraction = i / (num - 1);
+        var start = this.segment.start.mul(fraction).add(this.segment.end.mul(1 - fraction));
+        c.moveTo(start.x, start.y);
+        c.lineTo(start.x - xOffset, start.y - yOffset);
+    }
+    c.stroke();
 }

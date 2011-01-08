@@ -22,7 +22,6 @@ function Polygon() {
 	}
 
 	this.boundingBox = new AABB(this.vertices[0], this.vertices[0]);
-	this.circle = new Circle(new Vector(0, 0), 0);
 	this.initializeBounds();
 }
 
@@ -52,9 +51,6 @@ Polygon.prototype.getSegment = function(i) {
 Polygon.prototype.getAabb = function() {
 	return this.boundingBox.offsetBy(this.center);
 };
-Polygon.prototype.getCircle = function() {
-	return this.circle.offsetBy(this.center);
-};
 Polygon.prototype.getCenter = function() {
 	return this.center;
 };
@@ -66,10 +62,6 @@ Polygon.prototype.initializeBounds = function() {
 
 		// expand the bounding box to include this vertex
 		this.boundingBox = this.boundingBox.include(vertex);
-
-		// expand the bounding circle to include this vertex
-		//if(vertex.lengthSquared() > this.circle.radius * this.circle.radius)
-        //    this.circle = new Circle(new Vector(0, 0), vertex.length());
 	}
 };
 

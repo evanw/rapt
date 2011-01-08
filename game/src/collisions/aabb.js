@@ -40,9 +40,6 @@ AABB.prototype.getType = function() {
 AABB.prototype.getAabb = function() {
 	return this;
 };
-AABB.prototype.getCircle = function() {
-	return new Circle(this.getCenter(), this.size.length() / 2);
-};
 AABB.prototype.moveBy = function(delta) {
 	this.lowerLeft = this.lowerLeft.add(delta);
 };

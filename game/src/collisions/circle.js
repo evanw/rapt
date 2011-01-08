@@ -18,9 +18,6 @@ Circle.prototype.getAabb = function() {
 Circle.prototype.getCenter = function() {
     return this.center;
 }
-Circle.prototype.getCircle = function() {
-	return this;
-};
 Circle.prototype.moveBy = function(delta) {
 	this.center = this.center.add(delta);
 };
