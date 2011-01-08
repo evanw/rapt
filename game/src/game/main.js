@@ -202,7 +202,6 @@ function MenuLevel(title, html_title) {
         $('#loadingScreen').hide();
         // Don't use === here, comparing a string with an int
         var lastLevel = selectedLevel.attr('id') == (menu.levels.length - 1);
-        console.log(lastLevel);
         changeScreen(new Game(lastLevel));
     }
 
