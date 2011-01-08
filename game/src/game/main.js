@@ -284,13 +284,13 @@ function MenuLevel(title, html_title) {
                 e.preventDefault();
             }
  		} else if ($('#levelScreen').is(':visible')) {
-            if (e.which === UP_ARROW) {
+            if (e.which === UP_ARROW && selectedLevel !== null) {
                 var levelNum = parseInt(selectedLevel.attr('id'), 10);
                 if (levelNum !== 0) {
                     $('#' + (levelNum - 1)).focus();
                 }
             }
-            if (e.which === DOWN_ARROW) {
+            if (e.which === DOWN_ARROW && selectedLevel !== null) {
                 var levelNum = parseInt(selectedLevel.attr('id'), 10);
                 if (levelNum !== (menu.levels.length - 1)) {
                     $('#' + (levelNum + 1)).focus();

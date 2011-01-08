@@ -225,13 +225,13 @@ CollisionDetector.containsPointShape = function(point, shape) {
 	switch(shape.getType())
 	{
 	case SHAPE_CIRCLE:
-        return point.sub(shape.center).lengthSquared() < shape.radius * shape.radius;
+        return (point.sub(shape.center).lengthSquared() < shape.radius * shape.radius);
 
 	case SHAPE_AABB:
-        return point.x >= shape.lowerLeft.x &&
+        return (point.x >= shape.lowerLeft.x &&
 			   point.x <= shape.lowerLeft.x + shape.size.x &&
                point.y >= shape.lowerLeft.y &&
-               point.y <= shape.lowerLeft.y + shape.size.y;
+               point.y <= shape.lowerLeft.y + shape.size.y);
 
 	case SHAPE_POLYGON:
         var len = shape.vertices.length;
@@ -477,13 +477,14 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 		// for each endpoint of the edge
 		for(var j = 0; j < 2; j++)
 		{
+            var polygonSegment = polygon.getSegment(i);
 			// if the polygon is trying to pass out of the edge, no collision
-			if(polygon.getSegment(i).normal.dot(edgeEndpoints[j].sub(edgeMiddle)) > 0) {
+			if(polygonSegment.normal.dot(edgeEndpoints[j].sub(edgeMiddle)) > 0) {
 				continue;
 			}
 
 			// if these don't intersect, ignore this edge
-			if(!this.intersectSegments(polygon.getSegment(i),
+			if(!this.intersectSegments(polygonSegment,
 									  new Segment(edgeEndpoints[j], edgeEndpoints[j].sub(deltaPosition)),
 									  ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
 				continue;
@@ -491,7 +492,7 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 
 			// if this contact is sooner, or if there wasn't one before, then we'll use this one
 			if(!firstContact || ref_deltaProportion.ref < firstContact.proportionOfDelta) {
-				firstContact = new Contact(ref_contactPoint.ref, polygon.getSegment(i).normal.mul(-1), ref_deltaProportion.ref);
+				firstContact = new Contact(ref_contactPoint.ref, polygonSegment.normal.mul(-1), ref_deltaProportion.ref);
 			}
 		}
 	}
