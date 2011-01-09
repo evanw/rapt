@@ -26,6 +26,7 @@ function Sprite(id, radius, drawFunc, anchor, color, angle) {
 	this.color = color || 0;
 	this.angle = angle || 0;
 	this.text = '';
+	this.textRect = null;
 }
 
 Sprite.prototype.getAnglePolygon = function() {
@@ -43,10 +44,31 @@ Sprite.prototype.hasAnglePolygon = function() {
 
 Sprite.prototype.draw = function(c, alpha) {
 	c.save();
+	this.calcTextRect(c);
 	c.translate(this.anchor.x, this.anchor.y);
 	this.drawFunc(c, alpha || 1, this.color, this.angle);
 	c.restore();
 };
+
+Sprite.prototype.calcTextRect = function(c) {
+	var textArray = splitUpText(c, this.text);
+	var textSize = 13;
+	var center = new Vector(0, 0.5 * 50 + (textSize + 2) * textArray.length / 2);
+	var numLines = textArray.length;
+	c.font = textSize + 'px Arial, sans-serif';
+	var lineHeight = textSize + 2;
+	var textHeight = lineHeight * numLines;
+	var textWidth = -1;
+	for (var i = 0; i < numLines; ++i) {
+		var currWidth = c.measureText(textArray[i]).width;
+		if (textWidth < currWidth) {
+			textWidth = currWidth;
+		}
+	}
+	this.textRect = new Rectangle(center, center).expand(textWidth / 2 + TEXT_BOX_X_MARGIN, textHeight / 2 + TEXT_BOX_Y_MARGIN);
+	this.textRect.min = this.textRect.min.div(50).add(this.anchor);
+	this.textRect.max = this.textRect.max.div(50).add(this.anchor);
+}
 
 Sprite.prototype.drawSelection = function(c) {
 	c.beginPath();
@@ -57,10 +79,21 @@ Sprite.prototype.drawSelection = function(c) {
 	if (this.hasAnglePolygon()) {
 		this.getAnglePolygon().draw(c);
 	}
+	
+	if (this.id == SPRITE_SIGN) {
+		this.calcTextRect(c);
+		var rect = this.textRect.expand(0.1, 0.1);
+		var x = rect.min.x;
+		var y = rect.min.y;
+		var w = rect.max.x - rect.min.x;
+		var h = rect.max.y - rect.min.y;
+		c.fillRect(x, y, w, h);
+		c.strokeRect(x, y, w, h);
+	}
 };
 
 Sprite.prototype.touchesRect = function(rect) {
-	return new Circle(this.anchor, this.radius).intersectsRect(rect);
+	return new Circle(this.anchor, this.radius).intersectsRect(rect) || (this.textRect !== null && this.textRect.intersectsRect(rect));
 };
 
 Sprite.prototype.getAnchor = function() {

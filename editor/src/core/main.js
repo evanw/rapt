@@ -156,7 +156,9 @@ function fillHelp() {
 		'---', '---',
 		'Pan camera', isSafari ? 'Middle-drag' : 'Right-drag', // Safari doesn't send mousemove messages when the right mouse button is pressed
 		'Zoom camera', 'Scrollwheel',
-		'Move selection', 'Left-drag'
+		'Move selection', 'Left-drag',
+		'---', '---',
+		'Edit sign', 'Double-click'
 	];
 	
 	// Generate keyboard shortcut html
@@ -165,8 +167,7 @@ function fillHelp() {
 		gen.addCell(keys[i]);
 	}
 	$('#help').html(gen.getHTML() + '<hr>To change starting direction for Bombers, Jet Streams, Wall Crawlers, and ' +
-		'Wheeligators, select them and drag the triangle (must be in "Select" mode).<hr>' +
-		'To edit text for signs, double-click the question mark.');
+		'Wheeligators, select them and drag the triangle (must be in "Select" mode).');
 }
 
 function fillEnemies() {

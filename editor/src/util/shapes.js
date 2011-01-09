@@ -25,6 +25,11 @@ Rectangle.prototype.containsPoint = function(point) {
 	return point.x >= this.min.x && point.x < this.max.x && point.y >= this.min.y && point.y < this.max.y;
 };
 
+Rectangle.prototype.expand = function(x, y) {
+	var padding = new Vector(x, y);
+	return new Rectangle(this.min.sub(padding), this.max.add(padding));
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // class Circle
 ////////////////////////////////////////////////////////////////////////////////
