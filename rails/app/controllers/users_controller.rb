@@ -41,13 +41,15 @@ class UsersController < ApplicationController
     respond_with @level do |format|
       format.json { render :json => @level, :methods => [:html_title] }
       format.html do
-        if current_user.present? and @level.user == current_user
-         render :layout => false
-       elsif current_user.present?
-         redirect_to "/users/#{current_user.username}", :flash => {:error => "You can only edit levels you created"}
-       else
-         redirect_to root_url, :flash => {:error => "You must be logged in to edit levels"}
-       end
+        if @level.nil?
+          redirect_to "/users/#{current_user.username}", :flash => {:error => "The level at #{request.path} does not exist"}
+        elsif current_user.present? and @level.user == current_user
+          render :layout => false
+        elsif current_user.present?
+          redirect_to "/users/#{current_user.username}", :flash => {:error => "You can only edit levels you created"}
+        else
+          redirect_to root_url, :flash => {:error => "You must be logged in to edit levels"}
+        end
      end
     end
   end
