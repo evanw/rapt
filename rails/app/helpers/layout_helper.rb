@@ -22,7 +22,7 @@ module LayoutHelper
   
   def edit_links_for_level(level)
     if current_user.present? and level.user == current_user
-      "<span class='links'><a href='/edit/#{current_user.username}/#{level.html_title}'>Edit</a> <a href='/edit/#{level.id}' data-confirm='Are you sure?' data-method='delete' rel='nofollow'>Delete</a></span>"
+      "<span class='links'><a href='/edit/#{current_user.username}/#{level.html_title}/'>Edit</a> <a href='/levels/#{level.id}/' data-confirm='Are you sure?' data-method='delete' rel='nofollow'>Delete</a></span>"
     else
       ""
     end

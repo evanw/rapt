@@ -7,11 +7,13 @@ Rapt::Application.routes.draw do
   match 'edit/:username/:levelname' => 'users#edit_level', :via => :get
   match 'edit/:username/:levelname' => 'users#update_level', :via => :put
 
-  resources :users do
-    resources :levels
-  end
+  match 'levels/:id' => 'levels#destroy', :via => :delete
+
+  # resources :users do
+  #   resources :levels
+  # end
   
-  resources :levels
+  # resources :levels
   
   match 'play' => 'game#play'
   

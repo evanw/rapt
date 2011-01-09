@@ -1,20 +1,10 @@
-<!-- TODO: Display User account -->
-
-<% if current_user.present? and current_user == @user %>
-Create new level
-
-<form action="/levels" method="post">
-	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
-	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
-	<input type="text" name="level[title]" />
-	<input type="submit" value="Create" />
-</form>
-
-<% end %>
-
 <ul id="levels">
 	<% @user.levels.each do |level| %>
-		<li html_title="<%= level.html_title %>" position="<%= level.position %>" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><a href="/play#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a> <%== edit_links_for_level level %></li>
+		<li html_title="<%= level.html_title %>" position="<%= level.position %>" class="ui-state-default">
+		  <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
+		  <%== edit_links_for_level level %>
+	  </li>
 	<% end %>
 </ul>
 
@@ -63,4 +53,16 @@ Create new level
 			});
 			$( "#levels" ).disableSelection();
 	<% end %>
+<% end %>
+
+<% if current_user.present? and current_user == @user %>
+Create new level
+
+<form action="/levels" method="post">
+	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
+	<input type="text" name="level[title]" />
+	<input type="submit" value="Create" />
+</form>
+
 <% end %>

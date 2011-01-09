@@ -73,9 +73,10 @@ class LevelsController < ApplicationController
     if @level.user == current_user
       @level.destroy
       flash[:notice] = "Successfully deleted level '#{@level.title}'"
+      redirect_to "/edit/#{current_user.username}"
     else
-      flash[:error] = "You can only delete your own lvels"
+      flash[:error] = "You can only delete your own levels"
+      redirect_to "/"
     end
-    redirect_to "/edit/#{current_user.username}"
   end
 end
