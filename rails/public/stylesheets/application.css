@@ -2,7 +2,7 @@ body, span.left, span.right, span.center, div#footer div { background: #BFBFBF u
 
 body { margin: 0; color: #DFDFDF; font: 13px/20px "Lucida Grande", Arial, sans-serif; }
 h1 { font: bold italic 35px/35px Georgia, serif; text-align: center; }
-h2 { padding: 100px 0 40px 0; font: bold italic 25px/25px Georgia, serif; text-align: center; }
+h2 { font: bold italic 25px/25px Georgia, serif; text-align: center; }
 h3 { font: bold italic 18px/18px Georgia, serif; padding-bottom: 20px; }
 h1, h2, h3 { margin: 0; color: white; }
 p { margin: 0; padding-bottom: 30px; }
@@ -30,6 +30,7 @@ div#header { background: url(/images/header_border.png) center; }
 div#header > div { background: url(/images/header.png) center no-repeat; height: 364px; }
 div#content > div { max-width: 850px; padding: 40px 20px 0 20px; margin: 0 auto; }
 div#content h1 { padding-bottom: 40px; margin-top: -40px; }
+div#content h2 { padding: 100px 0 40px 0; }
 div#authors { color: #BFBFBF; font-style: italic; text-align: center; padding: 100px 20px 30px 20px; }
 div#footer { background: url(/images/footer_border.png) center top repeat-x; }
 div#footer > div { max-width: 851px; margin: 0 auto; }
