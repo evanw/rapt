@@ -1,8 +1,10 @@
 <%= content_for :title do "RAPT" end %>
 
-<canvas id="canvas">Your browser does not support the HTML5 canvas element.</canvas>
-<div id="levelScreen"></div>
-<div id="loadingScreen"></div>
+<div id="game">
+  <canvas id="canvas">Your browser does not support the HTML5 canvas element.</canvas>
+  <div id="levelScreen"></div>
+  <div id="loadingScreen"></div>
+</div>
 
 <%= include_stylesheets :game %>
 <%= include_javascripts :game %>

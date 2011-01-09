@@ -1,7 +1,7 @@
 body, span.left, span.right, span.center, div#footer div { background: #BFBFBF url(/images/gears.png) center top fixed no-repeat; }
 
 body { margin: 0; color: #DFDFDF; font: 13px/20px "Lucida Grande", Arial, sans-serif; }
-h1 { padding-bottom: 40px; font: bold italic 35px/35px Georgia, serif; text-align: center; }
+h1 { font: bold italic 35px/35px Georgia, serif; text-align: center; }
 h2 { padding: 100px 0 40px 0; font: bold italic 25px/25px Georgia, serif; text-align: center; }
 h3 { font: bold italic 18px/18px Georgia, serif; padding-bottom: 20px; }
 h1, h2, h3 { margin: 0; color: white; }
@@ -10,10 +10,17 @@ img { display: block; margin: 0 auto; }
 a { font-weight: bold; color: white; }
 
 div { background: #7F7F7F url(/images/background.png); }
-div#nav { height: 50px; }
+div#nav { }
 div#nav > div { line-height: 50px; text-align: right; max-width: 850px; padding: 0 20px; margin: 0 auto; }
 div#nav div#logo { float: left; font: bold italic 35px/50px Georgia, serif; }
 div#nav a { text-decoration: none; }
+
+div#flash_notice, div#flash_alert, div#flash_error {
+	color: black; line-height: 30px; text-align: center;  border: solid 1px black; margin-bottom: 40px;
+	box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
+}
+div#flash_notice { background: #AFA; }
+div#flash_alert, div#flash_error { background: #FAA; }
 
 div#title { background: url(/images/header_border.png) center bottom; }
 div#title > div { background: url(/images/header_border.png) center top; }
@@ -21,7 +28,8 @@ div#title h1 { line-height: 100px; padding: 0; color: black; }
 
 div#header { background: url(/images/header_border.png) center; }
 div#header > div { background: url(/images/header.png) center no-repeat; height: 364px; }
-div#content > div { max-width: 850px; padding: 0 20px; margin: 0 auto; }
+div#content > div { max-width: 850px; padding: 40px 20px 0 20px; margin: 0 auto; }
+div#content h1 { padding-bottom: 40px; margin-top: -40px; }
 div#authors { color: #BFBFBF; font-style: italic; text-align: center; padding: 100px 20px 30px 20px; }
 div#footer { background: url(/images/footer_border.png) center top repeat-x; }
 div#footer > div { max-width: 851px; margin: 0 auto; }
@@ -30,6 +38,11 @@ div#player_movement { width: 565px; margin: 0 auto; }
 span.left { display: block; float: left; margin-right: 20px; }
 span.right { display: block; float: right; margin-left: 20px; }
 span.center { display: inline-block; }
+
+div#game {
+	width: 800px; height: 600px; border: 1px solid black; overflow: hidden;
+	box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black;
+}
 
 a.button b { font-size: 150%; }
 a.button {

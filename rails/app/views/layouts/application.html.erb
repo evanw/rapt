@@ -25,9 +25,12 @@
     <% if content_for?(:header) %>
       <%= yield(:header) %>
     <% else %>
-      <div id="title"><div><h1>TODO: page title goes here</h1></div></div>
+      <div id="title"><div><h1><%= content_for?(:title) ? yield(:title) : "Untitled" %></h1></div></div>
     <% end %>
     <div id="content"><div>
+      <% if content_for?(:before_flash) %>
+        <%= yield(:before_flash) %>
+      <% end %>
       <% flash.each do |name, msg| %>
         <%= content_tag :div, msg, :id => "flash_#{name}" %>
       <% end %>
