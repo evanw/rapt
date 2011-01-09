@@ -138,6 +138,7 @@ function mousePoint(e) {
 
 function fillHelp() {
 	// Platform specific modifier keys
+	var isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent); // $.browser.safari is broken
 	var mac = (navigator.platform.indexOf('Mac') != -1);
 	var ctrl = mac ? '^' : 'Ctrl+';
 	var alt = mac ? '&#x2325;' : 'Alt+';
@@ -153,7 +154,7 @@ function fillHelp() {
 		'Select all', (mac ? meta : ctrl) + 'A',
 		'Delete selection', backspace,
 		'---', '---',
-		'Pan camera', 'Right-drag',
+		'Pan camera', isSafari ? 'Middle-drag' : 'Right-drag', // Safari doesn't send mousemove messages when the right mouse button is pressed
 		'Zoom camera', 'Scrollwheel',
 		'Move selection', 'Left-drag'
 	];
@@ -163,8 +164,9 @@ function fillHelp() {
 	for (var i = 0; i < keys.length; i++) {
 		gen.addCell(keys[i]);
 	}
-	$('#help').html(gen.getHTML() + '<hr>The starting direction for Bombers, Jet Streams, Wall Crawlers, and ' +
-		'Wheeligators can be changed by selecting it and dragging the triangle (must be in "Select" mode).');
+	$('#help').html(gen.getHTML() + '<hr>To change starting direction for Bombers, Jet Streams, Wall Crawlers, and ' +
+		'Wheeligators, select them and drag the triangle (must be in "Select" mode).<hr>' +
+		'To edit text for signs, double-click the question mark.');
 }
 
 function fillEnemies() {

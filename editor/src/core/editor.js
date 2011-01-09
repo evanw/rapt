@@ -212,8 +212,8 @@ Editor.prototype.drawGrid = function() {
 };
 
 Editor.prototype.mouseDown = function(point, buttons, modifierKeyPressed) {
-	if (buttons == MOUSE_RIGHT) {
-		// Camera pan on right click
+	if (buttons == MOUSE_MIDDLE || buttons == MOUSE_RIGHT) {
+		// Camera pan on right click (or middle click because right click is broken in Safari)
 		this.activeTool = new CameraPanTool(this.worldCenter);
 		this.activeTool.mouseDown(this.viewportToWorld(point));
 	} else if (buttons == MOUSE_LEFT) {
