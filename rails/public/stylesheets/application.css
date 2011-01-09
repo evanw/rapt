@@ -40,13 +40,8 @@ span.left { display: block; float: left; margin-right: 20px; }
 span.right { display: block; float: right; margin-left: 20px; }
 span.center { display: inline-block; }
 
-div#game {
-	width: 800px; height: 600px; border: 1px solid black; overflow: hidden;
-	box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black;
-}
-div#game * {
-	background: none;
-}
+div#game { width: 800px; height: 600px; border: 1px solid black; overflow: hidden; box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black; }
+div#game * { background: none; }
 
 a.button b { font-size: 150%; }
 a.button {
@@ -75,3 +70,21 @@ a.disabled.button, a.disabled.button:hover, a.disabled.button:active {
 	background: #5F5F5F; background: -webkit-gradient(linear, left top, left bottom, from(#6F6F6F), to(#4F4F4F)); background: -moz-linear-gradient(#6F6F6F, #4F4F4F);
 }
 div#buttons { text-align: center; }
+
+input[type=text], input[type=password] { width: 300px; background: #CFCFCF; border: 1px solid black; padding: 5px 3px; box-shadow: inset 0 1px 2px #3F3F3F; -moz-box-shadow: inset 0 1px 2px #3F3F3F; -webkit-box-shadow: inset 0 1px 2px #3F3F3F; }
+input[type=text]:focus, input[type=password]:focus { outline: none; background: white; }
+input[type=submit] {
+	color: white;
+	font-size: 15px;
+	padding: 10px 30px;
+	font-weight: bold;
+	border: 1px solid black;
+	border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px;
+	background: #5F5F5F; background: -webkit-gradient(linear, left top, left bottom, from(#6F6F6F), to(#4F4F4F)); background: -moz-linear-gradient(#6F6F6F, #4F4F4F);
+}
+input[type=submit]:hover {
+	background: #6F6F6F; background: -webkit-gradient(linear, left top, left bottom, from(#7F7F7F), to(#5F5F5F)); background: -moz-linear-gradient(#7F7F7F, #5F5F5F);
+}
+input[type=submit]:active {
+	background: #4F4F4F; background: -webkit-gradient(linear, left top, left bottom, from(#3F3F3F), to(#5F5F5F)); background: -moz-linear-gradient(#3F3F3F, #5F5F5F);
+}
