@@ -1,7 +1,7 @@
 <ul id="levels">
 	<% @user.levels.each do |level| %>
-		<li html_title="<%= level.html_title %>" position="<%= level.position %>" class="ui-state-default">
-		  <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+		<li html_title="<%= level.html_title %>" position="<%= level.position %>">
+		  <span>&varr;</span>
 		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
 		  <%== edit_links_for_level level %>
 	  </li>
@@ -12,12 +12,16 @@
 <% if current_user and @user == current_user %>
 
 	<% content_for :head do %>
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
 		<style>
 			#levels { list-style-type: none; margin: 0; padding: 0; }
-			#levels li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1em; height: 1.2em; }
-			#levels li span { position: absolute; margin-left: -1.3em; }
+			#levels li {
+			  margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
+			  box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
+    	}
+			#levels li span { margin-right: 3px; }
 			#levels li span.links { position: relative; float: right; }
+			#levels a, #levels li span { color: black; }
 		</style>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
 	<% end %>
@@ -32,6 +36,7 @@
 			}
 		
 			$( "#levels" ).sortable({
+			  axis: 'y',
 				update: function(e, ui){
 					var numItems = $("#levels li").size();
 					var idx = $(ui.item).index();
@@ -56,13 +61,14 @@
 <% end %>
 
 <% if current_user.present? and current_user == @user %>
-Create new level
-
-<form action="/levels" method="post">
-	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
-	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
-	<input type="text" name="level[title]" />
-	<input type="submit" value="Create" />
-</form>
+<div id="new_level">
+  Create new level
+  <form action="/levels" method="post">
+  	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+  	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
+  	<input type="text" name="level[title]" />
+  	<input type="submit" value="Create" />
+  </form>
+</div>
 
 <% end %>

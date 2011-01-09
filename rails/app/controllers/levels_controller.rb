@@ -44,9 +44,9 @@ class LevelsController < ApplicationController
     @level.user_id = params[:level][:user_id]
 
     if @level.save
-      redirect_to "/edit/#{@level.user.username}/#{@level.html_title}"
+      redirect_to "/edit/#{@level.user.username}/#{@level.html_title}/"
     else
-      redirect_to "/edit/#{@level.user.username}", :flash => {:error => @level.errors.full_messages.join("<br />")}
+      redirect_to "/edit/#{@level.user.username}/", :flash => {:error => @level.errors.full_messages.join("<br />")}
     end
   end
 
@@ -73,7 +73,7 @@ class LevelsController < ApplicationController
     if @level.user == current_user
       @level.destroy
       flash[:notice] = "Successfully deleted level '#{@level.title}'"
-      redirect_to "/edit/#{current_user.username}"
+      redirect_to "/edit/#{current_user.username}/"
     else
       flash[:error] = "You can only delete your own levels"
       redirect_to "/"

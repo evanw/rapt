@@ -5,7 +5,7 @@ h1 { font: bold italic 35px/35px Georgia, serif; text-align: center; }
 h2 { font: bold italic 25px/25px Georgia, serif; text-align: center; }
 h3 { font: bold italic 18px/18px Georgia, serif; padding-bottom: 20px; }
 h1, h2, h3 { margin: 0; color: white; }
-p { margin: 0; padding-bottom: 30px; }
+p, ul { margin: 0; padding-bottom: 30px; }
 img { display: block; margin: 0 auto; }
 a { font-weight: bold; color: white; }
 
@@ -88,3 +88,5 @@ input[type=submit]:hover {
 input[type=submit]:active {
 	background: #4F4F4F; background: -webkit-gradient(linear, left top, left bottom, from(#3F3F3F), to(#5F5F5F)); background: -moz-linear-gradient(#3F3F3F, #5F5F5F);
 }
+
+div#new_level { margin-top: 20px; }
