@@ -5,8 +5,6 @@ output_path = './www/rapt.js'
 
 import re, os, time, sys
 
-release = 'release' in sys.argv
-
 class CompileError(Exception):
 	def __init__(self, text):
 		Exception.__init__(self, text)
@@ -75,7 +73,7 @@ def compile(sources):
 def build():
 	try:
 		data = compile(sources())
-		if release:
+		if 'inline' in sys.argv:
 			print 'inlining javascript...'
 			from js_inline import js_inline
 			data = js_inline(data)
@@ -102,5 +100,5 @@ def monitor():
 
 if __name__ == '__main__':
 	build()
-	if not release:
+	if 'release' not in sys.argv:
 		monitor()

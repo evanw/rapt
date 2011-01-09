@@ -198,6 +198,10 @@ SelectionTool.prototype.mouseDown = function(point) {
 	if (clickedOnAnglePolygon) {
 		this.mode = SELECTION_MODE_ROTATE;
 		this.start = point;
+	} else if (!this.modifierKeyPressed && selectionUnderMouse.length > 0) {
+		this.mode = SELECTION_MODE_MOVE;
+		this.start = point;
+		this.doc.setSelection(selectionUnderMouse);
 	} else {
 		this.mode = SELECTION_MODE_SELECT;
 		this.start = this.end = point;

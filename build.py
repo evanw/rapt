@@ -18,7 +18,7 @@ def background(command):
 	subprocess.Popen(command, shell=True)
 
 op = foreground if release else background
-suffix = ' release' if release else ''
+suffix = ' inline release' if release else ''
 op('cd editor && python build.py' + suffix)
 op('cd game && python build.py' + suffix)
 
