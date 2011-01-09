@@ -18,7 +18,7 @@ function overlay(text) {
 }
 
 function getLevelURL() {
-	return 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
+	return 'http://' + location.host + '/edit/' + username + '/' + levelname + '/';
 }
 
 function ajaxGetLevel(onSuccess) {

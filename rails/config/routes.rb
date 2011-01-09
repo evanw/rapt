@@ -1,10 +1,11 @@
 Rapt::Application.routes.draw do
   devise_for :users
 
-  match 'users/:username' => 'users#show'
-  match 'users/:username/levels(.:format)' => 'users#levels'
-  match 'users/:username/:levelname' => 'users#edit_level', :via => :get
-  match 'users/:username/:levelname' => 'users#update_level', :via => :put
+  # these have to be edit, not users, because the users namespace is taken up by devise (/users/sign_in, /users/sign_out, /users/sign_up, etc...)
+  match 'edit/:username' => 'users#show'
+  match 'edit/:username/levels(.:format)' => 'users#levels'
+  match 'edit/:username/:levelname' => 'users#edit_level', :via => :get
+  match 'edit/:username/:levelname' => 'users#update_level', :via => :put
 
   resources :users do
     resources :levels

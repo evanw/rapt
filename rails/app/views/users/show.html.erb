@@ -35,7 +35,7 @@ Create new level
 	<% content_for :javascript do %>
 			function savePosition(element){
 				$.ajax({
-					url: '/users/<%= @user.username %>/'+element.attr('html_title'),
+					url: '/edit/<%= @user.username %>/'+element.attr('html_title'),
 					type: 'PUT',
 					data: ({ levelname: element.attr('html_title'), level: { position: element.attr('position') }})
 				});

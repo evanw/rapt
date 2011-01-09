@@ -12,23 +12,21 @@
   <body>
     <div id="nav"><div>
     	<div id="logo"><a href="/">RAPT</a></div>
-    	<div id="flash">
-        <% flash.each do |name, msg| %>
-          <%= content_tag :div, msg, :id => "flash_#{name}" %>
-        <% end %>
-  	  </div>
   	  <% if current_user.nil? %>
       	<a href="/users/sign_in">Sign in</a>
       	&bull;
       	<a href="/users/sign_up">Sign up</a>
   	  <% else %>
-    	  Signed in as <a href="/users/<%= current_user.username %>"><%= current_user.username %></a>
+    	  Signed in as <a href="/edit/<%= current_user.username %>"><%= current_user.username %></a>
       	&bull;
       	<a href="/users/sign_out">Sign out</a>
   	  <% end %>
     </div></div>
     <div id="header"><div></div></div>
     <div id="content"><div>
+      <% flash.each do |name, msg| %>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <% end %>
       <%= yield %>
     </div></div>
     <div id="authors">Made in 2010-2011 by Evan Wallace, Justin Ardini, and Kayle Gishen</div>

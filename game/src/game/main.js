@@ -9,14 +9,14 @@ var DOWN_ARROW = 40;
 function getMenuURL() {
 	var matches = /^#\/([^\/]+)\//.exec(location.hash);
 	var username = matches[1];
-	return 'http://' + location.host + '/users/' + username + '/';
+	return 'http://' + location.host + '/edit/' + username + '/';
 }
 
 function getLevelURL() {
 	var matches = /^#\/([^\/]+)\/([^\/]+)\/$/.exec(location.hash);
 	var username = matches[1];
 	var levelname = matches[2];
-	return 'http://' + location.host + '/users/' + username + '/' + levelname + '/';
+	return 'http://' + location.host + '/edit/' + username + '/' + levelname + '/';
 }
 
 function ajaxGet(what, url, onSuccess) {
