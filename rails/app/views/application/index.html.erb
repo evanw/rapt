@@ -1,8 +1,16 @@
-<h1>RAPT HOME PAGE</h1>
+<%= content_for :title, "Robots Are People Too - HTML5 Game" %>
 
-<a href="/users/sign_up/">/users/sign_up/</a><br>
-<a href="/users/sign_in/">/users/sign_in/</a><br>
-<a href="/users/sign_out/">/users/sign_out/</a><br>
-<a href="/play/">/play/</a><br>
-<a href="/users/rapt/">/users/rapt/</a><br>
-<a href="/users/rapt/Intro_1/">/users/rapt/Intro_1/</a><br>
+<h1>Robots Are People Too</h1>
+<p>
+	Robots Are People Too is a side-scrolling platformer with a focus on cooperative gameplay.&nbsp;
+	It was developed as a final project for CS 32, a software engineering course at Brown University.&nbsp;
+</p>
+<div id="buttons">
+	<a href="/play" class="button"><span></span> <b>Play&nbsp;in&nbsp;browser</b> <br> Works best in Google Chrome</a>
+  <% if current_user.nil? %>
+  	<a class="disabled button"><span></span> <b>Open&nbsp;level&nbsp;editor</b> <br> Please sign in first</a>
+  <% else %>
+  	<a href="/users/<%= current_user.username %>" class="button"><span></span> <b>Open&nbsp;level&nbsp;editor</b> <br> Create your own levels</a>
+  <% end %>
+</div>
+<p>The goal of each level is to get from the start location to the goal (indicated by the four black triangles) while avoiding all the nasty things that get in the way.&nbsp; Once you beat a level, you will see a silver cog next to that level on the menu.&nbsp; For an additional challenge, collect all the golden cogs in a level before you reach the goal, which will give you a golden cog on the level menu instead.</p>
