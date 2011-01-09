@@ -111,7 +111,8 @@ Hunter.prototype.move = function(seconds) {
     }
 
     // Damp the movement so it doesn't keep floating around
-    this.velocity = this.velocity.mul(0.99);
+    // Time independent version of multiplying by 0.99
+    this.velocity = this.velocity.mul(Math.pow(0.366032, seconds));
 
     return this.accelerate(this.acceleration, seconds);
 };
