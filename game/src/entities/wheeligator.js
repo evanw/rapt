@@ -13,10 +13,7 @@ function Wheeligator(center, angle) {
 
     this.hitGround = false;
     this.angularVelocity = 0;
-    this.startsRight = false;
-
-    if (angle <= Math.PI * 0.5 || angle > Math.PI * 0.666666) this.startsRight = true;
-    else this.startsRight = false;
+    this.startsRight = (Math.cos(angle) > 0);
 
 	this.bodySprite = new Sprite();
 	this.bodySprite.drawGeometry = function(c) {

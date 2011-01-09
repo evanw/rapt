@@ -199,6 +199,7 @@ SelectionTool.prototype.mouseDown = function(point) {
 		this.mode = SELECTION_MODE_ROTATE;
 		this.start = point;
 	} else if (!this.modifierKeyPressed && selectionUnderMouse.length > 0) {
+		// If you drag an unselected element, set that as the selection so it doesn't take two clicks to move something
 		this.mode = SELECTION_MODE_MOVE;
 		this.start = point;
 		this.doc.setSelection(selectionUnderMouse);
@@ -373,69 +374,71 @@ AddPlaceableTool.prototype.draw = function(c) {
 // class LinkButtonToDoorTool
 ////////////////////////////////////////////////////////////////////////////////
 
-var LINK_MODE_HOVER = 0;
-var LINK_MODE_BUTTON_TO_DOOR = 1;
-var LINK_MODE_DOOR_TO_BUTTON = 2;
-
 function LinkButtonToDoorTool(doc) {
 	this.doc = doc;
-	this.button = null;
-	this.door = null;
-	this.point = null;
-	this.isButtonCloser = false;
-	this.mode = LINK_MODE_HOVER;
+	this.from = null;
+	this.to = null;
+	this.isLinking = false;
+	this.isValidLink = false;
 }
 
 LinkButtonToDoorTool.prototype.mouseDown = function(point) {
 	this.mouseMoved(point);
-	if (this.button != null && this.door != null) {
-		this.mode = this.isButtonCloser ? LINK_MODE_BUTTON_TO_DOOR : LINK_MODE_DOOR_TO_BUTTON;
-	} else {
-		this.mode = LINK_MODE_HOVER;
-	}
+	this.isLinking = (this.from !== null);
+	this.mouseMoved(point);
 };
 
 LinkButtonToDoorTool.prototype.mouseMoved = function(point) {
-	if (this.mode != LINK_MODE_BUTTON_TO_DOOR) {
-		this.button = this.doc.world.closestPlaceableOfType(point, Button);
+	var button = this.doc.world.closestPlaceableOfType(point, Button);
+	var door = this.doc.world.closestPlaceableOfType(point, Door);
+	if (this.isLinking) {
+		if (this.from instanceof Button) this.to = door;
+		else if (this.from instanceof Door) this.to = button;
+		else this.to = null;
+		this.isValidLink = (this.from !== null && this.to !== null);
+	} else {
+		var pointToButton = (button !== null) ? button.getCenter().sub(point).lengthSquared() : Number.POSITIVE_INFINITY;
+		var pointToDoor = (door !== null) ? door.getCenter().sub(point).lengthSquared() : Number.POSITIVE_INFINITY;
+		this.from = (pointToButton < pointToDoor) ? button : door;
+		this.to = null;
+		this.isValidLink = false;
 	}
-	if (this.mode != LINK_MODE_DOOR_TO_BUTTON) {
-		this.door = this.doc.world.closestPlaceableOfType(point, Door);
-	}
-	if (this.button != null && this.door != null) {
-		this.isButtonCloser = (this.button.getCenter().sub(point).length() < this.door.getCenter().sub(point).length());
-	}
-	this.point = point;
 };
 
 LinkButtonToDoorTool.prototype.mouseUp = function(point) {
-	if (this.mode != LINK_MODE_HOVER) {
+	this.mouseMoved(point);
+	if (this.isValidLink) {
+		var button = (this.from instanceof Button) ? this.from : this.to;
+		var door = (this.from instanceof Door) ? this.from : this.to;
+		
 		// Check if this link already exists
 		var linkAlreadyExists = false;
 		var placeables = this.doc.world.placeables;
 		for (var i = 0; i < placeables.length; i++) {
-			if (placeables[i] instanceof Link && placeables[i].button == this.button && placeables[i].door == this.door) {
+			if (placeables[i] instanceof Link && placeables[i].button == button && placeables[i].door == door) {
 				linkAlreadyExists = true;
 				break;
 			}
 		}
 		
 		// Only add the new link if it doesn't already exist
-		if (!linkAlreadyExists) this.doc.addPlaceable(new Link(this.button, this.door));
-		this.mode = LINK_MODE_HOVER;
+		if (!linkAlreadyExists) {
+			this.doc.addPlaceable(new Link(button, door));
+		}
 	}
+	this.isLinking = false;
+	this.mouseMoved(point);
 };
 
 LinkButtonToDoorTool.prototype.draw = function(c) {
-	if (this.point != null) {
-		c.strokeStyle = rgba(0, 0, 0, 0.5);
-		if (this.mode != LINK_MODE_HOVER) {
-			dashedLine(c, this.button.getCenter(), this.door.getCenter());
-		} else if (this.button != null && (this.door == null || this.isButtonCloser)) {
-			dashedLine(c, this.button.getCenter(), this.point);
-		} else if (this.door != null) {
-			dashedLine(c, this.door.getCenter(), this.point);
-		}
+	c.fillStyle = rgba(0, 0, 0, 0);
+	c.strokeStyle = rgba(0, 0, 0, 0.5);
+	if (this.from !== null) this.from.drawSelection(c);
+	if (this.to !== null) this.to.drawSelection(c);
+	if (this.isValidLink) {
+		var button = (this.from instanceof Button) ? this.from : this.to;
+		var door = (this.from instanceof Door) ? this.from : this.to;
+		dashedLine(c, button.getCenter(), door.getCenter());
 	}
 };
 
@@ -446,7 +449,6 @@ LinkButtonToDoorTool.prototype.draw = function(c) {
 function ToggleInitiallyOpenTool(doc) {
 	this.doc = doc;
 	this.door = null;
-	this.point = null;
 }
 
 ToggleInitiallyOpenTool.prototype.mouseDown = function(point) {
@@ -458,14 +460,15 @@ ToggleInitiallyOpenTool.prototype.mouseDown = function(point) {
 
 ToggleInitiallyOpenTool.prototype.mouseMoved = function(point) {
 	this.door = this.doc.world.closestPlaceableOfType(point, Door);
-	this.point = point;
 };
 
 ToggleInitiallyOpenTool.prototype.mouseUp = function(point) {
 };
 
 ToggleInitiallyOpenTool.prototype.draw = function(c) {
-	if (this.point != null && this.door != null) {
-		dashedLine(c, this.door.getCenter(), this.point);
+	if (this.door != null) {
+		c.fillStyle = rgba(0, 0, 0, 0);
+		c.strokeStyle = rgba(0, 0, 0, 0.5);
+		this.door.drawSelection(c);
 	}
 };
