@@ -49,14 +49,12 @@ WallAvoider.prototype.move = function(seconds) {
         var closestPointDelta = ref_worldPoint.ref.sub(this.getCenter());
         var wallAvoidance = closestPointDelta.mul(-1 / (closestPointDist * closestPointDist));
 
-        // BREAKS INLINER
-        // this.acceleration.inplaceAdd(wallAvoidance);
-        this.acceleration = this.acceleration.add(wallAvoidance);
+        this.acceleration.inplaceAdd(wallAvoidance);
         this.acceleration.normalize();
         this.acceleration.inplaceMul(WALL_AVOIDER_ACCEL);
 
         // Time independent version of multiplying by 0.99
-        this.velocity = this.velocity.mul(Math.pow(0.366032, seconds));
+        this.velocity.inplaceMul(Math.pow(0.366032, seconds));
         return this.accelerate(this.acceleration, seconds);
     }
 };

@@ -34,7 +34,8 @@ CorrosionCloud.prototype.move = function(seconds) {
     this.velocity.y += speed * Math.sin(this.heading);
 
     if (this.velocity.lengthSquared() > (CORROSION_CLOUD_SPEED * CORROSION_CLOUD_SPEED)) {
-        this.velocity = this.velocity.unit().mul(CORROSION_CLOUD_SPEED);
+        this.velocity.normalize();
+        this.velocity.inplaceMul(CORROSION_CLOUD_SPEED);
     }
 
     return this.velocity.mul(seconds);
