@@ -3,8 +3,13 @@ class UsersController < ApplicationController
   respond_to :html, :json
   
   def show
-    @user = User.find_by_username(params[:username])
-    respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
+    begin
+        @user = User.find_by_username(params[:username])
+        respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
+    rescue
+        render :text => "Couldn't find user " + params[:username] if @user.nil?
+        return
+    end
   end
   
   def levels
@@ -17,14 +22,14 @@ class UsersController < ApplicationController
     begin
       @user = User.find_by_username(params[:username])
     rescue
-      render :text => "Couldn't find user", :status => 404 if @user.nil
+      render :text => "Couldn't find user", :status => 404 if @user.nil?
       return
     end
     
     begin
       @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
     rescue
-      render :text => "Couldn't find level", :status => 404 if @level.nil
+      render :text => "Couldn't find level", :status => 404 if @level.nil?
       return
     end
     
