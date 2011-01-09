@@ -48,7 +48,6 @@ WallAvoider.prototype.move = function(seconds) {
         this.acceleration = targetDelta.unit();
         var closestPointDelta = ref_worldPoint.ref.sub(this.getCenter());
         var wallAvoidance = closestPointDelta.mul(-1 / (closestPointDist * closestPointDist));
-
         this.acceleration.inplaceAdd(wallAvoidance);
         this.acceleration.normalize();
         this.acceleration.inplaceMul(WALL_AVOIDER_ACCEL);
