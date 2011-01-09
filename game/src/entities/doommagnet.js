@@ -85,7 +85,7 @@ DoomMagnet.prototype.move = function(seconds) {
 
     var delta = this.accelerate(heading, seconds);
     // Time independent version of mulitiplying by 0.994
-    this.velocity = this.velocity.mul(Math.pow(0.547821, seconds));
+    this.velocity.inplaceMul(Math.pow(0.547821, seconds));
 
     var center = this.getCenter();
     var oldAngle = this.bodySprite.angle;

@@ -201,7 +201,7 @@ Player.prototype.disableJump = function() {
 };
 
 Player.prototype.addToVelocity = function(v) {
-    this.velocity = this.velocity.add(v);
+    this.velocity.inplaceAdd(v);
 };
 
 Player.prototype.collideWithOtherPlayer = function() {
@@ -408,7 +408,7 @@ Player.prototype.tickPhysics = function(seconds) {
 	// If on a floor
 	if(this.state == PLAYER_STATE_FLOOR) {
 		if (this.crouchKey) {
-			this.velocity = this.velocity.mul(Math.pow(0.000001, seconds));
+			this.velocity.inplaceMul(Math.pow(0.000001, seconds));
 		} else {
             this.velocity.y -= PLAYER_GRAVITY * seconds;
             if (!this.jumpKey && this.leftKey != this.rightKey && 

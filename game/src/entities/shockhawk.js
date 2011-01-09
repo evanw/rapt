@@ -55,7 +55,7 @@ ShockHawk.prototype.avoidsSpawn = function() {
 ShockHawk.prototype.move = function(seconds) {
     // Time independent version of multiplying by 0.998
     // solved x^0.01 = 0.998 for x very precisely using wolfram alpha
-    this.velocity = this.velocity.mul(Math.pow(0.8185668046884278157989334904543296243702023236680159019579, seconds));
+    this.velocity.inplaceMul(Math.pow(0.8185668046884278157989334904543296243702023236680159019579, seconds));
     if (!this.target || this.target.isDead()) {
         this.chasing = false;
         return this.accelerate(this.velocity.mul(-SHOCK_HAWK_DECEL), seconds);

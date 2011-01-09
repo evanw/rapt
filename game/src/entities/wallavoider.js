@@ -53,7 +53,7 @@ WallAvoider.prototype.move = function(seconds) {
         this.acceleration.inplaceMul(WALL_AVOIDER_ACCEL);
 
         // Time independent version of multiplying by 0.99
-        this.velocity = this.velocity.mul(Math.pow(0.366032, seconds));
+        this.velocity.inplaceMul(Math.pow(0.366032, seconds));
         return this.accelerate(this.acceleration, seconds);
     }
 };
