@@ -1,3 +1,5 @@
+<%= content_for :title, "Your levels" %>
+
 <% if current_user and @user == current_user %>
   <ul id="levels">
   	<% @user.levels.each do |level| %>
@@ -67,6 +69,6 @@
     </form>
   </div>
 <% else %>
-  <div id="flash_error">Permission denied</div>
-  You are not allowed to view <%= @user.username %>'s levels.
+  <div id="flash_error">Not allowed to edit <%= @user.username %>'s levels</div>
+  Please <a href="/users/sign_in">sign in</a> to edit your levels.
 <% end %>

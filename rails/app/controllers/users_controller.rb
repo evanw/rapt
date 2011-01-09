@@ -34,7 +34,7 @@ class UsersController < ApplicationController
     begin
       @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
     rescue
-      redirect_to "/", :flash => {:error => "Couldn't find level '#{params[:levelname]}' under user '#{params[:username]}'"}
+      redirect_to "/", :flash => {:error => "Couldn't find level '#{params[:levelname]}' in #{params[:username]}'s levels"}
       return
     end
     
@@ -42,7 +42,7 @@ class UsersController < ApplicationController
       format.json { render :json => @level, :methods => [:html_title] }
       format.html do
         if @level.nil?
-          redirect_to "/edit/#{current_user.username}/", :flash => {:error => "The level at #{request.path} does not exist"}
+          redirect_to "/", :flash => {:error => "Couldn't find level '#{params[:levelname]}' in #{params[:username]}'s levels"}
         elsif current_user.present? and @level.user == current_user
           render :layout => false
         elsif current_user.present?
