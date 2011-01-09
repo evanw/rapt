@@ -397,6 +397,7 @@ function loadEditor() {
 		editor.mouseOut();
 	});
 	$(canvas).dblclick(function(e) {
+		buttons = 0;
 		e.preventDefault();
 		editor.doubleClick(mousePoint(e));
 	});
