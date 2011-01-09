@@ -323,7 +323,7 @@ def o(n, handledattrs=[]):
 
 		elif n.type == "BLOCK":
 			check(subnodes=len(n))
-			return "{%s\n}" % "".join("\n" + o(x) for x in n)
+			return "{%s\n}" % "".join("\n" + o(x) + ";" for x in n)
 
 		elif n.type in ("BREAK", "CONTINUE"):
 			check(attrs=["target"], optattrs=["label"])
@@ -491,7 +491,7 @@ def o(n, handledattrs=[]):
 			scope.push()
 			body = ""
 			for x in n:
-				body += o(x) + "\n"
+				body += o(x) + ";\n"
 			locals = scope.pop()
 			if locals:
 				return "var %s;\n%s" % (", ".join(locals), body)
