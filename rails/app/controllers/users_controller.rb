@@ -10,11 +10,7 @@ class UsersController < ApplicationController
   def show
     begin
         @user = User.find_by_username(params[:username])
-        if current_user and @user == current_user
-          respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
-        else
-          redirect_to "/", :flash => {:error => "Not allowed to edit levels of '#{params[:username]}'"}
-        end
+        respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
     rescue
         redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
         return
@@ -46,11 +42,11 @@ class UsersController < ApplicationController
       format.json { render :json => @level, :methods => [:html_title] }
       format.html do
         if @level.nil?
-          redirect_to "/edit/#{current_user.username}", :flash => {:error => "The level at #{request.path} does not exist"}
+          redirect_to "/edit/#{current_user.username}/", :flash => {:error => "The level at #{request.path} does not exist"}
         elsif current_user.present? and @level.user == current_user
           render :layout => false
         elsif current_user.present?
-          redirect_to "/edit/#{current_user.username}", :flash => {:error => "You can only edit levels you created"}
+          redirect_to "/edit/#{current_user.username}/", :flash => {:error => "You can only edit levels you created"}
         else
           redirect_to root_url, :flash => {:error => "You must be logged in to edit levels"}
         end

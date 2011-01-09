@@ -1,67 +1,72 @@
-<ul id="levels">
-	<% @user.levels.each do |level| %>
-		<li html_title="<%= level.html_title %>" position="<%= level.position %>">
-		  <span>&varr;</span>
-		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
-		  <%== edit_links_for_level level %>
-	  </li>
-	<% end %>
-</ul>
+<% if current_user and @user == current_user %>
+  <ul id="levels">
+  	<% @user.levels.each do |level| %>
+  		<li html_title="<%= level.html_title %>" position="<%= level.position %>">
+  		  <span>&varr;</span>
+  		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
+  		  <%== edit_links_for_level level %>
+  	  </li>
+  	<% end %>
+  </ul>
 
-<% content_for :head do %>
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
-	<style>
-		#levels { list-style-type: none; margin: 0; padding: 0; }
-		#levels li {
-		  margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
-		  box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
-  	}
-		#levels li span { margin-right: 3px; }
-		#levels li span.links { position: relative; float: right; }
-		#levels a, #levels li span { color: black; }
-	</style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
-<% end %>
+  <% content_for :head do %>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
+  	<style>
+  		#levels { list-style-type: none; margin: 0; padding: 0; }
+  		#levels li {
+  		  margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
+  		  box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
+    	}
+  		#levels li span { margin-right: 3px; }
+  		#levels li span.links { position: relative; float: right; }
+  		#levels a, #levels li span { color: black; }
+  	</style>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
+  <% end %>
 
-<% content_for :javascript do %>
-		function savePosition(element){
-			$.ajax({
-				url: '/edit/<%= @user.username %>/'+element.attr('html_title'),
-				type: 'PUT',
-				data: ({ levelname: element.attr('html_title'), level: { position: element.attr('position') }})
-			});
-		}
+  <% content_for :javascript do %>
+  		function savePosition(element){
+  			$.ajax({
+  				url: '/edit/<%= @user.username %>/'+element.attr('html_title'),
+  				type: 'PUT',
+  				data: ({ levelname: element.attr('html_title'), level: { position: element.attr('position') }})
+  			});
+  		}
 	
-		$( "#levels" ).sortable({
-		  axis: 'y',
-			update: function(e, ui){
-				var numItems = $("#levels li").size();
-				var idx = $(ui.item).index();
-				var pos = parseFloat($(ui.item).attr('position'));
-				if(idx == 0 && numItems > 1)
-				{
-					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
-					pos = after / 2.0;
-				}else if(idx > 0 && idx < numItems - 1 ){
-					var before = parseFloat($("#levels li:nth-child("+idx+")").attr('position'));
-					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
-					pos = (before + after) / 2.0;
-				}else if(idx == numItems -1){
-					pos = parseFloat($("#levels li:nth-child("+idx+")").attr('position')) + 1.0;
-				}
-				$(ui.item).attr('position', pos);
-				savePosition(ui.item);
-			}
-		});
-		$( "#levels" ).disableSelection();
-<% end %>
+  		$( "#levels" ).sortable({
+  		  axis: 'y',
+  			update: function(e, ui){
+  				var numItems = $("#levels li").size();
+  				var idx = $(ui.item).index();
+  				var pos = parseFloat($(ui.item).attr('position'));
+  				if(idx == 0 && numItems > 1)
+  				{
+  					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
+  					pos = after / 2.0;
+  				}else if(idx > 0 && idx < numItems - 1 ){
+  					var before = parseFloat($("#levels li:nth-child("+idx+")").attr('position'));
+  					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
+  					pos = (before + after) / 2.0;
+  				}else if(idx == numItems -1){
+  					pos = parseFloat($("#levels li:nth-child("+idx+")").attr('position')) + 1.0;
+  				}
+  				$(ui.item).attr('position', pos);
+  				savePosition(ui.item);
+  			}
+  		});
+  		$( "#levels" ).disableSelection();
+  <% end %>
 
-<div id="new_level">
-  Create new level
-  <form action="/levels" method="post">
-  	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
-  	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
-  	<input type="text" name="level[title]" />
-  	<input type="submit" value="Create" />
-  </form>
-</div>
+  <div id="new_level">
+    Create new level
+    <form action="/levels" method="post">
+    	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+    	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
+    	<input type="text" name="level[title]" />
+    	<input type="submit" value="Create" />
+    </form>
+  </div>
+<% else %>
+  <div id="flash_error">Permission denied</div>
+  You are not allowed to view <%= @user.username %>'s levels.
+<% end %>
