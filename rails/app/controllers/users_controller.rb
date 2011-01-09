@@ -12,7 +12,7 @@ class UsersController < ApplicationController
         @user = User.find_by_username(params[:username])
         respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
     rescue
-        render :text => "Couldn't find user " + params[:username] if @user.nil?
+        redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
         return
     end
   end
@@ -27,14 +27,14 @@ class UsersController < ApplicationController
     begin
       @user = User.find_by_username(params[:username])
     rescue
-      render :text => "Couldn't find user", :status => 404 if @user.nil?
+      redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
       return
     end
     
     begin
       @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
     rescue
-      render :text => "Couldn't find level", :status => 404 if @level.nil?
+      redirect_to "/", :flash => {:error => "Couldn't find level '#{params[:levelname]}' under user '#{params[:username]}'"}
       return
     end
     
