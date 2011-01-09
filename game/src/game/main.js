@@ -95,6 +95,14 @@ function MenuLevel(title, html_title) {
     var selectedLevel = null;
     var menu = new Menu();
 
+	function loadLevelFromJSON(json) {
+		gameState.loadLevelFromJSON(jsonForCurrentLevel);
+		
+		// reset the seconds count in case level loading took a while (we don't want the physics to
+		// try and catch up, because then it will rush through the first few seconds of the game)
+		lastTime = new Date();
+	}
+
 	function tick() {
         // Poll for hash changes
 		processHash(location.hash);
@@ -153,7 +161,7 @@ function MenuLevel(title, html_title) {
 			ajaxGet('level', getLevelURL(), function(json) {
 				jsonForCurrentLevel = JSON.parse(json['level']['data']);
 				showGameScreen();
-				gameState.loadLevelFromJSON(jsonForCurrentLevel);
+				loadLevelFromJSON(jsonForCurrentLevel);
 				document.title = json['level']['title'] + ' - ' + menu.username + ' - RAPT';
 			});
         }
@@ -240,7 +248,7 @@ function MenuLevel(title, html_title) {
                 if (gameState.gameStatus === GAME_LOST) {
                     // if the level is being restarted, reload the level
 					showGameScreen();
-					gameState.loadLevelFromJSON(jsonForCurrentLevel);
+					loadLevelFromJSON(jsonForCurrentLevel);
                 } else if (gameState.gameStatus === GAME_WON) {
                     // if the user is going to the next level, load the next level using the level select page
                     for (var i = 0; i < menu.levels.length; ++i) {

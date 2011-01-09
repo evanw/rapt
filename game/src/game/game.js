@@ -182,7 +182,7 @@ Game.prototype.keyDown = function(key) {
 };
 
 Game.prototype.keyUp = function(key) {
-    if (key in keyMapGame) gameState[keyMapGame[key]] = true;
+    if (key in keyMapGame) gameState[keyMapGame[key]] = false;
 	if (key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = false;
 	if (key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = false;
 };
