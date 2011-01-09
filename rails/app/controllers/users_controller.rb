@@ -2,6 +2,11 @@ class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:show, :edit_level]
   respond_to :html, :json
   
+  def index
+        # TODO
+        render :text => "Nothing to see here yet."
+  end
+
   def show
     begin
         @user = User.find_by_username(params[:username])
