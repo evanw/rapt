@@ -10,7 +10,11 @@ class UsersController < ApplicationController
   def show
     begin
         @user = User.find_by_username(params[:username])
-        respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
+        if current_user and @user == current_user
+          respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
+        else
+          redirect_to "/", :flash => {:error => "Not allowed to edit levels of '#{params[:username]}'"}
+        end
     rescue
         redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
         return
