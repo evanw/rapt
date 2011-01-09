@@ -14,6 +14,11 @@ div#nav { height: 50px; }
 div#nav > div { line-height: 50px; text-align: right; max-width: 850px; padding: 0 20px; margin: 0 auto; }
 div#nav div#logo { float: left; font: bold italic 35px/50px Georgia, serif; }
 div#nav a { text-decoration: none; }
+
+div#title { background: url(/images/header_border.png) center bottom; }
+div#title > div { background: url(/images/header_border.png) center top; }
+div#title h1 { line-height: 100px; padding: 0; color: black; }
+
 div#header { background: url(/images/header_border.png) center; }
 div#header > div { background: url(/images/header.png) center no-repeat; height: 364px; }
 div#content > div { max-width: 850px; padding: 0 20px; margin: 0 auto; }

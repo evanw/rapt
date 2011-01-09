@@ -22,7 +22,11 @@
       	<a href="/users/sign_out">Sign out</a>
   	  <% end %>
     </div></div>
-    <div id="header"><div></div></div>
+    <% if content_for?(:header) %>
+      <%= yield(:header) %>
+    <% else %>
+      <div id="title"><div><h1>TODO: page title goes here</h1></div></div>
+    <% end %>
     <div id="content"><div>
       <% flash.each do |name, msg| %>
         <%= content_tag :div, msg, :id => "flash_#{name}" %>
