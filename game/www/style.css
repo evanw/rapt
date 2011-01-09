@@ -1,8 +1,16 @@
+#levelScreen {
+	background: #DFDFDF !important;
+}
+
+#levelScreen h2 {
+	color: black;
+}
+
 #levels {
 	width: 250px;
 	margin-left: auto;
 	margin-right: auto;
-	background: #C7C7C7;
+	background: #C7C7C7 !important;
 	border: groove 3px #A7A7A7;
 	border-radius: 4px;
 	-moz-border-radius: 4px; 
@@ -18,4 +26,13 @@
 	color: black;
 	text-decoration: none;
 	outline: none;
+}
+
+#loadingScreen {
+	width: 800px;
+	height: 300px;
+	padding-top: 300px;
+	background: #DFDFDF !important;
+	color: black;
+	text-align: center;
 }
