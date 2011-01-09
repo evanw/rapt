@@ -22,7 +22,7 @@ class Level < ActiveRecord::Base
   end
   
   def determine_position
-    self.position = self.user.levels.count + 1.0
+    self.position = self.user.levels.maximum(:position) + 1.0
   end
 
 end
