@@ -65,7 +65,7 @@ Game.prototype.tick = function(seconds) {
 		// fixed physics tick
 		var count = 0;
 		this.fixedPhysicsTick += seconds;
-		while (++count <= 10 && this.fixedPhysicsTick >= 0) {
+		while (++count <= 3 && this.fixedPhysicsTick >= 0) {
 			this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
 			gameState.tick(SECONDS_BETWEEN_TICKS);
 			Particle.tick(SECONDS_BETWEEN_TICKS);
