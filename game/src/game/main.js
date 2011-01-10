@@ -317,14 +317,18 @@ var hash = null;
 var menu = null;
 var level = null;
 
-$(document).ready(function() {
-	// scroll the game to the center of the window if it lies partially or completely off screen
+// scroll the game to the center of the window if it lies partially or completely off screen
+function scrollGameIntoWindow() {
 	var windowTop = $('body').scrollTop(), windowHeight = $(window).height();
 	var gameTop = $('#game').offset().top, gameHeight = $('#game').outerHeight();
 	if (gameTop < windowTop || gameTop + gameHeight > windowTop + windowHeight) {
 		// html is for firefox, body is for webkit
 		$('html, body').animate({ scrollTop: gameTop + (gameHeight - windowHeight) / 2 });
 	}
+}
+
+$(document).ready(function() {
+	scrollGameIntoWindow();
 	
 	hash = new Hash();
 	menu = new Menu();
@@ -380,6 +384,8 @@ function tick() {
 			menu.load(hash.username, function() { menu.show(); });
 			menu.show();
 		} else {
+			scrollGameIntoWindow();
+			
 			// make sure the menu is loaded so we can go right to the menu when the user presses escape
 			menu.load(hash.username);
 			
