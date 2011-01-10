@@ -83,13 +83,15 @@ Menu.prototype.load = function(username, onSuccess) {
 };
 
 Menu.prototype.updateSelectedIndex = function() {
-	var selectedLevel = '#level' + this.selectedIndex;
-	$('.level').blur();
-	$(selectedLevel).focus();
-	
-	// no idea why 450 is the magic number that centers the selected level, but not going to worry about it
-	var scrollTop = $('#levelScreen').scrollTop() + $(selectedLevel).offset().top - 450;
-	$('#levelScreen').scrollTop(scrollTop);
+	var selectedLevel = $('#level' + this.selectedIndex);
+	if (selectedLevel.length > 0) {
+		$('.level').blur();
+		$(selectedLevel).focus();
+
+		// no idea why 450 is the magic number that centers the selected level, but not going to worry about it
+		var scrollTop = $('#levelScreen').scrollTop() + $(selectedLevel).offset().top - 450;
+		$('#levelScreen').scrollTop(scrollTop);
+	}
 };
 
 Menu.prototype.show = function() {
@@ -320,7 +322,8 @@ $(document).ready(function() {
 	var windowTop = $('body').scrollTop(), windowHeight = $(window).height();
 	var gameTop = $('#game').offset().top, gameHeight = $('#game').outerHeight();
 	if (gameTop < windowTop || gameTop + gameHeight > windowTop + windowHeight) {
-		$('body').animate({ scrollTop: gameTop + (gameHeight - windowHeight) / 2 });
+		// html is for firefox, body is for webkit
+		$('html, body').animate({ scrollTop: gameTop + (gameHeight - windowHeight) / 2 });
 	}
 	
 	hash = new Hash();

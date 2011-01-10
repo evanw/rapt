@@ -4,7 +4,6 @@ div#levelScreen {
    width: 800px;
    height: 600px;
    overflow: auto;
-	background: #DFDFDF;
 }
 
 #levelScreen h2 {
@@ -38,7 +37,6 @@ div#levelScreen {
 	width: 800px;
 	height: 300px;
 	padding-top: 300px;
-	background: #DFDFDF !important;
 	color: black;
 	text-align: center;
 }
