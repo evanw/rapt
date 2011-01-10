@@ -32,11 +32,13 @@ var useFixedPhysicsTick = true;
 Game.subclasses(Screen);
 
 // class Game extends Screen
-function Game(lastLevel) {
+function Game() {
 	this.camera = new Camera();
 	this.fps = 0;
 	this.fixedPhysicsTick = 0;
-    this.lastLevel = lastLevel;
+	
+	// whether this game is the last level in the menu, this will be updated by main.js when the menu loads
+	this.lastLevel = false;
 
 	gameState = new GameState();
 }

@@ -1,11 +1,23 @@
 <%= content_for :title, "Your levels" %>
 
 <% if current_user and @user == current_user %>
+  <p>RAPT is meant to be played with a friend!&nbsp; Share your levels with your friends by giving them this url: <a href="<%= play_url %>/#/<%= @user.username %>/"><%= play_url %>/#/<%= @user.username %>/</a></p>
+
+  <div id="buttons">
+    <a href="<%= play_url %>/#/<%= @user.username %>/" class="button"><span></span><b>Play&nbsp;your&nbsp;levels</b> <br> Go to your level menu</a>
+  </div>
+
   <ul id="levels">
   	<% @user.levels.each do |level| %>
   		<li html_title="<%= level.html_title %>" position="<%= level.position %>">
   		  <span>&varr;</span>
-  		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
+  		  <% if false %>
+  		    <% # link to play each level directly %>
+    		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
+  		  <% else %>
+  		    <% # no link to play a specific level, must click the play button above %>
+    		  <%= level.title %>
+  		  <% end %>
   		  <%== edit_links_for_level level %>
   	  </li>
   	<% end %>
@@ -21,7 +33,7 @@
     	}
   		#levels li span { margin-right: 3px; }
   		#levels li span.links { position: relative; float: right; }
-  		#levels a, #levels li span { color: black; }
+  		#levels a, #levels li { color: black; }
   	</style>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
   <% end %>

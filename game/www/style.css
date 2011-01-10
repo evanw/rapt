@@ -1,5 +1,8 @@
-#levelScreen {
-	background: #DFDFDF !important;
+div#levelScreen {
+   width: 800px;
+   height: 600px;
+   overflow: auto;
+	background: #DFDFDF;
 }
 
 #levelScreen h2 {
@@ -19,12 +22,13 @@
 
 .level {
 	font: 14px/24px "Lucida Grande", Arial, sans-serif;
-	cursor: pointer;
+	color: black;
+	display: block;
+	text-decoration: none;
 }
 
-.level a {
-	color: black;
-	text-decoration: none;
+.level:focus {
+	background: white !important;
 	outline: none;
 }
 
