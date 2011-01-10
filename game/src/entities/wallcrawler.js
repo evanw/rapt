@@ -39,27 +39,30 @@ function WallCrawler(center, direction) {
 WallCrawler.prototype.move = function(seconds) {
     var ref_shapePoint = {};
     var ref_worldPoint = {};
-    CollisionDetector.closestToEntityWorld(this, 2, ref_shapePoint, ref_worldPoint, gameState.world);
+    var closestPointDist = CollisionDetector.closestToEntityWorld(this, 2, ref_shapePoint, ref_worldPoint, gameState.world);
 
-    var delta = this.getCenter().sub(ref_worldPoint.ref);
-    // Make sure it doesn't get too far away or get stuck in corners
-    var flip = delta.flip();
+    if (closestPointDist < Number.POSITIVE_INFINITY) {
+        var delta = this.getCenter().sub(ref_worldPoint.ref);
+        // Make sure it doesn't get too far away or get stuck in corners
+        var flip = delta.flip();
 
-    if (this.firstTick) {
-        if (this.velocity.dot(flip) < 0) this.clockwise = true;
-        else this.clockwise = false;
-        this.firstTick = false;
+        if (this.firstTick) {
+            if (this.velocity.dot(flip) < 0) this.clockwise = true;
+            else this.clockwise = false;
+            this.firstTick = false;
+        }
+        if (delta.lengthSquared() > (WALL_CRAWLER_RADIUS * WALL_CRAWLER_RADIUS * 1.1)) {
+            // Pull the crawler towards the wall
+            if (this.clockwise) this.velocity = flip.mul(-1).sub(delta.mul(PULL_FACTOR));
+            else this.velocity = flip.sub(delta.mul(PULL_FACTOR));
+        } else {
+            // Push the crawler away from the wall
+            if (this.clockwise) this.velocity = flip.mul(-1).add(delta.mul(PUSH_FACTOR));
+            else this.velocity = flip.add(delta.mul(PUSH_FACTOR));
+        }
+        this.velocity.normalize();
     }
-    if (delta.lengthSquared() > (WALL_CRAWLER_RADIUS * WALL_CRAWLER_RADIUS * 1.1)) {
-        // Pull the crawler towards the wall
-        if (this.clockwise) this.velocity = flip.mul(-1).sub(delta.mul(PULL_FACTOR));
-        else this.velocity = flip.sub(delta.mul(PULL_FACTOR));
-    } else {
-        // Push the crawler away from the wall
-        if (this.clockwise) this.velocity = flip.mul(-1).add(delta.mul(PUSH_FACTOR));
-        else this.velocity = flip.add(delta.mul(PUSH_FACTOR));
-    }
-    this.velocity.normalize();
+
     return this.velocity.mul(WALL_CRAWLER_SPEED * seconds);
 };
 

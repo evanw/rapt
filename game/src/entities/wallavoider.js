@@ -46,9 +46,11 @@ WallAvoider.prototype.move = function(seconds) {
             return this.accelerate(new Vector(0, 0), seconds);
         }
         this.acceleration = targetDelta.unit();
-        var closestPointDelta = ref_worldPoint.ref.sub(this.getCenter());
-        var wallAvoidance = closestPointDelta.mul(-1 / (closestPointDist * closestPointDist));
-        this.acceleration.inplaceAdd(wallAvoidance);
+        if (closestPointDist < Number.POSITIVE_INFINITY) {
+            var closestPointDelta = ref_worldPoint.ref.sub(this.getCenter());
+            var wallAvoidance = closestPointDelta.mul(-1 / (closestPointDist * closestPointDist));
+            this.acceleration.inplaceAdd(wallAvoidance);
+        }
         this.acceleration.normalize();
         this.acceleration.inplaceMul(WALL_AVOIDER_ACCEL);
 
