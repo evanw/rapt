@@ -83,8 +83,13 @@ Menu.prototype.load = function(username, onSuccess) {
 };
 
 Menu.prototype.updateSelectedIndex = function() {
+	var selectedLevel = '#level' + this.selectedIndex;
 	$('.level').blur();
-	$('#level' + this.selectedIndex).focus();
+	$(selectedLevel).focus();
+	
+	// no idea why 450 is the magic number that centers the selected level, but not going to worry about it
+	var scrollTop = $('#levelScreen').scrollTop() + $(selectedLevel).offset().top - 450;
+	$('#levelScreen').scrollTop(scrollTop);
 };
 
 Menu.prototype.show = function() {
@@ -105,6 +110,14 @@ Menu.prototype.show = function() {
 		}
 		html += '</div>';
 		$('#levelScreen').html(html);
+
+		var this_ = this;
+		$('.level').hover(function() {
+			$(this).focus();
+		});
+		$('.level').focus(function() {
+			this_.selectedIndex = this.id.substr(5); // remove "level"
+		});
 
 		this.updateSelectedIndex();
 	}
