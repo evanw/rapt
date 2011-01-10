@@ -40,7 +40,7 @@ span.left { display: block; float: left; margin-right: 20px; }
 span.right { display: block; float: right; margin-left: 20px; }
 span.center { display: inline-block; }
 
-div#game { width: 800px; height: 600px; border: 1px solid black; overflow: hidden; box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black; }
+div#game { width: 800px; height: 600px; border: 1px solid black; overflow: hidden; margin: 0 auto; box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black; }
 div#game * { background: none; }
 
 a.button b { font-size: 150%; }

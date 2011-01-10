@@ -9,5 +9,29 @@
 <%= include_stylesheets :game %>
 <%= include_javascripts :game %>
 
-<br>
-<a href="/">Back to Home</a>
+<div id="keys">
+  <div id="wasd">
+    <div class="key" style="left:65px;top:0;">W</div>
+    <div class="key" style="left:0;top:65px;">A</div>
+    <div class="key" style="left:65px;top:65px;">S</div>
+    <div class="key" style="left:130px;top:65px;">D</div>
+    Player 1
+  </div>
+
+  <div id="arrows">
+    <div class="key" style="left:65px;top:0;">&uarr;</div>
+    <div class="key" style="left:0;top:65px;">&larr;</div>
+    <div class="key" style="left:65px;top:65px;">&darr;</div>
+    <div class="key" style="left:130px;top:65px;">&rarr;</div>
+    Player 2
+  </div>
+
+  <div id="other">
+    <div class="key" style="left:0;top:0;">K</div>
+    <div class="key" style="left:0;top:65px;"><small>Esc</small></div>
+    Kill both players (start over)<br>
+    Go to the level menu
+  </div>
+</div>
+
+<p><a href="/">Back to Home</a></p>
