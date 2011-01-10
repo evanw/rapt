@@ -145,10 +145,7 @@ Menu.prototype.isLastLevel = function(username, levelname) {
 };
 
 Menu.prototype.keyDown = function(e) {
-	if (e.which === ESCAPE_KEY) {
-		// escape returns the player to the level select page
-		hash.setHash(this.username, null);
-	} else if (e.which == UP_ARROW) {
+	if (e.which == UP_ARROW) {
 		if (this.selectedIndex > 0) this.selectedIndex--;
 		this.updateSelectedIndex();
 	} else if (e.which == DOWN_ARROW) {
@@ -319,6 +316,13 @@ var menu = null;
 var level = null;
 
 $(document).ready(function() {
+	// scroll the game to the center of the window if it lies partially or completely off screen
+	var windowTop = $('body').scrollTop(), windowHeight = $(window).height();
+	var gameTop = $('#game').offset().top, gameHeight = $('#game').outerHeight();
+	if (gameTop < windowTop || gameTop + gameHeight > windowTop + windowHeight) {
+		$('body').animate({ scrollTop: gameTop + (gameHeight - windowHeight) / 2 });
+	}
+	
 	hash = new Hash();
 	menu = new Menu();
 	level = new Level();
@@ -332,6 +336,11 @@ $(document).keydown(function(e) {
 	if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
 		menu.keyDown(e);
 		level.keyDown(e);
+
+		if (e.which === ESCAPE_KEY) {
+			// escape returns the player to the level select page
+			hash.setHash(menu.username || level.username, null);
+		}
 
 		// Prevents default behaviors like scrolling up/down
 		if (e.which == UP_ARROW || e.which == DOWN_ARROW || e.which == SPACEBAR) {
@@ -368,7 +377,12 @@ function tick() {
 			menu.load(hash.username, function() { menu.show(); });
 			menu.show();
 		} else {
-			level.load(hash.username, hash.levelname, function() { level.show(); });
+			// make sure the menu is loaded so we can go right to the menu when the user presses escape
+			menu.load(hash.username);
+			
+			level.load(hash.username, hash.levelname, function() {
+				level.show();
+			});
 			level.show();
 		}
 	}
