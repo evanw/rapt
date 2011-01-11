@@ -19,6 +19,7 @@ var MODE_SELECT = 7;
 var MODE_ENEMIES = 8;
 var MODE_WALLS_BUTTONS = 9;
 var MODE_HELP = 10;
+var MODE_SAVE_AND_EXIT = 11;
 
 function todo(c, alpha) {
 	Sprites.drawQuestionMark(c, alpha);

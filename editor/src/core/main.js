@@ -77,7 +77,8 @@ var idToModeMap = {
 	'mode_select': MODE_SELECT,
 	'mode_enemies': MODE_ENEMIES,
 	'mode_walls_buttons': MODE_WALLS_BUTTONS,
-	'mode_help': MODE_HELP
+	'mode_help': MODE_HELP,
+	'mode_save_exit': MODE_SAVE_AND_EXIT
 };
 
 var editor = null;
@@ -326,6 +327,18 @@ function loadEditor() {
 		$(this).addClass('toolbar-current');
 		e.preventDefault();
 		showOrHidePanels(mode);
+		if (mode == MODE_SAVE_AND_EXIT) {
+			var cleanIndex = editor.doc.undoStack.getCurrentIndex();
+			ajaxPutLevel(editor.save(), function() {
+				editor.doc.undoStack.setCleanIndex(cleanIndex);
+				
+				// assuming we got here from our main site, press the browser's back button
+				history.back();
+				
+				// if that doesn't work, then try to close the window
+				window.close();
+			});
+		}
 	});
 	
 	// Add actions to buttons on sign text dialog
