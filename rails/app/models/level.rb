@@ -9,7 +9,7 @@ class Level < ActiveRecord::Base
   
   attr_accessible :data, :position, :title
   
-  before_create :determine_position
+  before_create :determine_position, :set_default_level
   
   def html_title
     self.title.gsub(' ', '_')
@@ -27,6 +27,11 @@ class Level < ActiveRecord::Base
     rescue
       self.position = 1.0
     end
+  end
+  
+  def set_default_level
+    unique_id = rand(2**31 - 1)
+    self.data = sprintf("{\"cells\":[[0,1,1,0],[0,0,0,0]],\"width\":4,\"height\":2,\"entities\":[],\"unique_id\":%d,\"start\":[0,0],\"end\":[3,0]}", unique_id)
   end
 
 end
