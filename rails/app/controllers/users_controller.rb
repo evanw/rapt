@@ -10,6 +10,13 @@ class UsersController < ApplicationController
   def show
     begin
         @user = User.find_by_username(params[:username])
+        
+        # we don't want to cache because otherwise creating a new level, editing that level, and going
+        # back won't show the newly created level (because the old page will be pulled from the cache)
+        response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+        
         respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
     rescue
         redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
