@@ -19,7 +19,7 @@ This will create a server at http://localhost:3000/.
 
 ### More Information
 
-This project is actually a port of a [http://raptgame.com/](previous iteration) written in C++ using OpenGL. Because this project was a port, performance has always been an issue for us. We were able to raise our rendering performance to an acceptable level but physics performance is still an issue.
+This project is actually a port of a [previous iteration](http://raptgame.com/) written in C++ using OpenGL. Because this project was a port, performance has always been an issue for us. We were able to raise our rendering performance to an acceptable level but physics performance is still an issue.
 
 The C++ version relied on a locked physics tick of 100 FPS, which just can't be done yet in modern browsers. We were able to bring this down to 60 FPS without impacting game mechanics, but anything under that caused weird gameplay issues. As a result RAPT only really runs well in Google Chrome, which has the lowest costs for function calls and object allocations. We tried bringing up performance in Firefox by inlining a lot of our 2D vector operations and unnecessary allocations (automatically via `game/js_inline.py`) but it only gave performance gains of 5-10% in Firefox.
 
