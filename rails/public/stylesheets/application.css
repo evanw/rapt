@@ -33,7 +33,7 @@ div#content h1 { padding-bottom: 40px; margin-top: -40px; }
 div#content h2 { padding: 100px 0 40px 0; }
 div#authors { color: #BFBFBF; font-style: italic; text-align: center; padding: 100px 20px 30px 20px; }
 div#footer { background: url(/images/footer_border.png) center top repeat-x; }
-div#footer > div { max-width: 801px; margin: 0 auto; }
+div#footer > div { max-width: 851px; margin: 0 auto; }
 div#footer > div > div { background: url(/images/footer.png) center top repeat-x; height: 300px; }
 div#player_movement { width: 565px; margin: 0 auto; }
 span.left { display: block; float: left; margin-right: 20px; }
