@@ -243,14 +243,14 @@ Level.prototype.keyDown = function(e) {
 				// restart the current level
 				this.restart();
 			} else if (gameState.gameStatus === GAME_WON) {
-                if (menu.isLastLevel(this.username, this.levelname)) {
-                    // go back to the level menu
-                    hash.setHash(this.username, null);
-                } else {
-                    // go straight to the next level
-                    var index = menu.indexOfLevel(this.username, this.levelname);
-                    hash.setHash(this.username, menu.items[index + 1].levelname);
-                }
+				if (menu.isLastLevel(this.username, this.levelname)) {
+					// go back to the level menu
+					hash.setHash(this.username, null);
+				} else {
+					// go straight to the next level
+					var index = menu.indexOfLevel(this.username, this.levelname);
+					hash.setHash(this.username, menu.items[index + 1].levelname);
+				}
 			}
 		}
 	}
