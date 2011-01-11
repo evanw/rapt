@@ -105,7 +105,9 @@ Menu.prototype.show = function() {
 		$('#levelScreen').show();
 		$('#loadingScreen').hide();
 
-		var html = '<h2>' + this.username + '\'s Levels</h2><div id="levels">';
+		var html = '<h2>';
+		html += (this.username == 'rapt') ? 'Official Levels' : 'Levels made by ' + this.username;
+		html += '</h2><div id="levels">';
 		for (var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
 			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">' + item.title;

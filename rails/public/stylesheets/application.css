@@ -11,7 +11,7 @@ a { font-weight: bold; color: white; }
 
 div { background: #7F7F7F url(/images/background.png); }
 div#nav { }
-div#nav > div { line-height: 50px; text-align: right; max-width: 850px; padding: 0 20px; margin: 0 auto; }
+div#nav > div { line-height: 50px; text-align: right; max-width: 800px; padding: 0 20px; margin: 0 auto; }
 div#nav div#logo { float: left; font: bold italic 35px/50px Georgia, serif; }
 div#nav a { text-decoration: none; }
 
@@ -28,19 +28,19 @@ div#title h1 { line-height: 100px; padding: 0; color: black; }
 
 div#header { background: url(/images/header_border.png) center; }
 div#header > div { background: url(/images/header.png) center no-repeat; height: 364px; }
-div#content > div { max-width: 850px; padding: 40px 20px 0 20px; margin: 0 auto; }
+div#content > div { max-width: 800px; padding: 40px 20px 0 20px; margin: 0 auto; }
 div#content h1 { padding-bottom: 40px; margin-top: -40px; }
 div#content h2 { padding: 100px 0 40px 0; }
 div#authors { color: #BFBFBF; font-style: italic; text-align: center; padding: 100px 20px 30px 20px; }
 div#footer { background: url(/images/footer_border.png) center top repeat-x; }
-div#footer > div { max-width: 851px; margin: 0 auto; }
+div#footer > div { max-width: 801px; margin: 0 auto; }
 div#footer > div > div { background: url(/images/footer.png) center top repeat-x; height: 300px; }
 div#player_movement { width: 565px; margin: 0 auto; }
 span.left { display: block; float: left; margin-right: 20px; }
 span.right { display: block; float: right; margin-left: 20px; }
 span.center { display: inline-block; }
 
-div#game { width: 800px; height: 600px; background: #DFDFDF; border: 1px solid black; overflow: hidden; margin: 0 auto; box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black; }
+div#game { width: 800px; height: 600px; background: #DFDFDF; border: 1px solid black; overflow: hidden; margin: 0 auto 40px auto; box-shadow: 0 0 5px black; -moz-box-shadow: 0 0 5px black; -webkit-box-shadow: 0 0 5px black; }
 div#game * { background: none; }
 
 a.button b { font-size: 150%; }
