@@ -78,13 +78,11 @@ def build():
 			from js_inline import js_inline
 			data = js_inline(data)
 		data = '(function(){\n\n' + data + '})();\n\n'
-		with open(output_path, 'w') as f:
-			f.write(data)
+		open(output_path, 'w').write(data)
 		print 'built %s (%u bytes)' % (output_path, len(data))
 	except CompileError, e:
 		print 'error: ' + str(e)
-		with open(output_path, 'w') as f:
-			f.write('alert("%s")' % str(e))
+		open(output_path, 'w').write('alert("%s")' % str(e))
 
 def stat():
 	return [os.stat(file).st_mtime for file in sources()]
