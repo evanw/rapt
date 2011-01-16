@@ -433,7 +433,7 @@ CollisionDetector.collideCirclePoint = function(circle, deltaPosition, point) {
 
 	// BUGFIX: shock hawks were disappearing on Traps when deltaPosition was very small, which caused
 	// us to try to solve a quadratic with a second order coefficient of zero and put NaNs everywhere
-	var delta = deltaPosition.length();
+	var delta = deltaPosition.lengthSquared();
 	if (delta < 0.0000001) {
 		return false;
 	}
@@ -725,8 +725,8 @@ CollisionDetector.distanceShapePoint = function(shape, point) {
 	alert('assertion failed in CollisionDetector.distanceShapePoint');
 };
 CollisionDetector.distanceCirclePoint = function(circle, point) {
-	var distance = circle.center.sub(point).length();
-	return distance > circle.radius ? distance - circle.radius : 0;
+	var distance = circle.center.sub(point).lengthSquared();
+	return distance > circle.radius*circle.radius ? Math.sqrt(distance) - circle.radius : 0;
 };
 CollisionDetector.distancePolygonPoint = function(polygon, point) {
 	var ref_polygonEdgeProportion = {}, ref_distanceProportion = {};
@@ -817,7 +817,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 		for(var j = 0; j < 2; j++)
 		{
 			var thisSegmentPoint = j == 0 ? segment.start : segment.end;
-			thisDistance = polygonPoint.sub(thisSegmentPoint).length();
+			thisDistance = polygonPoint.sub(thisSegmentPoint).lengthSquared();
 
 			if(thisDistance < distance)
 			{
@@ -827,6 +827,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 			}
 		}
 	}
+	distance = Math.sqrt(distance);
 
 	var ref_edgeProportion = {}, ref_polygonDistanceProportion = {}, ref_closestPoint = {};
 
@@ -844,7 +845,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 		}
 
 		// the distance along the normal of the segment from the segment to this vertex of the polygon
-		thisDistance = Math.abs(ref_polygonDistanceProportion.ref);
+		thisDistance = ref_polygonDistanceProportion.ref*ref_polygonDistanceProportion.ref; //FIXME speedup square
 
 		// if this is the closest we've found, use this
 		if(thisDistance < distance)
@@ -875,7 +876,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 				continue;
 			}
 
-			thisDistance = Math.abs(ref_distanceProportion.ref);
+			thisDistance = ref_polygonDistanceProportion.ref*ref_polygonDistanceProportion.ref;//FIXME speedup square
 
 			if(thisDistance < distance)
 			{
