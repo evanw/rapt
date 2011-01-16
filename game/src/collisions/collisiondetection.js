@@ -845,7 +845,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 		}
 
 		// the distance along the normal of the segment from the segment to this vertex of the polygon
-		thisDistance = ref_polygonDistanceProportion.ref*ref_polygonDistanceProportion.ref; //FIXME speedup square
+		thisDistance = ref_polygonDistanceProportion.ref;
 
 		// if this is the closest we've found, use this
 		if(thisDistance < distance)
@@ -876,7 +876,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 				continue;
 			}
 
-			thisDistance = ref_polygonDistanceProportion.ref*ref_polygonDistanceProportion.ref;//FIXME speedup square
+			thisDistance = ref_polygonDistanceProportion.ref;
 
 			if(thisDistance < distance)
 			{
