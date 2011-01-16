@@ -5,7 +5,7 @@
   *
   *  Segment i goes from vertex i to vertex ((i + 1) % vertices.length)
   *
-  *  When making a new polygon, please declare the vertices in counterclockwise order.  I'm not sure what will
+  *  When making a new polygon, please declare the vertices in counterclockwise order.	I'm not sure what will
   *  happen if you don't do that.
   */
 

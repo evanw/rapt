@@ -11,9 +11,9 @@ Wheeligator.subclasses(WalkingEnemy);
 function Wheeligator(center, angle) {
 	WalkingEnemy.prototype.constructor.call(this, ENEMY_WHEELIGATOR, center, WHEELIGATOR_RADIUS, WHEELIGATOR_ELASTICITY);
 
-    this.hitGround = false;
-    this.angularVelocity = 0;
-    this.startsRight = (Math.cos(angle) > 0);
+	this.hitGround = false;
+	this.angularVelocity = 0;
+	this.startsRight = (Math.cos(angle) > 0);
 
 	this.bodySprite = new Sprite();
 	this.bodySprite.drawGeometry = function(c) {
@@ -38,39 +38,39 @@ function Wheeligator(center, angle) {
 };
 
 Wheeligator.prototype.move = function(seconds) {
-    var isOnFloor = this.isOnFloor();
+	var isOnFloor = this.isOnFloor();
 
-    if (!this.hitGround && isOnFloor) {
-        if (this.velocity.x < WHEELIGATOR_SPEED) {
-            this.velocity.x = this.startsRight ? WHEELIGATOR_SPEED : -WHEELIGATOR_SPEED;
-            this.hitGround = true;
-        }
-    }
+	if (!this.hitGround && isOnFloor) {
+		if (this.velocity.x < WHEELIGATOR_SPEED) {
+			this.velocity.x = this.startsRight ? WHEELIGATOR_SPEED : -WHEELIGATOR_SPEED;
+			this.hitGround = true;
+		}
+	}
 
-    if (isOnFloor) {
-        this.angularVelocity = -this.velocity.x / WHEELIGATOR_RADIUS;
-    }
+	if (isOnFloor) {
+		this.angularVelocity = -this.velocity.x / WHEELIGATOR_RADIUS;
+	}
 
-    this.velocity.y += (FREEFALL_ACCEL * seconds);
-    return this.velocity.mul(seconds);
+	this.velocity.y += (FREEFALL_ACCEL * seconds);
+	return this.velocity.mul(seconds);
 };
 
 Wheeligator.prototype.reactToWorld = function(contact) {
-    // If a floor, bounce off like elasticity is FLOOR_ELASTICITY
-    if (Edge.getOrientation(contact.normal) === EDGE_FLOOR) {
-        var perpendicular = this.velocity.projectOntoAUnitVector(contact.normal);
-        var parallel = this.velocity.sub(perpendicular);
-        this.velocity = parallel.add(perpendicular.mul(WHEELIGATOR_FLOOR_ELASTICITY));
-        this.angularVelocity = -this.velocity.x / WHEELIGATOR_RADIUS;
-    }
+	// If a floor, bounce off like elasticity is FLOOR_ELASTICITY
+	if (Edge.getOrientation(contact.normal) === EDGE_FLOOR) {
+		var perpendicular = this.velocity.projectOntoAUnitVector(contact.normal);
+		var parallel = this.velocity.sub(perpendicular);
+		this.velocity = parallel.add(perpendicular.mul(WHEELIGATOR_FLOOR_ELASTICITY));
+		this.angularVelocity = -this.velocity.x / WHEELIGATOR_RADIUS;
+	}
 };
 
 Wheeligator.prototype.afterTick = function(seconds) {
-    this.bodySprite.offsetBeforeRotation = this.getCenter();
-    this.bodySprite.angle = this.bodySprite.angle + this.angularVelocity * seconds;
+	this.bodySprite.offsetBeforeRotation = this.getCenter();
+	this.bodySprite.angle = this.bodySprite.angle + this.angularVelocity * seconds;
 };
 
 Wheeligator.prototype.draw = function(c) {
-    var pos = this.getCenter();
-    this.bodySprite.draw(c);
+	var pos = this.getCenter();
+	this.bodySprite.draw(c);
 };

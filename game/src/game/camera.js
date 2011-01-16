@@ -18,9 +18,9 @@ function SplitScreenCamera(playerA, playerB, width, height) {
 
 // Clip a rectangular w by h polygon by a line passing though split and the origin:
 //
-//  +-----+---+
-//  | A  /  B |
-//  +---+-----+
+//	+-----+---+
+//	| A  /	B |
+//	+---+-----+
 //
 // Pass split to get region A and -split to get region B.  This is necessary likely
 // because Firefox 4.0b8 renders to an internal buffer bounding the clipping polygon,

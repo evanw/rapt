@@ -55,10 +55,10 @@ Headache.subclasses(HoveringEnemy);
 function Headache(center, target) {
 	HoveringEnemy.prototype.constructor.call(this, ENEMY_HEADACHE, center, HEADACHE_RADIUS, HEADACHE_ELASTICITY);
 
-    this.target = target;
-    this.isAttached = false;
-    this.isTracking = false;
-    this.restingOffset = new Vector(0, -10);
+	this.target = target;
+	this.isAttached = false;
+	this.isTracking = false;
+	this.restingOffset = new Vector(0, -10);
 
 	this.chains = [];
 	for (var i = 0; i < 4; i++) {
@@ -67,53 +67,53 @@ function Headache(center, target) {
 }
 
 Headache.prototype.move = function(seconds) {
-    this.isTracking = false;
+	this.isTracking = false;
 
-    // If the headache isn't yet attached to a Player
-    if (!this.isAttached) {
-        if (this.target.isDead()) return new Vector(0, 0);
-        var delta = this.target.getCenter().sub(this.getCenter());
-        if (delta.lengthSquared() < (HEADACHE_RANGE * HEADACHE_RANGE) && !CollisionDetector.lineOfSightWorld(this.getCenter(), this.target.getCenter(), gameState.world)) {
-            // Seeks the top of the Player, not the center
-            delta.y += 0.45;
-            // Multiply be 3 so it attaches more easily if its close to a player
-            if (delta.lengthSquared() > (HEADACHE_SPEED * seconds * HEADACHE_SPEED * seconds * 3))
-            {
-                this.isTracking = true;
-                delta.normalize();
-                delta = delta.mul(HEADACHE_SPEED * seconds);
-            } else {
-                this.isAttached = true;
-            }
-            return delta;
-        }
-    } else {
-        // If a headache is attached to a dead player, it vanishes
-        if (this.target.isDead()) {
-            this.setDead(true);
-        }
-        // Otherwise it moves with the player
-        var delta = this.target.getCenter().add(new Vector(0, 0.45)).sub(this.getCenter());
-        // If player is crouching, adjust position
-        if (this.target.getCrouch() && this.target.isOnFloor())
-        {
-            delta.y -= 0.25;
-            if (this.target.facingRight) delta.x += 0.15;
-            else delta.x -= 0.15;
-        }
-        this.hitCircle.moveBy(delta);
-    }
-    return new Vector(0, 0);
+	// If the headache isn't yet attached to a Player
+	if (!this.isAttached) {
+		if (this.target.isDead()) return new Vector(0, 0);
+		var delta = this.target.getCenter().sub(this.getCenter());
+		if (delta.lengthSquared() < (HEADACHE_RANGE * HEADACHE_RANGE) && !CollisionDetector.lineOfSightWorld(this.getCenter(), this.target.getCenter(), gameState.world)) {
+			// Seeks the top of the Player, not the center
+			delta.y += 0.45;
+			// Multiply be 3 so it attaches more easily if its close to a player
+			if (delta.lengthSquared() > (HEADACHE_SPEED * seconds * HEADACHE_SPEED * seconds * 3))
+			{
+				this.isTracking = true;
+				delta.normalize();
+				delta = delta.mul(HEADACHE_SPEED * seconds);
+			} else {
+				this.isAttached = true;
+			}
+			return delta;
+		}
+	} else {
+		// If a headache is attached to a dead player, it vanishes
+		if (this.target.isDead()) {
+			this.setDead(true);
+		}
+		// Otherwise it moves with the player
+		var delta = this.target.getCenter().add(new Vector(0, 0.45)).sub(this.getCenter());
+		// If player is crouching, adjust position
+		if (this.target.getCrouch() && this.target.isOnFloor())
+		{
+			delta.y -= 0.25;
+			if (this.target.facingRight) delta.x += 0.15;
+			else delta.x -= 0.15;
+		}
+		this.hitCircle.moveBy(delta);
+	}
+	return new Vector(0, 0);
 };
 
 Headache.prototype.reactToWorld = function() {
-    // Nothing happens
+	// Nothing happens
 };
 
 Headache.prototype.onDeath = function() {
-    gameState.incrementStat(STAT_ENEMY_DEATHS);
-    
-    var position = this.getCenter();
+	gameState.incrementStat(STAT_ENEMY_DEATHS);
+	
+	var position = this.getCenter();
 
 	// body
 	var direction = Vector.fromAngle(randInRange(0, 2 * Math.PI)).mul(randInRange(0, 0.05));
@@ -133,27 +133,27 @@ Headache.prototype.onDeath = function() {
 };
 
 Headache.prototype.reactToPlayer = function(player) {
-    if (player === this.target) {
-        player.disableJump();
-    } else if (player.getVelocity().y < 0 && player.getCenter().y > this.getCenter().y) {
-        // The other player must jump on the headache from above to kill it
-        this.setDead(true);
-    }
+	if (player === this.target) {
+		player.disableJump();
+	} else if (player.getVelocity().y < 0 && player.getCenter().y > this.getCenter().y) {
+		// The other player must jump on the headache from above to kill it
+		this.setDead(true);
+	}
 };
 
 Headache.prototype.getTarget = function() {
-    return this.target === gameState.playerB;
+	return this.target === gameState.playerB;
 };
 
 Headache.prototype.afterTick = function(seconds) {
-    var center = this.getCenter();
+	var center = this.getCenter();
 	for (var i = 0; i < this.chains.length; i++) {
 		this.chains[i].tick(seconds, center);
 	}
 };
 
 Headache.prototype.draw = function(c) {
-    var center = this.getCenter();
+	var center = this.getCenter();
 	
 	c.strokeStyle = 'black';
 	for (var i = 0; i < this.chains.length; i++) {

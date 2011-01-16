@@ -166,7 +166,7 @@ Player.prototype.reset = function(center, color) {
 	this.jumpDisabled = false;
 	this.lastContact = null;
 	this.state = PLAYER_STATE_FLOOR;
-    this.prevState = PLAYER_STATE_FLOOR;
+	this.prevState = PLAYER_STATE_FLOOR;
 
 	// animation stuff
 	this.sprites = createPlayerSprites();
@@ -193,15 +193,15 @@ Player.prototype.getPlayerIndex = function() {
 };
 
 Player.prototype.getCrouch = function() {
-    return this.crouchKey;
+	return this.crouchKey;
 };
 
 Player.prototype.disableJump = function() {
-    this.jumpDisabled = true;
+	this.jumpDisabled = true;
 };
 
 Player.prototype.addToVelocity = function(v) {
-    this.velocity.inplaceAdd(v);
+	this.velocity.inplaceAdd(v);
 };
 
 Player.prototype.collideWithOtherPlayer = function() {
@@ -210,7 +210,7 @@ Player.prototype.collideWithOtherPlayer = function() {
 
 	if(otherPlayer.crouchKey && !otherPlayer.isDead() && this.state == PLAYER_STATE_FLOOR && otherPlayer.state == PLAYER_STATE_FLOOR)
 	{
-        // Other player not moving, this player moving fast enough in x
+		// Other player not moving, this player moving fast enough in x
 		if(otherPlayer.velocity.lengthSquared() < 0.01 &&
 			Math.abs(this.velocity.x) > 4 /* && TODO: HAD TO COMMENT THIS OUT BECAUSE Y VELOCITY IS BIGGER THAN 0.1, WHY IS THIS
 			Math.abs(this.velocity.y) < 0.1*/)
@@ -225,7 +225,7 @@ Player.prototype.collideWithOtherPlayer = function() {
 			}
 		}
 
-        // Change the spawn point if the players are within 1 unit and we have waited for at least 1 second
+		// Change the spawn point if the players are within 1 unit and we have waited for at least 1 second
 		if(this.getCenter().sub(otherPlayer.getCenter()).lengthSquared() < 1 &&
 			this.crouchTimer > 1 && otherPlayer.crouchTimer >= this.crouchTimer)
 		{
@@ -267,30 +267,30 @@ Player.prototype.tickDeath = function(seconds) {
 };
 
 Player.prototype.tickPhysics = function(seconds) {
-    // if we hit something, stop the boost
+	// if we hit something, stop the boost
 	if(this.lastContact != null)
-    {
-    	this.boostMagnitude = 0;
-	    this.boostTime = 0;
-    }
+	{
+		this.boostMagnitude = 0;
+		this.boostTime = 0;
+	}
 
 	// if we're not in a boost, decrease the boost magnitude
-    this.boostTime -= seconds;
+	this.boostTime -= seconds;
 	if(this.boostTime < 0)
-        this.boostMagnitude *= Math.pow(0.1, seconds);
+		this.boostMagnitude *= Math.pow(0.1, seconds);
 
-    // if we hit something or fall down, turn super jumping off
+	// if we hit something or fall down, turn super jumping off
 	if(this.lastContact != null || this.velocity.y < 0)
-	    this.isSuperJumping = false;
+		this.isSuperJumping = false;
 
-    // move the player horizontally
+	// move the player horizontally
 	var moveLeft = (this.leftKey && !this.rightKey && !this.crouchKey);
 	var moveRight = (this.rightKey && !this.leftKey && !this.crouchKey);
 
 	// check for edge collisions.  sometimes if we hit an edge hard, we won't actually be within the margin
-    // but we will have a contact so we use both methods to detect an edge contact
-    // THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
-    CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
+	// but we will have a contact so we use both methods to detect an edge contact
+	// THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
+	CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
 
 	var onGround = (edgeQuad.edges[EDGE_FLOOR] != null) || (this.lastContact != null && Edge.getOrientation(this.lastContact.normal) == EDGE_FLOOR);
 	var onLeft = (edgeQuad.edges[EDGE_LEFT] != null) || (this.lastContact != null && Edge.getOrientation(this.lastContact.normal) == EDGE_LEFT);
@@ -372,14 +372,14 @@ Player.prototype.tickPhysics = function(seconds) {
 	var closestPointDistance = CollisionDetector.closestToEntityWorld(this, 0.1, ref_closestPointShape, ref_closestPointWorld, gameState.world);
 
 	if(this.state == PLAYER_STATE_LEFT_WALL || this.state == PLAYER_STATE_RIGHT_WALL) {
-        // apply wall friction if the player is sliding down
-        if (this.velocity.y < 0) {
-            this.velocity.y *= Math.pow(WALL_FRICTION, seconds);
-        }
-        if (this.velocity.y > -0.5 && this.prevState === PLAYER_STATE_CLAMBER) {
-            // continue clambering to prevent getting stuck alternating between clambering and climbing
-            this.state = PLAYER_STATE_CLAMBER;
-        }
+		// apply wall friction if the player is sliding down
+		if (this.velocity.y < 0) {
+			this.velocity.y *= Math.pow(WALL_FRICTION, seconds);
+		}
+		if (this.velocity.y > -0.5 && this.prevState === PLAYER_STATE_CLAMBER) {
+			// continue clambering to prevent getting stuck alternating between clambering and climbing
+			this.state = PLAYER_STATE_CLAMBER;
+		}
 	}
 
 
@@ -410,15 +410,15 @@ Player.prototype.tickPhysics = function(seconds) {
 		if (this.crouchKey) {
 			this.velocity.inplaceMul(Math.pow(0.000001, seconds));
 		} else {
-            this.velocity.y -= PLAYER_GRAVITY * seconds;
-            if (!this.jumpKey && this.leftKey != this.rightKey && 
-                this.onDiagLastTick && edgeQuad.edges[EDGE_FLOOR].segment.normal.y < 0.99) {
-                // If running down on a diagonal floor, dont let the player run off
-                this.velocity = this.velocity.projectOntoAUnitVector(edgeQuad.edges[EDGE_FLOOR].segment.normal.flip()).mul(0.99);
-                this.velocity.y += .001;
-            }
-        }
-    } else {
+			this.velocity.y -= PLAYER_GRAVITY * seconds;
+			if (!this.jumpKey && this.leftKey != this.rightKey && 
+				this.onDiagLastTick && edgeQuad.edges[EDGE_FLOOR].segment.normal.y < 0.99) {
+				// If running down on a diagonal floor, dont let the player run off
+				this.velocity = this.velocity.projectOntoAUnitVector(edgeQuad.edges[EDGE_FLOOR].segment.normal.flip()).mul(0.99);
+				this.velocity.y += .001;
+			}
+		}
+	} else {
 		this.velocity.y -= PLAYER_GRAVITY * seconds;
 	}
 
@@ -448,7 +448,7 @@ Player.prototype.tickPhysics = function(seconds) {
 	}
 
 	// After everything, reenable jump
-    this.prevState = this.state;
+	this.prevState = this.state;
 	this.jumpDisabled = false;
 };
 

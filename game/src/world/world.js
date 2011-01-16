@@ -12,7 +12,7 @@ function World(w, h, spawnPoint, goal) {
 	
 	this.width = w;
 	this.height = h;
-    this.safety = spawnPoint;
+	this.safety = spawnPoint;
 
 	this.spawnPoint = spawnPoint.add(new Vector(0.5, 0.5));
 	this.goal = goal.add(new Vector(0.5, 0.5));
@@ -65,7 +65,7 @@ World.prototype.getCellType = function(x, y) {
 };
 
 World.prototype.setCell = function(x, y, type) {
-    this.cells[x][y] = new Cell(x, y, type);
+	this.cells[x][y] = new Cell(x, y, type);
 };
 
 World.prototype.createAllEdges = function() {
@@ -137,7 +137,7 @@ World.prototype.getEdgesInAabb = function(aabb, color) {
 		for(var y = ymin; y < ymax; y++)
 			edges = edges.concat(this.cells[x][y].getBlockingEdges(color));
 
-    return edges;
+	return edges;
 };
 
 World.prototype.getCellsInAabb = function(aabb) {
@@ -151,17 +151,17 @@ World.prototype.getCellsInAabb = function(aabb) {
 		for(var y = ymin; y < ymax; y++)
 			cells = cells.concat(this.cells[x][y]);
 
-    return cells;
+	return cells;
 };
 
 World.prototype.getHugeAabb = function() {
-    return new AABB(new Vector(-WORLD_MARGIN, -WORLD_MARGIN), new Vector(this.width + WORLD_MARGIN, this.height + WORLD_MARGIN));
+	return new AABB(new Vector(-WORLD_MARGIN, -WORLD_MARGIN), new Vector(this.width + WORLD_MARGIN, this.height + WORLD_MARGIN));
 }
 
 World.prototype.getWidth = function() {
-    return this.width;
+	return this.width;
 }
 
 World.prototype.getHeight = function() {
-    return this.height;
+	return this.height;
 }

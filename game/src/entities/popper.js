@@ -37,8 +37,8 @@ function createPopperSprites() {
 	}
 
 	sprites[POPPER_BODY].drawGeometry = function(c) {
-	    c.strokeStyle = 'black';
-	    c.fillStyle = 'black';
+		c.strokeStyle = 'black';
+		c.fillStyle = 'black';
 		c.beginPath();
 		c.moveTo(0.2, -0.2);
 		c.lineTo(-0.2, -0.2);
@@ -64,24 +64,24 @@ function createPopperSprites() {
 
 	var legDrawGeometry = function(c) {
 		c.strokeStyle = 'black';
-        c.beginPath();
-        c.moveTo(0, 0);
-        c.lineTo(0, -LEG_LENGTH);
-        c.stroke();
+		c.beginPath();
+		c.moveTo(0, 0);
+		c.lineTo(0, -LEG_LENGTH);
+		c.stroke();
 	};
 
-    for(var i = 0; i < 4; i++) {
-        sprites[POPPER_LEG1_UPPER + i].drawGeometry = legDrawGeometry;
-        sprites[POPPER_LEG1_LOWER + i].drawGeometry = legDrawGeometry;
-        sprites[POPPER_LEG1_UPPER + i].setParent(sprites[POPPER_BODY]);
-        sprites[POPPER_LEG1_LOWER + i].setParent(sprites[POPPER_LEG1_UPPER + i]);
-        sprites[POPPER_LEG1_LOWER + i].offsetBeforeRotation = new Vector(0, -LEG_LENGTH);
-    }
+	for(var i = 0; i < 4; i++) {
+		sprites[POPPER_LEG1_UPPER + i].drawGeometry = legDrawGeometry;
+		sprites[POPPER_LEG1_LOWER + i].drawGeometry = legDrawGeometry;
+		sprites[POPPER_LEG1_UPPER + i].setParent(sprites[POPPER_BODY]);
+		sprites[POPPER_LEG1_LOWER + i].setParent(sprites[POPPER_LEG1_UPPER + i]);
+		sprites[POPPER_LEG1_LOWER + i].offsetBeforeRotation = new Vector(0, -LEG_LENGTH);
+	}
 
-    sprites[POPPER_LEG1_UPPER].offsetBeforeRotation = new Vector(-0.2, -0.2);
-    sprites[POPPER_LEG2_UPPER].offsetBeforeRotation = new Vector(-0.1, -0.2);
-    sprites[POPPER_LEG3_UPPER].offsetBeforeRotation = new Vector(0.1, -0.2);
-    sprites[POPPER_LEG4_UPPER].offsetBeforeRotation = new Vector(0.2, -0.2);
+	sprites[POPPER_LEG1_UPPER].offsetBeforeRotation = new Vector(-0.2, -0.2);
+	sprites[POPPER_LEG2_UPPER].offsetBeforeRotation = new Vector(-0.1, -0.2);
+	sprites[POPPER_LEG3_UPPER].offsetBeforeRotation = new Vector(0.1, -0.2);
+	sprites[POPPER_LEG4_UPPER].offsetBeforeRotation = new Vector(0.2, -0.2);
 
 	return sprites;
 }
@@ -91,60 +91,60 @@ Popper.subclasses(WalkingEnemy);
 function Popper(center) {
 	WalkingEnemy.prototype.constructor.call(this, ENEMY_POPPER, center, POPPER_RADIUS, POPPER_ELASTICITY);
 
-    this.onFloor = false;
-    this.timeToNextJump = POPPER_JUMP_DELAY;
+	this.onFloor = false;
+	this.timeToNextJump = POPPER_JUMP_DELAY;
 	this.sprites = createPopperSprites();
 }
 
 Popper.prototype.move = function(seconds) {
-    if (this.timeToNextJump <= 0) {
-        // POPPER_MIN_JUMP_Y <= velocity.y < POPPER_MAX_JUMP_Y
-        this.velocity.y = randInRange(POPPER_MIN_JUMP_Y, POPPER_MAX_JUMP_Y);
-        // -(POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y) <= velocity.x <= (POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y)
-        this.velocity.x = (Math.random() > 0.5) ? POPPER_MAX_JUMP_Y - this.velocity.y : -POPPER_MAX_JUMP_Y + this.velocity.y;
+	if (this.timeToNextJump <= 0) {
+		// POPPER_MIN_JUMP_Y <= velocity.y < POPPER_MAX_JUMP_Y
+		this.velocity.y = randInRange(POPPER_MIN_JUMP_Y, POPPER_MAX_JUMP_Y);
+		// -(POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y) <= velocity.x <= (POPPER_MAX_JUMP_Y - POPPER_MIN_JUMP_Y)
+		this.velocity.x = (Math.random() > 0.5) ? POPPER_MAX_JUMP_Y - this.velocity.y : -POPPER_MAX_JUMP_Y + this.velocity.y;
 
-        this.timeToNextJump = POPPER_JUMP_DELAY;
-        this.onFloor = false;
-    } else if (this.onFloor) {
-        this.timeToNextJump = this.timeToNextJump - seconds;
-    }
-    return this.accelerate(new Vector(0, POPPER_ACCEL), seconds);
+		this.timeToNextJump = POPPER_JUMP_DELAY;
+		this.onFloor = false;
+	} else if (this.onFloor) {
+		this.timeToNextJump = this.timeToNextJump - seconds;
+	}
+	return this.accelerate(new Vector(0, POPPER_ACCEL), seconds);
 };
 
 Popper.prototype.reactToWorld = function(contact) {
-    if (contact.normal.y >= .999) {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-        this.onFloor = true;
-    }
+	if (contact.normal.y >= .999) {
+		this.velocity.x = 0;
+		this.velocity.y = 0;
+		this.onFloor = true;
+	}
 };
 
 Popper.prototype.afterTick = function(seconds) {
-    var position = this.getCenter();
-    this.sprites[POPPER_BODY].offsetBeforeRotation = position;
+	var position = this.getCenter();
+	this.sprites[POPPER_BODY].offsetBeforeRotation = position;
 
-    // unfortunate hax because poppers bounce a little bit because of the way Enemy::Tick() works
-    var ref_shapePoint = {}, ref_worldPoint = {};
-    var distance = CollisionDetector.closestToEntityWorld(this, 2 * POPPER_RADIUS, ref_shapePoint, ref_worldPoint, gameState.world);
-    var isOnFloor = (distance < 3 * POPPER_RADIUS && ref_shapePoint.ref.eq(position.add(new Vector(0, -POPPER_RADIUS))) && ref_worldPoint.ref.sub(ref_shapePoint.ref).length() < 0.1);
+	// unfortunate hax because poppers bounce a little bit because of the way Enemy::Tick() works
+	var ref_shapePoint = {}, ref_worldPoint = {};
+	var distance = CollisionDetector.closestToEntityWorld(this, 2 * POPPER_RADIUS, ref_shapePoint, ref_worldPoint, gameState.world);
+	var isOnFloor = (distance < 3 * POPPER_RADIUS && ref_shapePoint.ref.eq(position.add(new Vector(0, -POPPER_RADIUS))) && ref_worldPoint.ref.sub(ref_shapePoint.ref).length() < 0.1);
 
-    var frame;
-    if(!isOnFloor)
-    {
-        var percent = this.velocity.y * -0.25;
-        percent = (percent < 0) ? 1 / (1 - percent) - 1 : 1 - 1 / (1 + percent);
-        frame = popperJumpingKeyframes[0].lerpWith(popperJumpingKeyframes[1], percent);
-    }
-    else frame = popperStandingKeyframe;
+	var frame;
+	if(!isOnFloor)
+	{
+		var percent = this.velocity.y * -0.25;
+		percent = (percent < 0) ? 1 / (1 - percent) - 1 : 1 - 1 / (1 + percent);
+		frame = popperJumpingKeyframes[0].lerpWith(popperJumpingKeyframes[1], percent);
+	}
+	else frame = popperStandingKeyframe;
 
-    this.sprites[POPPER_BODY].offsetAfterRotation = frame.center;
-    for(var i = 0; i < POPPER_NUM_SPRITES; i++) {
-        this.sprites[i].angle = frame.angles[i];
+	this.sprites[POPPER_BODY].offsetAfterRotation = frame.center;
+	for(var i = 0; i < POPPER_NUM_SPRITES; i++) {
+		this.sprites[i].angle = frame.angles[i];
 	}
 };
 
 Popper.prototype.draw = function(c) {
-    this.sprites[POPPER_BODY].draw(c);
+	this.sprites[POPPER_BODY].draw(c);
 };
 
 Popper.prototype.avoidsSpawn = function() {

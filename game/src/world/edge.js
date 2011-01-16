@@ -29,11 +29,11 @@ Edge.prototype.blocksColor = function(entityColor) {
 }
 
 Edge.prototype.getStart = function() {
-    return this.segment.start;
+	return this.segment.start;
 }
 
 Edge.prototype.getEnd = function() {
-    return this.segment.end;
+	return this.segment.end;
 }
 
 Edge.prototype.getOrientation = function() {
@@ -55,15 +55,15 @@ Edge.prototype.draw = function(c) {
 	}
 	this.segment.draw(c);
 
-    var xOffset = this.segment.normal.x * 0.1;
-    var yOffset = this.segment.normal.y * 0.1;
+	var xOffset = this.segment.normal.x * 0.1;
+	var yOffset = this.segment.normal.y * 0.1;
 
-    c.beginPath();
-    for(var i = 1, num = 10; i < num - 1; ++i) {
-        var fraction = i / (num - 1);
-        var start = this.segment.start.mul(fraction).add(this.segment.end.mul(1 - fraction));
-        c.moveTo(start.x, start.y);
-        c.lineTo(start.x - xOffset, start.y - yOffset);
-    }
-    c.stroke();
+	c.beginPath();
+	for(var i = 1, num = 10; i < num - 1; ++i) {
+		var fraction = i / (num - 1);
+		var start = this.segment.start.mul(fraction).add(this.segment.end.mul(1 - fraction));
+		c.moveTo(start.x, start.y);
+		c.lineTo(start.x - xOffset, start.y - yOffset);
+	}
+	c.stroke();
 }

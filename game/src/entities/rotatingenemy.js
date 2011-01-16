@@ -10,8 +10,8 @@ RotatingEnemy.subclasses(Enemy);
 function RotatingEnemy(type, center, radius, heading, elasticity) {
 	Enemy.prototype.constructor.call(this, type, elasticity);
 
-    this.hitCircle = new Circle(center, radius);
-    this.heading = heading;
+	this.hitCircle = new Circle(center, radius);
+	this.heading = heading;
 }
 
 RotatingEnemy.prototype.getShape = function() {

@@ -14,38 +14,38 @@ Bomber.subclasses(SpawningEnemy);
 function Bomber(center, angle) {
 	SpawningEnemy.prototype.constructor.call(this, ENEMY_BOMBER, center, BOMBER_WIDTH, BOMBER_HEIGHT, BOMBER_ELASTICITY, BOMB_FREQUENCY, randInRange(0, BOMB_FREQUENCY));
 
-    if (angle < Math.PI * 0.25) this.setVelocity(new Vector(BOMBER_SPEED, 0));
-    else if (angle < Math.PI * 0.75) this.setVelocity(new Vector(0, BOMBER_SPEED));
-    else if (angle < Math.PI * 1.25) this.setVelocity(new Vector(-BOMBER_SPEED, 0));
-    else if (angle < Math.PI * 1.75) this.setVelocity(new Vector(0, -BOMBER_SPEED));
-    else this.setVelocity(new Vector(BOMBER_SPEED, 0));
+	if (angle < Math.PI * 0.25) this.setVelocity(new Vector(BOMBER_SPEED, 0));
+	else if (angle < Math.PI * 0.75) this.setVelocity(new Vector(0, BOMBER_SPEED));
+	else if (angle < Math.PI * 1.25) this.setVelocity(new Vector(-BOMBER_SPEED, 0));
+	else if (angle < Math.PI * 1.75) this.setVelocity(new Vector(0, -BOMBER_SPEED));
+	else this.setVelocity(new Vector(BOMBER_SPEED, 0));
 }
 
 Bomber.prototype.move = function(seconds) {
-    return this.velocity.mul(seconds);
+	return this.velocity.mul(seconds);
 };
 
 Bomber.prototype.reactToPlayer = function(player) {
-    var relativePos = player.getCenter().sub(this.getCenter());
-    // If player jumps on top of the Bomber, it explodes
-    if (relativePos.y > (BOMBER_HEIGHT - .05)) {
-        player.setVelocity(new Vector(player.getVelocity().x, BOMBER_EXPLOSION_POWER));
-        this.setDead(true);
-    } else if (player.isSuperJumping) {
-        this.setDead(true);
-    } else {
-        player.setDead(true);
-    }
+	var relativePos = player.getCenter().sub(this.getCenter());
+	// If player jumps on top of the Bomber, it explodes
+	if (relativePos.y > (BOMBER_HEIGHT - .05)) {
+		player.setVelocity(new Vector(player.getVelocity().x, BOMBER_EXPLOSION_POWER));
+		this.setDead(true);
+	} else if (player.isSuperJumping) {
+		this.setDead(true);
+	} else {
+		player.setDead(true);
+	}
 };
 
 Bomber.prototype.spawn = function() {
-    var spawnPoint = new Vector(this.hitBox.lowerLeft.x + this.hitBox.getWidth() * 0.5, this.hitBox.getBottom());
-    gameState.addEnemy(new Bomb(spawnPoint, new Vector(0, Math.min(this.velocity.y, -.3))), spawnPoint);
-    return true;
+	var spawnPoint = new Vector(this.hitBox.lowerLeft.x + this.hitBox.getWidth() * 0.5, this.hitBox.getBottom());
+	gameState.addEnemy(new Bomb(spawnPoint, new Vector(0, Math.min(this.velocity.y, -.3))), spawnPoint);
+	return true;
 };
 
 Bomber.prototype.afterTick = function() {
-    // drawing stuff
+	// drawing stuff
 };
 
 Bomber.prototype.onDeath = function() {

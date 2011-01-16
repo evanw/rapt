@@ -9,7 +9,7 @@ HoveringEnemy.subclasses(Enemy);
 function HoveringEnemy(type, center, radius, elasticity) {
 	Enemy.prototype.constructor.call(this, type, elasticity);
 
-    this.hitCircle = new Circle(center, radius);
+	this.hitCircle = new Circle(center, radius);
 }
 
 HoveringEnemy.prototype.getShape = function() {
