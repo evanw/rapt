@@ -53,7 +53,7 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 	temp = new Vector(this.width / Math.abs(temp.x), this.height / Math.abs(temp.y));
 	var maxLength = Math.min(temp.x, temp.y) / 4;
 
-	var isSplit = (positionB.sub(positionA).length() > 2*maxLength);
+	var isSplit = (positionB.sub(positionA).lengthSquared() > 4*maxLength*maxLength);
 
 	if(!isSplit) {
 		renderer.render(c, center, this.width, this.height, this.backgroundCacheA);
@@ -63,12 +63,12 @@ SplitScreenCamera.prototype.draw = function(c, renderer) {
 
 		// make sure a's center isn't more than maxLength from positionA
 		var centerA = center.sub(positionA);
-		if(centerA.length() > maxLength) centerA = centerA.unit().mul(maxLength);
+		if(centerA.lengthSquared() > maxLength*maxLength) centerA = centerA.unit().mul(maxLength);
 		centerA = centerA.add(positionA);
 
 		// make sure b's center isn't more than maxLength from positionB
 		var centerB = center.sub(positionB);
-		if(centerB.length() > maxLength) centerB = centerB.unit().mul(maxLength);
+		if(centerB.lengthSquared() > maxLength*maxLength) centerB = centerB.unit().mul(maxLength);
 		centerB = centerB.add(positionB);
 
 		// draw world from a's point of view
@@ -110,7 +110,7 @@ ZoomOutCamera.prototype.draw = function(c, renderer) {
 	var center = positionA.add(positionB).div(2);
 	
 	// maximum distance between a player and the center is the distance to the box that is half the size of the screen
-	var temp = positionB.sub(positionA).unit();
+	var temp = positionA.sub(positionB).unit();
 	temp = new Vector(this.width / Math.abs(temp.x), this.height / Math.abs(temp.y));
 	var maxLength = Math.min(temp.x, temp.y) / 2;
 	
