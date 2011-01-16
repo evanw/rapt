@@ -180,7 +180,7 @@ CollisionDetector.lineOfSightWorld = function(eye, target, world) {
 		var ref_losProportion = {};
 
 		// if the LOS is not blocked by this edge, then ignore this edge
-		if(!this.intersectSegments(new Segment(eye, target), edges[it].segment, ref_losProportion, ref_edgeProportion, ref_contactPoint)) {
+		if(!this.llIntersectSegments(eye, target, edges[it].segment.start, edges[it].segment.end, ref_losProportion, ref_edgeProportion, ref_contactPoint)) {
 			continue;
 		}
 
@@ -258,12 +258,8 @@ CollisionDetector.intersectEntitySegment = function(entity, segment) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // INTERSECTIONS
-CollisionDetector.intersectSegments = function(segment0, segment1, ref_segmentProportion0, ref_segmentProportion1, ref_contactPoint) {
-	var segStart0 = segment0.start;
-	var segEnd0 = segment0.end;
+CollisionDetector.llIntersectSegments = function(segStart0, segEnd0, segStart1, segEnd1, ref_segmentProportion0, ref_segmentProportion1, ref_contactPoint) {
 	var segSize0 = segEnd0.sub(segStart0);
-	var segStart1 = segment1.start;
-	var segEnd1 = segment1.end;
 	var segSize1 = segEnd1.sub(segStart1);
 
 	// make sure these aren't parallel
@@ -292,6 +288,10 @@ CollisionDetector.intersectSegments = function(segment0, segment1, ref_segmentPr
 
 	// now that we've checked all this, the segments do intersect.
 	return true;
+}
+
+CollisionDetector.intersectSegments = function(segment0, segment1, ref_segmentProportion0, ref_segmentProportion1, ref_contactPoint) {
+	return this.llIntersectSegments(segment0.start, segment0.end, segment1.start, segment1.end, ref_segmentProportion0, ref_segmentProportion1, ref_contactPoint);
 };
 CollisionDetector.intersectCircleLine = function(circle, line, ref_lineProportion0, ref_lineProportion1) {
 	// variables taken from http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
@@ -408,7 +408,7 @@ CollisionDetector.collideCircleSegment = function(circle, deltaPosition, segment
 	// if the circle started outside this segment, then it might have hit the flat part of this segment
 	if(startedOutside) {
 		var ref_segmentProportion = {}, ref_proportionOfDelta = {}, ref_contactPoint = {};
-		if(this.intersectSegments(segment, new Segment(circleInnermost, newCircleInnermost), ref_segmentProportion, ref_proportionOfDelta, ref_contactPoint)) {
+		if(this.llIntersectSegments(segment.start, segment.end, circleInnermost, newCircleInnermost, ref_segmentProportion, ref_proportionOfDelta, ref_contactPoint)) {
 			// we can return this because the circle will always hit the flat part before it hits an end
 			return new Contact(ref_contactPoint.ref, segmentNormal, ref_proportionOfDelta.ref);
 		}
@@ -484,8 +484,8 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 			}
 
 			// if these don't intersect, ignore this edge
-			if(!this.intersectSegments(polygonSegment,
-									  new Segment(edgeEndpoints[j], edgeEndpoints[j].sub(deltaPosition)),
+			if(!this.llIntersectSegments(polygonSegment.start, polygonSegment.end,
+									  edgeEndpoints[j], edgeEndpoints[j].sub(deltaPosition),
 									  ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
 				continue;
 			}
@@ -501,7 +501,8 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 	for(i = 0; i < polygon.vertices.length; i++)
 	{
 		// if these don't intersect, ignore this edge
-		if(!this.intersectSegments(segment, new Segment(polygon.getVertex(i), polygon.getVertex(i).add(deltaPosition)), ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
+		var vertex = polygon.getVertex(i);
+		if(!this.llIntersectSegments(segment.start, segment.end, vertex, vertex.add(deltaPosition), ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
 			continue;
 		}
 
@@ -738,7 +739,7 @@ CollisionDetector.distancePolygonPoint = function(polygon, point) {
 		var polygonSegment = polygon.getSegment(i);
 
 		// find where this segment endpoint projects onto the polygon edge
-		this.intersectSegments(polygonSegment, new Segment(point, point.add(polygonSegment.normal)), ref_polygonEdgeProportion, ref_distanceProportion, ref_closestPointOnPolygonEdge);
+		this.llIntersectSegments(polygonSegment.start, polygonSegment.end, point, point.add(polygonSegment.normal), ref_polygonEdgeProportion, ref_distanceProportion, ref_closestPointOnPolygonEdge);
 
 		// if this projects beyond the endpoints of the polygon's edge, ignore it
 		if(ref_polygonEdgeProportion.ref < 0 || ref_polygonEdgeProportion.ref > 1) {
@@ -774,7 +775,7 @@ CollisionDetector.closestToShapeSegment = function(shape, ref_shapePoint, ref_se
 CollisionDetector.closestToCircleSegment = function(circle, ref_shapePoint, ref_segmentPoint, segment) {
 	// see if the closest point is in the middle of the segment
 	var ref_segmentProportion = {}, ref_projectProportion = {};
-	this.intersectSegments(segment, new Segment(circle.center, circle.center.sub(segment.normal)), ref_segmentProportion, ref_projectProportion, ref_segmentPoint);
+	this.llIntersectSegments(segment.start, segment.end, circle.center, circle.center.sub(segment.normal), ref_segmentProportion, ref_projectProportion, ref_segmentPoint);
 
 	// if the closest point is in the middle of the segment
 	if(ref_segmentProportion.ref >= 0 && ref_segmentProportion.ref <= 1)
@@ -835,7 +836,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 		var polygonPoint = polygon.getVertex(i);
 
 		// find where this polygon vertex projects onto the edge
-		this.intersectSegments(segment, new Segment(polygonPoint, polygonPoint.sub(segment.normal)), ref_edgeProportion, ref_polygonDistanceProportion, ref_closestPoint);
+		this.llIntersectSegments(segment.start, segment.end, polygonPoint, polygonPoint.sub(segment.normal), ref_edgeProportion, ref_polygonDistanceProportion, ref_closestPoint);
 
 		// if this projects beyond the endpoints of the edge, ignore it
 		if(ref_edgeProportion.ref < 0 || ref_edgeProportion.ref > 1) {
@@ -867,7 +868,7 @@ CollisionDetector.closestToPolygonSegment = function(polygon, ref_shapePoint, re
 			var thisSegmentPoint = j == 0 ? segment.start : segment.end;
 
 			// find where this segment endpoint projects onto the polygon edge
-			this.intersectSegments(polygonSegment, new Segment(thisSegmentPoint, thisSegmentPoint.add(polygonSegment.normal)), ref_polygonEdgeProportion, ref_distanceProportion, ref_closestPoint);
+			this.llIntersectSegments(polygonSegment.start, polygonSegment.end, thisSegmentPoint, thisSegmentPoint.add(polygonSegment.normal), ref_polygonEdgeProportion, ref_distanceProportion, ref_closestPoint);
 
 			// if this projects beyond the endpoints of the polygon's edge, ignore it
 			if(ref_polygonEdgeProportion.ref < 0 || ref_polygonEdgeProportion.ref > 1) {
@@ -946,9 +947,10 @@ CollisionDetector.penetrationPolygonSegment = function(polygon, segment) {
 	for(var i = 0; i < polygon.vertices.length; i++)
 	{
 		// find where this polygon point projects onto the segment
-		this.intersectSegments(
-				segment,
-				new Segment(polygon.getVertex(i), polygon.getVertex(i).sub(segment.normal)),
+		var vertex = polygon.getVertex(i);
+		this.llIntersectSegments(
+				segment.start, segment.end,
+				vertex, vertex.sub(segment.normal),
 				ref_edgeProportion, ref_penetrationProportion, ref_closestPointOnSegment);
 
 		// if this point projects onto the segment outside of its endpoints, don't consider this point to be projected
