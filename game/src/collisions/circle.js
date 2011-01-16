@@ -5,7 +5,7 @@ function Circle(center, radius) {
 }
 
 Circle.prototype.copy = function() {
-    return new Circle(this.center, this.radius);
+	return new Circle(this.center, this.radius);
 }
 
 Circle.prototype.getType = function() {
@@ -16,7 +16,7 @@ Circle.prototype.getAabb = function() {
 	return new AABB(this.center.sub(radiusVector), this.center.add(radiusVector));
 };
 Circle.prototype.getCenter = function() {
-    return this.center;
+	return this.center;
 }
 Circle.prototype.moveBy = function(delta) {
 	this.center = this.center.add(delta);

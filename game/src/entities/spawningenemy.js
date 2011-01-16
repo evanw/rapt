@@ -6,11 +6,11 @@ SpawningEnemy.subclasses(Enemy);
 function SpawningEnemy(type, center, width, height, elasticity, frequency, startingTime) {
 	Enemy.prototype.constructor.call(this, type, elasticity);
 
-    this.spawnFrequency = frequency;
+	this.spawnFrequency = frequency;
 
-    // Time until next enemy gets spawned
-    this.timeUntilNextSpawn = startingTime;
-    this.hitBox = AABB.makeAABB(center, width, height);
+	// Time until next enemy gets spawned
+	this.timeUntilNextSpawn = startingTime;
+	this.hitBox = AABB.makeAABB(center, width, height);
 }
 
 SpawningEnemy.prototype.getShape = function() {
@@ -25,19 +25,19 @@ SpawningEnemy.prototype.getReloadPercentage = function() {
 
 // Special tick to include a step to spawn enemies
 SpawningEnemy.prototype.tick = function(seconds) {
-    this.timeUntilNextSpawn -= seconds;
+	this.timeUntilNextSpawn -= seconds;
 
-    if (this.timeUntilNextSpawn <= 0)
-    {
-        // If an enemy is spawned, increase the time by the spawn frequency
-        if (this.spawn())
-        {
-            this.timeUntilNextSpawn += this.spawnFrequency;
-        } else
-        {
-            this.timeUntilNextSpawn = 0;
-        }
-    }
+	if (this.timeUntilNextSpawn <= 0)
+	{
+		// If an enemy is spawned, increase the time by the spawn frequency
+		if (this.spawn())
+		{
+			this.timeUntilNextSpawn += this.spawnFrequency;
+		} else
+		{
+			this.timeUntilNextSpawn = 0;
+		}
+	}
 
 	Enemy.prototype.tick.call(this, seconds);
 };

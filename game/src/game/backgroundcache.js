@@ -7,23 +7,23 @@
 
 // fixed physics tick
 //
-// Level           |  ff cache  |  ff no cache  |  ch cache  |  ch no cache
+// Level		   |  ff cache	|  ff no cache	|  ch cache  |	ch no cache
 // ----------------+------------+---------------+------------+---------------
-// Intro 1 (whole) |     38     |      52       |     56     |      60
-// Intro 1 (split) |     26     |      32       |     33     |      46
-// Cube (whole)    |      9     |       9       |     36     |      43
-// Cube (split)    |      5     |       6       |     15     |      17
+// Intro 1 (whole) |	 38		|	   52		|	  56	 |		60
+// Intro 1 (split) |	 26		|	   32		|	  33	 |		46
+// Cube (whole)    |	  9		|		9		|	  36	 |		43
+// Cube (split)    |	  5		|		6		|	  15	 |		17
 
 // variable physics tick (note: while this improved speed in ff quite a bit,
 // physics were noticably wrong -- wall crawlers got stuck and wheeligators
 // would hop up and down while rolling)
 //
-// Level           |  ff cache  |  ff no cache  |  ch cache  |  ch no cache
+// Level		   |  ff cache	|  ff no cache	|  ch cache  |	ch no cache
 // ----------------+------------+---------------+------------+---------------
-// Intro 1 (whole) |     40     |      60       |     56     |      60
-// Intro 1 (split) |     28     |      38       |     34     |      44
-// Cube (whole)    |     26     |      28       |     37     |      43
-// Cube (split)    |     17     |      14       |     20     |      20
+// Intro 1 (whole) |	 40		|	   60		|	  56	 |		60
+// Intro 1 (split) |	 28		|	   38		|	  34	 |		44
+// Cube (whole)    |	 26		|	   28		|	  37	 |		43
+// Cube (split)    |	 17		|	   14		|	  20	 |		20
 
 // class BackgroundCache
 function BackgroundCache(name) {

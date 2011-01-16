@@ -1,18 +1,18 @@
 // class AABB extends Shape
 function AABB(lowerLeft, upperRight) {
-    this.lowerLeft = new Vector(
-        Math.min(lowerLeft.x, upperRight.x),
-        Math.min(lowerLeft.y, upperRight.y));
-    this.size = new Vector(
-        Math.max(lowerLeft.x, upperRight.x),
-        Math.max(lowerLeft.y, upperRight.y)).sub(this.lowerLeft);
+	this.lowerLeft = new Vector(
+		Math.min(lowerLeft.x, upperRight.x),
+		Math.min(lowerLeft.y, upperRight.y));
+	this.size = new Vector(
+		Math.max(lowerLeft.x, upperRight.x),
+		Math.max(lowerLeft.y, upperRight.y)).sub(this.lowerLeft);
 }
 
 AABB.makeAABB = function(center, width, height) {
-    var halfSize = new Vector(width * 0.5, height * 0.5);
-    var lowerLeft = center.sub(halfSize);
-    var upperRight = center.add(halfSize);
-    return new AABB(lowerLeft, upperRight);
+	var halfSize = new Vector(width * 0.5, height * 0.5);
+	var lowerLeft = center.sub(halfSize);
+	var upperRight = center.add(halfSize);
+	return new AABB(lowerLeft, upperRight);
 }
 
 AABB.prototype.getTop = function() { return this.lowerLeft.y + this.size.y; };
@@ -26,9 +26,9 @@ AABB.prototype.copy = function() {
 	return new AABB(this.lowerLeft, this.lowerLeft.add(this.size));
 };
 AABB.prototype.getPolygon = function() {
-    var center = this.getCenter();
+	var center = this.getCenter();
 	var halfSize = this.size.div(2);
-    return new Polygon(center,
+	return new Polygon(center,
 		new Vector(+halfSize.x, +halfSize.y),
 		new Vector(-halfSize.x, +halfSize.y),
 		new Vector(-halfSize.x, -halfSize.y),
@@ -65,5 +65,5 @@ AABB.prototype.offsetBy = function(offset) {
 
 AABB.prototype.draw = function(c) {
 	c.strokeStyle = 'black';
-    c.strokeRect(this.lowerLeft.x, this.lowerLeft.y, this.size.x, this.size.y);
+	c.strokeRect(this.lowerLeft.x, this.lowerLeft.y, this.size.x, this.size.y);
 };

@@ -1,29 +1,29 @@
 // porting notes:
 //
 // - a prefix of "ref_" on the variable name means it was a non-const reference in C++
-//   this is handled like so:
+//	 this is handled like so:
 //
-//   // C++
-//   void func(int& foo) {
-//       foo = 2;
-//   }
+//	 // C++
+//	 void func(int& foo) {
+//		 foo = 2;
+//	 }
 //
-//   void main() {
-//       int foo;
-//       func(foo);
-//       cout << foo << endl;
-//   }
+//	 void main() {
+//		 int foo;
+//		 func(foo);
+//		 cout << foo << endl;
+//	 }
 //
-//   // JavaScript
-//   function func(ref_foo) {
-//       ref_foo.ref = 2;
-//   }
+//	 // JavaScript
+//	 function func(ref_foo) {
+//		 ref_foo.ref = 2;
+//	 }
 //
-//   function main() {
-//       var ref_foo = {};
-//       func(ref_foo);
-//       console.log(ref_foo.ref);
-//   }
+//	 function main() {
+//		 var ref_foo = {};
+//		 func(ref_foo);
+//		 console.log(ref_foo.ref);
+//	 }
 //
 // - gameState is a global, so all functions that take gameState as an argument in C++ don't now
 
@@ -113,7 +113,7 @@ CollisionDetector.collideShapeWorld = function(shape, ref_deltaPosition, ref_vel
 
 		// TODO: This was here when I ported this, but it is incorrect because it
 		// stops you short of an edge, which is good except the distance from that
-		// edge grows with your speed.  A correct version is after this.
+		// edge grows with your speed.	A correct version is after this.
 		// ref_deltaPosition.ref = ref_deltaPosition.ref.mul(newContact.proportionOfDelta).projectOntoAUnitVector(newContact.normal).mul(-elasticity).add(deltaParallel).add(newContact.normal.mul(0.001));
 
 		var proportionLeft = 1 - newContact.proportionOfDelta;
@@ -167,7 +167,7 @@ CollisionDetector.lineOfSightWorld = function(eye, target, world) {
 	var edges = world.getEdgesInAabb(new AABB(eye, target), EDGE_ENEMIES);
 	var minLosProportion = 1.1;
 	var ref_edgeProportion = {};  // throwaway
-	var ref_contactPoint = {};  // throwaway
+	var ref_contactPoint = {};	// throwaway
 	var firstEdge = null;
 	for (var it = 0; it < edges.length; it++)
 	{
@@ -225,24 +225,24 @@ CollisionDetector.containsPointShape = function(point, shape) {
 	switch(shape.getType())
 	{
 	case SHAPE_CIRCLE:
-        return (point.sub(shape.center).lengthSquared() < shape.radius * shape.radius);
+		return (point.sub(shape.center).lengthSquared() < shape.radius * shape.radius);
 
 	case SHAPE_AABB:
-        return (point.x >= shape.lowerLeft.x &&
+		return (point.x >= shape.lowerLeft.x &&
 			   point.x <= shape.lowerLeft.x + shape.size.x &&
-               point.y >= shape.lowerLeft.y &&
-               point.y <= shape.lowerLeft.y + shape.size.y);
+			   point.y >= shape.lowerLeft.y &&
+			   point.y <= shape.lowerLeft.y + shape.size.y);
 
 	case SHAPE_POLYGON:
-        var len = shape.vertices.length;
-        for (var i = 0; i < len; ++i) {
-            // Is this point outside this edge?  if so, it's not inside the polygon
-            if (point.sub(shape.vertices[i].add(shape.center)).dot(shape.segments[i].normal) > 0) {
-                return false;
-            }
-        }
-        // if the point was inside all of the edges, then it's inside the polygon.
-        return true;
+		var len = shape.vertices.length;
+		for (var i = 0; i < len; ++i) {
+			// Is this point outside this edge?  if so, it's not inside the polygon
+			if (point.sub(shape.vertices[i].add(shape.center)).dot(shape.segments[i].normal) > 0) {
+				return false;
+			}
+		}
+		// if the point was inside all of the edges, then it's inside the polygon.
+		return true;
 	}
 
 	alert('assertion failed in CollisionDetector.containsPointShape');
@@ -477,7 +477,7 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 		// for each endpoint of the edge
 		for(var j = 0; j < 2; j++)
 		{
-            var polygonSegment = polygon.getSegment(i);
+			var polygonSegment = polygon.getSegment(i);
 			// if the polygon is trying to pass out of the edge, no collision
 			if(polygonSegment.normal.dot(edgeEndpoints[j].sub(edgeMiddle)) > 0) {
 				continue;
@@ -607,8 +607,8 @@ CollisionDetector.overlapShapes = function(shape0, shape1) {
 	}
 
 	var result;
-    var shape0Type = shape0Pointer.getType();
-    var shape1Type = shape1Pointer.getType();
+	var shape0Type = shape0Pointer.getType();
+	var shape1Type = shape1Pointer.getType();
 
 	// if they're both circles
 	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
@@ -637,7 +637,7 @@ CollisionDetector.overlapCircles = function(circle0, circle1) {
 };
 CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	// see if any point on the border of the the polygon is in the circle
-    var len = polygon.vertices.length;
+	var len = polygon.vertices.length;
 	for(var i = 0; i < len; ++i)
 	{
 		// if a segment of the polygon crosses the edge of the circle
@@ -652,11 +652,11 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	}
 
 	// otherwise, the circle could be completely inside the polygon
-    var point = circle.center;
+	var point = circle.center;
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
 		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
-            return false;
+			return false;
 		}
 	}
 	// if the point was inside all of the edges, then it's inside the polygon.
@@ -665,8 +665,8 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 
 CollisionDetector.overlapPolygons = function(polygon0, polygon1) {
 	var i;
-    var len0 = polygon0.vertices.length;
-    var len1 = polygon1.vertices.length;
+	var len0 = polygon0.vertices.length;
+	var len1 = polygon1.vertices.length;
 
 	// see if any corner of polygon 0 is inside of polygon 1
 	for(i = 0; i < len0; ++i) {
@@ -687,11 +687,11 @@ CollisionDetector.overlapPolygons = function(polygon0, polygon1) {
 
 // CONTAINS
 CollisionDetector.containsPointPolygon = function(point, polygon) {
-    var len = polygon.vertices.length;
+	var len = polygon.vertices.length;
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
 		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
-            return false;
+			return false;
 		}
 	}
 	// if the point was inside all of the edges, then it's inside the polygon.

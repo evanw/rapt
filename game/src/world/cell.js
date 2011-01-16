@@ -19,12 +19,12 @@ Cell.prototype.topLeft = function() { return new Vector(this.x, this.y + 1); }
 Cell.prototype.topRight = function() { return new Vector(this.x + 1, this.y + 1); }
 
 Cell.prototype.addEdge = function(newEdge) {
-    this.edges.push(newEdge);
+	this.edges.push(newEdge);
 }
 
 Cell.prototype.removeEdge = function(edge) {
-    var edgeIndex = this.getEdge(edge);
-    this.edges.splice(edgeIndex, 1);
+	var edgeIndex = this.getEdge(edge);
+	this.edges.splice(edgeIndex, 1);
 }
 
 // returns all edges that block this color
@@ -39,14 +39,14 @@ Cell.prototype.getBlockingEdges = function(color) {
 }
 
 Cell.prototype.getEdge = function(edge) {
-    for (var i = 0; i < this.edges.length; ++i) {
-        var thisEdge = this.edges[i];
-        if ((thisEdge.getStart().sub(edge.getStart())).lengthSquared() < 0.001 &&
-           (thisEdge.getEnd().sub(edge.getEnd())).lengthSquared() < 0.001) {
-            return i;
-        }
-    }
-    return -1;
+	for (var i = 0; i < this.edges.length; ++i) {
+		var thisEdge = this.edges[i];
+		if ((thisEdge.getStart().sub(edge.getStart())).lengthSquared() < 0.001 &&
+		   (thisEdge.getEnd().sub(edge.getEnd())).lengthSquared() < 0.001) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 // returns a polygon that represents this cell

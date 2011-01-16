@@ -17,24 +17,24 @@ var STAT_NUM_COGS = 3;
 function GameState() {
 	this.world = new World(50, 50, new Vector(0.5, 0.5), new Vector(0.5, 0.5));
 	
-    // Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
+	// Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
 	this.playerA = new Player(this.world.spawnPoint, EDGE_RED);
 	this.playerB = new Player(this.world.spawnPoint, EDGE_BLUE);
 	this.spawnPointParticleTimer = 0;
-    this.spawnPointOffset = new Vector(0, 0);
-    this.enemies = [];
-    this.doors = [];
-    this.timeSinceStart = 0;
+	this.spawnPointOffset = new Vector(0, 0);
+	this.enemies = [];
+	this.doors = [];
+	this.timeSinceStart = 0;
 
-    // keys (will be set automatically)
-    this.killKey = false;
+	// keys (will be set automatically)
+	this.killKey = false;
 
 	// if you need to tell if the world has been modified (door has been opened/closed), just watch
 	// for changes to this variable, which can be incremented by gameState.recordModification()
 	this.modificationCount = 0;
 
-    this.gameStatus = GAME_IN_PLAY;
-    this.stats = [0, 0, 0, 0];
+	this.gameStatus = GAME_IN_PLAY;
+	this.stats = [0, 0, 0, 0];
 }
 
 // global variable for game state, initialized in main.js
@@ -50,7 +50,7 @@ GameState.prototype.recordModification = function() {
 };
 
 GameState.prototype.getPlayer = function(i) {
-    return (i == 0) ? this.playerA : this.playerB;
+	return (i == 0) ? this.playerA : this.playerB;
 }
 
 GameState.prototype.getOtherPlayer = function(player) {
@@ -58,159 +58,159 @@ GameState.prototype.getOtherPlayer = function(player) {
 }
 
 GameState.prototype.getSpawnPoint = function() {
-    return this.world.spawnPoint;
+	return this.world.spawnPoint;
 }
 
 GameState.prototype.setSpawnPoint = function(point) {
-    this.world.spawnPoint = new Vector(point.x, point.y);
-    
-    // offset to keep spawn point from drawing below ground
-    this.spawnPointOffset.y = 0.125;
+	this.world.spawnPoint = new Vector(point.x, point.y);
+	
+	// offset to keep spawn point from drawing below ground
+	this.spawnPointOffset.y = 0.125;
 
-    // prevents slipping?
-    this.world.spawnPoint.y += 0.01;
+	// prevents slipping?
+	this.world.spawnPoint.y += 0.01;
 }
 
 GameState.prototype.gameWon = function() {
-    var goal = this.world.goal;
-    var atGoalA = !this.playerA.isDead() && Math.abs(this.playerA.getCenter().x - goal.x) < 0.4 && 
-                    Math.abs(this.playerA.getCenter().y - goal.y) < 0.4;
-    var atGoalB = !this.playerB.isDead() && Math.abs(this.playerB.getCenter().x - goal.x) < 0.4 && 
-                    Math.abs(this.playerB.getCenter().y - goal.y) < 0.4;
-    return atGoalA && atGoalB;
+	var goal = this.world.goal;
+	var atGoalA = !this.playerA.isDead() && Math.abs(this.playerA.getCenter().x - goal.x) < 0.4 && 
+					Math.abs(this.playerA.getCenter().y - goal.y) < 0.4;
+	var atGoalB = !this.playerB.isDead() && Math.abs(this.playerB.getCenter().x - goal.x) < 0.4 && 
+					Math.abs(this.playerB.getCenter().y - goal.y) < 0.4;
+	return atGoalA && atGoalB;
 }
 
 GameState.prototype.gameLost = function() {
-    return (this.playerA.isDead() && this.playerB.isDead());
+	return (this.playerA.isDead() && this.playerB.isDead());
 }
 
 GameState.prototype.incrementStat = function(stat) {
-    ++this.stats[stat];
+	++this.stats[stat];
 }
 
 GameState.prototype.addEnemy = function(enemy, spawnerPosition) {
-    // If adding at the start of the game, start at its own center
-    if (typeof spawnerPosition === 'undefined') {
-        spawnerPosition = enemy.getShape().getCenter();
-    } else {
-        // rewind the enemy back to the spawner's center
-        enemy.getShape().moveTo(spawnerPosition);
-    }
+	// If adding at the start of the game, start at its own center
+	if (typeof spawnerPosition === 'undefined') {
+		spawnerPosition = enemy.getShape().getCenter();
+	} else {
+		// rewind the enemy back to the spawner's center
+		enemy.getShape().moveTo(spawnerPosition);
+	}
 
-    var ref_deltaPosition = { ref: enemy.getShape().getCenter().sub(spawnerPosition) };
-    var ref_velocity = { ref: enemy.getVelocity() };
+	var ref_deltaPosition = { ref: enemy.getShape().getCenter().sub(spawnerPosition) };
+	var ref_velocity = { ref: enemy.getVelocity() };
 
-    // do collision detection and push the enemy backwards if it would hit any walls
-    var contact = CollisionDetector.collideEntityWorld(enemy, ref_deltaPosition, ref_velocity, enemy.getElasticity(), this.world, true);
+	// do collision detection and push the enemy backwards if it would hit any walls
+	var contact = CollisionDetector.collideEntityWorld(enemy, ref_deltaPosition, ref_velocity, enemy.getElasticity(), this.world, true);
 
-    // put the velocity back into the enemy
-    enemy.setVelocity(ref_velocity.ref);
+	// put the velocity back into the enemy
+	enemy.setVelocity(ref_velocity.ref);
 
-    // move the spawned enemy as far out from the spawner as we can
-    enemy.getShape().moveBy(ref_deltaPosition.ref);
+	// move the spawned enemy as far out from the spawner as we can
+	enemy.getShape().moveBy(ref_deltaPosition.ref);
 
-    // now we can add the enemy to the list
-    this.enemies.push(enemy);
+	// now we can add the enemy to the list
+	this.enemies.push(enemy);
 }
 
 GameState.prototype.clearDoors = function() {
-    this.doors = [];
+	this.doors = [];
 }
 
 GameState.prototype.addDoor = function(start, end, type, color, startsOpen) {
-    var firstCell = new Vector();
-    var secondCell = new Vector();
-    // left wall
-    if (start.y + 1 == end.y && start.x == end.x) {
-        firstCell.x = start.x;
-        firstCell.y = start.y;
-        secondCell.x = start.x - 1;
-        secondCell.y = start.y;
-    }
-    // right wall
-    else if (start.y - 1 == end.y && start.x == end.x) {
-        firstCell.x = start.x - 1;
-        firstCell.y = end.y;
-        secondCell.x = start.x;
-        secondCell.y = end.y;
-    }
-    // ceiling
-    else if (start.x + 1 == end.x && start.y == end.y) {
-        firstCell.x = start.x;
-        firstCell.y = start.y - 1;
-        secondCell.x = start.x;
-        secondCell.y = start.y;
-    }
-    // floor
-    else if (start.x - 1 == end.x && start.y == end.y) {
-        firstCell.x = end.x;
-        firstCell.y = start.y;
-        secondCell.x = end.x;
-        secondCell.y = start.y - 1;
-    }
-    //diagonal
-    else {
-        firstCell.x = secondCell.x = (start.x < end.x ? start.x : end.x);
-        firstCell.y = secondCell.y = (start.y < end.y ? start.y : end.y);
-    }
+	var firstCell = new Vector();
+	var secondCell = new Vector();
+	// left wall
+	if (start.y + 1 == end.y && start.x == end.x) {
+		firstCell.x = start.x;
+		firstCell.y = start.y;
+		secondCell.x = start.x - 1;
+		secondCell.y = start.y;
+	}
+	// right wall
+	else if (start.y - 1 == end.y && start.x == end.x) {
+		firstCell.x = start.x - 1;
+		firstCell.y = end.y;
+		secondCell.x = start.x;
+		secondCell.y = end.y;
+	}
+	// ceiling
+	else if (start.x + 1 == end.x && start.y == end.y) {
+		firstCell.x = start.x;
+		firstCell.y = start.y - 1;
+		secondCell.x = start.x;
+		secondCell.y = start.y;
+	}
+	// floor
+	else if (start.x - 1 == end.x && start.y == end.y) {
+		firstCell.x = end.x;
+		firstCell.y = start.y;
+		secondCell.x = end.x;
+		secondCell.y = start.y - 1;
+	}
+	//diagonal
+	else {
+		firstCell.x = secondCell.x = (start.x < end.x ? start.x : end.x);
+		firstCell.y = secondCell.y = (start.y < end.y ? start.y : end.y);
+	}
 
-    var door;
-    if (type === ONE_WAY) {
-        door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0);
-        this.doors.push(door);
-    } else {
-        door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
-                   new Edge(end, start, color), secondCell.x, secondCell.y);
-        this.doors.push(door);
-    }
-    if (!startsOpen) {
-        door.act(DOORBELL_CLOSE, true, false);
-    }
+	var door;
+	if (type === ONE_WAY) {
+		door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0);
+		this.doors.push(door);
+	} else {
+		door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
+				   new Edge(end, start, color), secondCell.x, secondCell.y);
+		this.doors.push(door);
+	}
+	if (!startsOpen) {
+		door.act(DOORBELL_CLOSE, true, false);
+	}
 }
 
 GameState.prototype.getDoor = function(doorIndex) {
-     return this.doors[doorIndex];
+	 return this.doors[doorIndex];
 }
 
 // Kill all entities that intersect a given edge
 GameState.prototype.killAll = function(edge) {
-    for (var i = 0; i < 2; ++i) {
-        if (CollisionDetector.intersectEntitySegment(this.getPlayer(i), edge.segment)) {
-            this.getPlayer(i).setDead(true);
-        }
-    }
+	for (var i = 0; i < 2; ++i) {
+		if (CollisionDetector.intersectEntitySegment(this.getPlayer(i), edge.segment)) {
+			this.getPlayer(i).setDead(true);
+		}
+	}
 
-    for (var i = 0; i < this.enemies.length; ++i) {
-        var enemy = this.enemies[i];
-        if (enemy.canCollide() && CollisionDetector.intersectEntitySegment(enemy, edge.segment)) {
-            enemy.setDead(true);
-        }
-    }
+	for (var i = 0; i < this.enemies.length; ++i) {
+		var enemy = this.enemies[i];
+		if (enemy.canCollide() && CollisionDetector.intersectEntitySegment(enemy, edge.segment)) {
+			enemy.setDead(true);
+		}
+	}
 }
 
 GameState.prototype.tick = function(seconds) {
-    if (this.gameStatus === GAME_WON || this.gameWon()) {
-        this.gameStatus = GAME_WON;
-    } else if (this.gameStatus === GAME_LOST || this.gameLost()) {
-        this.gameStatus = GAME_LOST;
-    }
+	if (this.gameStatus === GAME_WON || this.gameWon()) {
+		this.gameStatus = GAME_WON;
+	} else if (this.gameStatus === GAME_LOST || this.gameLost()) {
+		this.gameStatus = GAME_LOST;
+	}
 
-    this.timeSinceStart += seconds;
+	this.timeSinceStart += seconds;
 
-    if (this.killKey) {
-        this.playerA.setDead(true);
-        this.playerB.setDead(true);
-    }
+	if (this.killKey) {
+		this.playerA.setDead(true);
+		this.playerB.setDead(true);
+	}
 	this.playerA.tick(seconds);
 	this.playerB.tick(seconds);
-    for (var i = 0; i < this.enemies.length; ++i) {
-        this.enemies[i].tick(seconds);
-    }
-    for (var i = 0; i < this.enemies.length; ++i) {
-        if (this.enemies[i].isDead()) {
-            this.enemies.splice(i, 1);
-        }
-    }
+	for (var i = 0; i < this.enemies.length; ++i) {
+		this.enemies[i].tick(seconds);
+	}
+	for (var i = 0; i < this.enemies.length; ++i) {
+		if (this.enemies[i].isDead()) {
+			this.enemies.splice(i, 1);
+		}
+	}
 
 	this.spawnPointParticleTimer -= seconds;
 	if(this.spawnPointParticleTimer <= 0)
@@ -250,24 +250,24 @@ function drawSpawnPoint(c, point) {
 }
 
 function drawGoal(c, point, time) {
-    var percent = time - Math.floor(time);
-    percent = 1 - percent;
-    percent = (percent - Math.pow(percent, 6)) * 1.72;
-    percent = 1 - percent;
+	var percent = time - Math.floor(time);
+	percent = 1 - percent;
+	percent = (percent - Math.pow(percent, 6)) * 1.72;
+	percent = 1 - percent;
 
-    c.fillStyle = 'black';
-    for (var i = 0; i < 4; ++i) {
-        var angle = i * (2 * Math.PI / 4);
-        var s = Math.sin(angle);
-        var csn = Math.cos(angle);
-        var radius = 0.45 - percent * 0.25;
-        var size = 0.15;
-        c.beginPath();
-        c.moveTo(point.x + csn * radius - s * size, point.y + s * radius + csn * size);
-        c.lineTo(point.x + csn * radius + s * size, point.y + s * radius - csn * size);
-        c.lineTo(point.x + csn * (radius - size), point.y + s * (radius - size));
-        c.fill();
-    }
+	c.fillStyle = 'black';
+	for (var i = 0; i < 4; ++i) {
+		var angle = i * (2 * Math.PI / 4);
+		var s = Math.sin(angle);
+		var csn = Math.cos(angle);
+		var radius = 0.45 - percent * 0.25;
+		var size = 0.15;
+		c.beginPath();
+		c.moveTo(point.x + csn * radius - s * size, point.y + s * radius + csn * size);
+		c.lineTo(point.x + csn * radius + s * size, point.y + s * radius - csn * size);
+		c.lineTo(point.x + csn * (radius - size), point.y + s * (radius - size));
+		c.fill();
+	}
 }
 
 GameState.prototype.draw = function(c, xmin, ymin, xmax, ymax) {

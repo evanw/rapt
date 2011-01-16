@@ -11,10 +11,10 @@ Entity.prototype.setVelocity = function(vel) { this.velocity = vel; }
 
 Entity.prototype.isDead = function() { return this._isDead; }
 Entity.prototype.setDead = function(isDead) {
-    if (this._isDead === isDead) return;
-    this._isDead = isDead;
-    if (this._isDead) this.onDeath();
-    else this.onRespawn();
+	if (this._isDead === isDead) return;
+	this._isDead = isDead;
+	if (this._isDead) this.onDeath();
+	else this.onRespawn();
 }
 
 Entity.prototype.getCenter = function() { return this.getShape().getCenter(); }
@@ -27,9 +27,9 @@ Entity.prototype.getCenter = function(){ return this.getShape().getCenter(); }
 Entity.prototype.setCenter = function(center){ this.getShape().moveTo(center) }
 
 Entity.prototype.isOnFloor = function() {
-    // THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
-    CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
-    return (edgeQuad.edges[EDGE_FLOOR] != null);
+	// THIS IS A GLOBAL NOW var edgeQuad = new EdgeQuad();
+	CollisionDetector.onEntityWorld(this, edgeQuad, gameState.world);
+	return (edgeQuad.edges[EDGE_FLOOR] != null);
 }
 
 Entity.prototype.tick = function(){ throw 'Entity.tick() unimplemented'; }

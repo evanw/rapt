@@ -19,15 +19,15 @@ Keyframe.prototype.lerpWith = function(keyframe, percent) {
 		lerp(this.center.y, keyframe.center.y, percent)
 	);
 	for(var i = 0; i < this.angles.length; i++) {
-        result.angles.push(lerp(this.angles[i], keyframe.angles[i], percent));
-    }
+		result.angles.push(lerp(this.angles[i], keyframe.angles[i], percent));
+	}
 	return result;
 };
 
 Keyframe.lerp = function(keyframes, percent) {
-    var lower = Math.floor(percent);
-    percent -= lower;
-    lower = lower % keyframes.length;
-    var upper = (lower + 1) % keyframes.length;
-    return keyframes[lower].lerpWith(keyframes[upper], percent);
+	var lower = Math.floor(percent);
+	percent -= lower;
+	lower = lower % keyframes.length;
+	var upper = (lower + 1) % keyframes.length;
+	return keyframes[lower].lerpWith(keyframes[upper], percent);
 };

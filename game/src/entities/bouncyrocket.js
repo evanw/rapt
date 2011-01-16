@@ -28,10 +28,10 @@ function drawBouncyRocket(c, isBlue) {
 BouncyRocket.subclasses(Rocket);
 
 function BouncyRocket(center, target, heading, launcher) {
-    Rocket.prototype.constructor.call(this, center, target, heading, BOUNCY_ROCKET_MAX_ROTATION, ENEMY_BOUNCY_ROCKET),
-    this.velocity = new Vector(BOUNCY_ROCKET_SPEED * Math.cos(heading), BOUNCY_ROCKET_SPEED * Math.sin(heading));
-    this.launcher = launcher;
-    this.hitsUntilExplodes = BOUNCY_ROCKET_HEALTH;
+	Rocket.prototype.constructor.call(this, center, target, heading, BOUNCY_ROCKET_MAX_ROTATION, ENEMY_BOUNCY_ROCKET),
+	this.velocity = new Vector(BOUNCY_ROCKET_SPEED * Math.cos(heading), BOUNCY_ROCKET_SPEED * Math.sin(heading));
+	this.launcher = launcher;
+	this.hitsUntilExplodes = BOUNCY_ROCKET_HEALTH;
 
 	this.sprites[ROCKET_SPRITE_RED].drawGeometry = function(c) {
 		drawBouncyRocket(c, false);
@@ -42,25 +42,25 @@ function BouncyRocket(center, target, heading, launcher) {
 }
 
 BouncyRocket.prototype.move = function(seconds) {
-    this.heading = this.velocity.atan2();
-    this.calcHeading(seconds);
-    this.velocity = new Vector(BOUNCY_ROCKET_SPEED * Math.cos(this.heading), BOUNCY_ROCKET_SPEED * Math.sin(this.heading));
-    return this.velocity.mul(seconds);
+	this.heading = this.velocity.atan2();
+	this.calcHeading(seconds);
+	this.velocity = new Vector(BOUNCY_ROCKET_SPEED * Math.cos(this.heading), BOUNCY_ROCKET_SPEED * Math.sin(this.heading));
+	return this.velocity.mul(seconds);
 }
 
 BouncyRocket.prototype.reactToWorld = function(contact) {
-    --this.hitsUntilExplodes;
+	--this.hitsUntilExplodes;
 
-    if (this.hitsUntilExplodes <= 0) {
-        this.setDead(true);
-    } else {
-        this.target = gameState.getOtherPlayer(this.target);
-    }
+	if (this.hitsUntilExplodes <= 0) {
+		this.setDead(true);
+	} else {
+		this.target = gameState.getOtherPlayer(this.target);
+	}
 }
 
 BouncyRocket.prototype.setDead = function(isDead) {
-    Entity.prototype.setDead.call(this, isDead);
-    if (isDead && this.launcher !== null) {
-        this.launcher.rocketDestroyed();
-    }
+	Entity.prototype.setDead.call(this, isDead);
+	if (isDead && this.launcher !== null) {
+		this.launcher.rocketDestroyed();
+	}
 }
