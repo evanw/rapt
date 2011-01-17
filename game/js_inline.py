@@ -100,6 +100,35 @@ def wrap_unary(flags, func, inplace=None):
 		return r
 	return convert
 
+def wrap_math_binary(func):
+	def convert(a, b):
+		va = o(a) if isid(a) else scope.alloc()
+		vb = o(b) if isid(b) else scope.alloc()
+		vr = scope.alloc()
+		r = []
+		if not isid(a):
+			r.append("%s = %s" % (va, o(a)))
+		if not isid(b):
+			r.append("%s = %s" % (vb, o(b)))
+		r.append("%s = %s" % (vr, func(va, vb)))
+		scope.free(va), scope.free(vb), scope.free(vr)
+		result_var = vr
+		return r
+	return convert
+
+def wrap_math_unary(func):
+	def convert(a):
+		va = o(a) if isid(a) else scope.alloc()
+		vr = scope.alloc()
+		r = []
+		if not isid(a):
+			r.append("%s = %s" % (va, o(a)))
+		r.append("%s = %s" % (vr, func(va)))
+		scope.free(va), scope.free(vr)
+		result_var = vr
+		return r
+	return convert
+
 def wrap_binary(flags, func, inplace = None):
 	def convert(a, b):
 		global result_var, allocations_avoided
@@ -244,6 +273,25 @@ binary_funcs = {
 	]),
 }
 
+unary_math_funcs = {
+	"abs": wrap_math_unary(lambda a:
+		"%s<0?-%s:%s" % (a, a, a)
+	),
+}
+
+binary_math_funcs = {
+	"min": wrap_math_binary(lambda a, b:
+		"%s<%s?%s:%s" % (a, b, a, b)
+	),
+	"max": wrap_math_binary(lambda a, b:
+		"%s>%s?%s:%s" % (a, b, a, b)
+	),
+}
+
+math_constants = {
+	"PI": 3.141592653589793
+}
+
 ################################################################################
 # parse tree visitor
 ################################################################################
@@ -340,9 +388,15 @@ def o(n, handledattrs=[]):
 				if len(n[1]) == 0 and func in unary_funcs:
 					inline_count += 1
 					return "(%s)" % ", ".join(unary_funcs[func](n[0][0]))
+				elif len(n[1]) == 1 and func in unary_math_funcs:
+					inline_count += 1
+					return "(%s)" % ", ".join(unary_math_funcs[func](n[1][0]))
 				elif len(n[1]) == 1 and func in binary_funcs:
 					inline_count += 1
 					return "(%s)" % ", ".join(binary_funcs[func](n[0][0], n[1][0]))
+				elif len(n[1]) == 2 and func in binary_math_funcs:
+					inline_count += 1
+					return "(%s)" % ", ".join(binary_math_funcs[func](n[1][0], n[1][1]))
 			elif n[0].type == "IDENTIFIER":
 				func = o(n[0])
 				if func in global_funcs:
@@ -389,6 +443,8 @@ def o(n, handledattrs=[]):
 
 		elif n.type == "DOT":
 			check(subnodes=2)
+			if o(n[0]) == "Math" and o(n[1]) in math_constants:
+				return str(math_constants[o(n[1])])
 			return "%s.%s" % (o(n[0]), o(n[1]))
 
 		elif n.type == "FUNCTION":
