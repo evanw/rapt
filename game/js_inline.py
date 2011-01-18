@@ -174,7 +174,7 @@ def randInRange(a, b):
 	r = []
 	if not isid(a): r.append("%s = %s" % (va, o(a)))
 	if not isid(b): r.append("%s = %s" % (vb, o(b)))
-	r.append("%s + (%s - %s) * Math.random()" % (va, vb, va))
+	r.append("%s + (%s - %s) * math_random()" % (va, vb, va))
 	scope.free(va), scope.free(vb)
 	return r
 
@@ -185,12 +185,12 @@ global_funcs = {
 
 unary_funcs = {
 	"unit": wrap_unary(NEED_RESULT | NEED_TEMP, lambda r, a, length: [
-		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
+		"%s = math_sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
 		"%s.x = %s.x / %s" % (r, a, length),
 		"%s.y = %s.y / %s" % (r, a, length)
 	], "normalize"),
 	"normalize": wrap_unary(NEED_TEMP, lambda a, length: [
-		"%s = Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
+		"%s = math_sqrt(%s.x*%s.x + %s.y*%s.y)" % (length, a, a, a, a),
 		"%s.x /= %s" % (a, length),
 		"%s.y /= %s" % (a, length)
 	]),
@@ -203,7 +203,7 @@ unary_funcs = {
 		"%s.y = -%s.x" % (r, a)
 	], "inplaceFlip"),
 	"length": wrap_unary(0, lambda a: [
-		"Math.sqrt(%s.x*%s.x + %s.y*%s.y)" % (a, a, a, a)
+		"math_sqrt(%s.x*%s.x + %s.y*%s.y)" % (a, a, a, a)
 	]),
 	"lengthSquared": wrap_unary(0, lambda a: [
 		"%s.x*%s.x + %s.y*%s.y" % (a, a, a, a)
@@ -237,12 +237,12 @@ binary_funcs = {
 		"%s.y = %s.y / %s" % (r, a, b)
 	], "inplaceDiv"),
 	"minComponents": wrap_binary(NEED_RESULT, lambda r, a, b: [
-		"%s.x = Math.min(%s.x, %s.x)" % (r, a, b),
-		"%s.y = Math.min(%s.y, %s.y)" % (r, a, b)
+		"%s.x = %s.x<%s.x?%s.x:%s.x" % (r, a, b, a, b),
+		"%s.y = %s.y<%s.y?%s.y:%s.y" % (r, a, b, a, b)
 	], "inplaceMinComponents"),
 	"maxComponents": wrap_binary(NEED_RESULT, lambda r, a, b: [
-		"%s.x = Math.max(%s.x, %s.x)" % (r, a, b),
-		"%s.y = Math.max(%s.y, %s.y)" % (r, a, b)
+		"%s.x = %s.x>%s.x?%s.x:%s.x" % (r, a, b, a, b),
+		"%s.y = %s.y>%s.y?%s.y:%s.y" % (r, a, b, a, b)
 	], "inplaceMaxComponents"),
 	"dot": wrap_binary(0, lambda a, b: [
 		"%s.x * %s.x + %s.y * %s.y" % (a, b, a, b)
@@ -264,12 +264,12 @@ binary_funcs = {
 		"%s.y /= %s" % (a, b)
 	]),
 	"inplaceMinComponents": wrap_binary(0, lambda a, b: [
-		"%s.x = Math.min(%s.x, %s.x)" % (a, a, b),
-		"%s.y = Math.min(%s.y, %s.y)" % (a, a, b)
+		"%s.x = %s.x<%s.x?%s.x:%s.x" % (a, a, b, a, b),
+		"%s.y = %s.y<%s.y?%s.y:%s.y" % (a, a, b, a, b)
 	]),
 	"inplaceMaxComponents": wrap_binary(0, lambda a, b: [
-		"%s.x = Math.max(%s.x, %s.x)" % (a, a, b),
-		"%s.y = Math.max(%s.y, %s.y)" % (a, a, b)
+		"%s.x = %s.x>%s.x?%s.x:%s.x" % (a, a, b, a, b),
+		"%s.y = %s.y>%s.y?%s.y:%s.y" % (a, a, b, a, b)
 	]),
 }
 
@@ -443,9 +443,14 @@ def o(n, handledattrs=[]):
 
 		elif n.type == "DOT":
 			check(subnodes=2)
-			if o(n[0]) == "Math" and o(n[1]) in math_constants:
-				return str(math_constants[o(n[1])])
-			return "%s.%s" % (o(n[0]), o(n[1]))
+			on0 = o(n[0])
+			on1 = o(n[1])
+			if on0 == "Math":
+				if on1 in math_constants:
+					return str(math_constants[on1])
+				else:
+					return "math_%s" % (on1)
+			return "%s.%s" % (on0, on1)
 
 		elif n.type == "FUNCTION":
 			check(attrs=["functionForm","params","body"],
