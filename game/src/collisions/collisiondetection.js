@@ -139,10 +139,10 @@ CollisionDetector.collideShapeWorld = function(shape, ref_deltaPosition, ref_vel
 // overlaps
 CollisionDetector.overlapShapePlayers = function(shape) {
 	var players = [];
-	if(this.overlapShapes(gameState.playerA.getShape(), shape)) {
+	if(this.overlapShapes(shape, gameState.playerA.getShape())) {
 		players.push(gameState.playerA);
 	}
-	if(this.overlapShapes(gameState.playerB.getShape(), shape)) {
+	if(this.overlapShapes(shape, gameState.playerB.getShape())) {
 		players.push(gameState.playerB);
 	}
 	return players;
@@ -271,28 +271,35 @@ CollisionDetector.intersectSegments = function(segment0, segment1, ref_segmentPr
 		return false;
 	}
 
+	var divisor = segSize0.y  * segSize1.x - segSize1.y * segSize0.x,
+	    segStartXDiff = segStart0.x - segStart1.x,
+	    segStartYDiff = segStart1.y - segStart0.y;
+
 	// calculate the point of intersection...
-	ref_segmentProportion0.ref = ((segStart1.y - segStart0.y) * segSize1.x + (segStart0.x - segStart1.x) * segSize1.y) /
-		(segSize0.y  * segSize1.x - segSize1.y * segSize0.x);
-	ref_segmentProportion1.ref = ((segStart0.y - segStart1.y) * segSize0.x + (segStart1.x - segStart0.x) * segSize0.y) /
-		(segSize1.y * segSize0.x - segSize0.y  * segSize1.x);
+	var segmentProportion0, segmentProportion1;
 
 	// where do these actually meet?
-	ref_contactPoint.ref = segStart0.add(segSize0.mul(ref_segmentProportion0.ref));
+	segmentProportion0 = (segStartYDiff * segSize1.x + segStartXDiff * segSize1.y) / divisor
 
 	// make sure the point of intersection is inside segment0
-	if(ref_segmentProportion0.ref < 0 || ref_segmentProportion0.ref > 1) {
+	if (segmentProportion0 < 0 || segmentProportion0 > 1) {
 		return false;
 	}
 
+	ref_segmentProportion1.ref = segmentProportion1 = (segStartYDiff * segSize0.x + segStartXDiff * segSize0.y) / divisor;
+	ref_contactPoint.ref = segSize0;
+	segSize0.inplaceMul(ref_segmentProportion0.ref = segmentProportion0);
+	segSize0.inplaceAdd(segStart0);
+
 	// make sure the point of intersection is inside segment1
-	if(ref_segmentProportion1.ref < 0 || ref_segmentProportion1.ref > 1) {
+	if (segmentProportion1 < 0 || segmentProportion1 > 1) {
 		return false;
 	}
 
 	// now that we've checked all this, the segments do intersect.
 	return true;
 };
+
 CollisionDetector.intersectCircleLine = function(circle, line, ref_lineProportion0, ref_lineProportion1) {
 	// variables taken from http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
 	// thanks, internet!
@@ -303,17 +310,19 @@ CollisionDetector.intersectCircleLine = function(circle, line, ref_lineProportio
 
 	// find quadratic equation variables
 	var a = lineSize.lengthSquared();
-	var b = 2 * lineSize.dot(lineStart.sub(circle.center));
+	var b = lineSize.dot(lineStart.sub(circle.center));
 	var c = lineStart.sub(circle.center).lengthSquared() - circle.radius * circle.radius;
 
-	var insideSqrt = b * b - 4 * a * c;
+	var insideSqrt = b * b - a * c;
 	if(insideSqrt < 0) {
 		return false;
 	}
 
+	insideSqrt = Math.sqrt(insideSqrt);
+
 	// calculate the point of intersection...
-	ref_lineProportion0.ref = (-b - Math.sqrt(insideSqrt)) * 0.5 / a;
-	ref_lineProportion1.ref = (-b + Math.sqrt(insideSqrt)) * 0.5 / a;
+	ref_lineProportion0.ref = (-b - insideSqrt) / a;
+	ref_lineProportion1.ref = (-b + insideSqrt) / a;
 
 	return true;
 };
@@ -610,19 +619,19 @@ CollisionDetector.overlapShapes = function(shape0, shape1) {
 	var shape0Type = shape0Pointer.getType();
 	var shape1Type = shape1Pointer.getType();
 
-	// if they're both circles
-	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
-		result = this.overlapCircles(shape0Pointer, shape1Pointer);
-	}
-
 	// if one is a circle and one is a polygon
-	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
+	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
 		result = this.overlapCirclePolygon(shape0Pointer, shape1Pointer);
 	}
 
 	// if both are polygons
 	else if(shape0Type == SHAPE_POLYGON && shape1Type == SHAPE_POLYGON) {
 		result = this.overlapPolygons(shape0Pointer, shape1Pointer);
+	}
+
+	// if they're both circles
+	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
+		result = this.overlapCircles(shape0Pointer, shape1Pointer);
 	}
 
 	// we would only get here if we received an impossible pair of shapes.
@@ -638,6 +647,8 @@ CollisionDetector.overlapCircles = function(circle0, circle1) {
 CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	// see if any point on the border of the the polygon is in the circle
 	var len = polygon.vertices.length;
+	var squaredCircleRadius = circle.radius * circle.radius;
+	var point = circle.center;
 	for(var i = 0; i < len; ++i)
 	{
 		// if a segment of the polygon crosses the edge of the circle
@@ -646,13 +657,12 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 		}
 
 		// if a vertex of the polygon is inside the circle
-		if(polygon.getVertex(i).sub(circle.center).lengthSquared() < circle.radius * circle.radius) {
+		if(polygon.getVertex(i).sub(point).lengthSquared() < squaredCircleRadius) {
 			return true;
 		}
 	}
 
 	// otherwise, the circle could be completely inside the polygon
-	var point = circle.center;
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
 		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {

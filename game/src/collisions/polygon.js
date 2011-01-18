@@ -29,7 +29,7 @@ Polygon.prototype.copy = function() {
 	var polygon = new Polygon(this.center, this.vertices[0]);
 	polygon.vertices = this.vertices;
 	polygon.segments = this.segments;
-	polygon.initializeBounds();
+	polygon.boundingBox = this.boundingBox.copy();
 	return polygon;
 };
 
