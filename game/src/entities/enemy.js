@@ -74,6 +74,11 @@ Enemy.prototype.tick = function(seconds) {
 	// If the enemy is still alive, collide it with the players
 	if (!this.isDead()) {
 		var players = CollisionDetector.overlapShapePlayers(shape);
+		// convert aabb to polygon - normally, this time-intensive conversion would be done
+		// in overlapShapes
+		if (shape.getType() == SHAPE_AABB) {
+			shape = shape.getPolygon();
+		}
 		for (var i = 0; i < players.length; ++i) {
 			if (!players[i].isDead()) {
 				this.reactToPlayer(players[i]);

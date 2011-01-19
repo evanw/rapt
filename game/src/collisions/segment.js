@@ -1,8 +1,8 @@
 // class Segment
-function Segment(start, end) {
+function Segment(start, end, normal) {
 	this.start = start;
 	this.end = end;
-	this.normal = end.sub(start).flip().unit();
+	this.normal = normal || end.sub(start).flip().unit();
 }
 
 Segment.prototype.offsetBy = function(offset) {

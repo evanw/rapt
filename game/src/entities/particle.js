@@ -54,7 +54,7 @@ ParticleInstance.prototype.tick = function(seconds) {
 	this.m_alpha *= Math.pow(this.m_decay, seconds);
 	this.m_radius *= Math.pow(this.m_expand, seconds);
 	this.m_velocity.y -= this.m_gravity * seconds;
-	this.m_position = this.m_position.add(this.m_velocity.mul(seconds));
+	this.m_position.inplaceAdd(this.m_velocity.mul(seconds));
 	this.m_angle += this.m_angularVelocity * seconds;
 	if(this.m_alpha < 0.05) {
 		this.m_bounces = -1;
