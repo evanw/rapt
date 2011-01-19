@@ -591,47 +591,45 @@ CollisionDetector.emergencyCollideShapeWorld = function(shape, ref_deltaPosition
 
 // OVERLAPS
 CollisionDetector.overlapShapes = function(shape0, shape1) {
-	var shapeTempPointer = null;
-	var shape0Pointer = shape0.copy();
-	var shape1Pointer = shape1.copy();
+	var shapeTempPointer;
+	//var shape0Pointer = shape0.copy();
+	//var shape1Pointer = shape1.copy(); //XXX
 
 	// convert aabb's to polygons
-	if(shape0Pointer.getType() == SHAPE_AABB)
+	if(shape0.getType() == SHAPE_AABB)
 	{
-		shapeTempPointer = shape0Pointer;
-		shape0Pointer = shape0Pointer.getPolygon();
+		shape0 = shape0.getPolygon();
 	}
-	if(shape1Pointer.getType() == SHAPE_AABB)
+	if(shape1.getType() == SHAPE_AABB)
 	{
-		shapeTempPointer = shape1Pointer;
-		shape1Pointer = shape1Pointer.getPolygon();
+		shape1 = shape1.getPolygon();
 	}
 
 	// swap the shapes so that they're in order
-	if(shape0Pointer.getType() > shape1Pointer.getType())
+	if(shape0.getType() > shape1.getType())
 	{
-		shapeTempPointer = shape1Pointer;
-		shape1Pointer = shape0Pointer;
-		shape0Pointer = shapeTempPointer;
+		shapeTempPointer = shape1;
+		shape1 = shape0;
+		shape0 = shapeTempPointer;
 	}
 
 	var result;
-	var shape0Type = shape0Pointer.getType();
-	var shape1Type = shape1Pointer.getType();
+	var shape0Type = shape0.getType();
+	var shape1Type = shape1.getType();
 
 	// if one is a circle and one is a polygon
 	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
-		result = this.overlapCirclePolygon(shape0Pointer, shape1Pointer);
+		result = this.overlapCirclePolygon(shape0, shape1);
 	}
 
 	// if both are polygons
 	else if(shape0Type == SHAPE_POLYGON && shape1Type == SHAPE_POLYGON) {
-		result = this.overlapPolygons(shape0Pointer, shape1Pointer);
+		result = this.overlapPolygons(shape0, shape1);
 	}
 
 	// if they're both circles
 	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
-		result = this.overlapCircles(shape0Pointer, shape1Pointer);
+		result = this.overlapCircles(shape0, shape1);
 	}
 
 	// we would only get here if we received an impossible pair of shapes.
