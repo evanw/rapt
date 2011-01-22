@@ -13,7 +13,7 @@ Vector.prototype.div = function(f) { return new Vector(this.x / f, this.y / f); 
 Vector.prototype.eq = function(v) { return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) < 0.001; };
 
 // inplace operations
-Vector.prototype.inplaceNeg = function() { this.x += -this.x; this.y = -this.y; };
+Vector.prototype.inplaceNeg = function() { this.x = -this.x; this.y = -this.y; };
 Vector.prototype.inplaceAdd = function(v) { this.x += v.x; this.y += v.y; };
 Vector.prototype.inplaceSub = function(v) { this.x -= v.x; this.y -= v.y; };
 Vector.prototype.inplaceMul = function(f) { this.x *= f; this.y *= f; };

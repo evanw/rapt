@@ -500,8 +500,9 @@ CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segme
 	// for each point of the polygon, check for a collision
 	for(i = 0; i < polygon.vertices.length; i++)
 	{
+        var vertex = polygon.getVertex(i);
 		// if these don't intersect, ignore this edge
-		if(!this.intersectSegments(segment, new Segment(polygon.getVertex(i), polygon.getVertex(i).add(deltaPosition)), ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
+		if(!this.intersectSegments(segment, new Segment(vertex, vertex.add(deltaPosition)), ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
 			continue;
 		}
 
@@ -945,10 +946,11 @@ CollisionDetector.penetrationPolygonSegment = function(polygon, segment) {
 	// check the penetration of each vertex of the polygon
 	for(var i = 0; i < polygon.vertices.length; i++)
 	{
+        var vertex = polygon.getVertex(i);
 		// find where this polygon point projects onto the segment
 		this.intersectSegments(
 				segment,
-				new Segment(polygon.getVertex(i), polygon.getVertex(i).sub(segment.normal)),
+				new Segment(vertex, vertex.sub(segment.normal)),
 				ref_edgeProportion, ref_penetrationProportion, ref_closestPointOnSegment);
 
 		// if this point projects onto the segment outside of its endpoints, don't consider this point to be projected
