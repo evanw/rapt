@@ -31,7 +31,9 @@ class Level < ActiveRecord::Base
   
   def set_default_level
     unique_id = rand(2**31 - 1)
-    self.data = sprintf("{\"cells\":[[0,1,1,0],[0,0,0,0]],\"width\":4,\"height\":2,\"entities\":[],\"unique_id\":%d,\"start\":[0,0],\"end\":[3,0]}", unique_id)
+    if self.data.nil?
+      self.data = sprintf("{\"cells\":[[0,1,1,0],[0,0,0,0]],\"width\":4,\"height\":2,\"entities\":[],\"unique_id\":%d,\"start\":[0,0],\"end\":[3,0]}", unique_id)
+    end
   end
 
 end
