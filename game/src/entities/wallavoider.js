@@ -15,7 +15,7 @@ function WallAvoider(center, target) {
 
 	this.bodySprite = new Sprite();
 	this.bodySprite.drawGeometry = function(c) {
-		c.beginPath(); c.arc(0, 0, 0.1, 0, 2*Math.PI); c.fill(); c.stroke();
+		c.beginPath(); c.arc(0, 0, 0.1, 0, 2*Math.PI, false); c.fill(); c.stroke();
 		c.beginPath();
 		for(var i = 0; i < 4; i++)
 		{

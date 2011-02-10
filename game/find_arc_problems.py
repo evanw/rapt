@@ -7,9 +7,12 @@ os.system('python build.py release')
 lines = open('./www/rapt.js').read().split('\n')
 
 # find all uses of the canvas arc() function
-lines = [(i, line.strip()) for i, line in enumerate(lines) if line.strip().startswith('c.arc(')]
+import re
+arc = re.compile('c.arc\([^;]*\);')
+lines = [(i, line.strip()) for i, line in enumerate(lines) if arc.search(line.strip())]
 
 # check uses of arc() function
 for i, line in lines:
-	if len(line.split(',')) != 6:
+	match = arc.search(line)
+	if len(match.group(0).split(',')) != 6:
 		print 'line %d: %s' %(i, line)
