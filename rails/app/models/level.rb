@@ -7,7 +7,7 @@ class Level < ActiveRecord::Base
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_uniqueness_of :title, :scope => :user_id
   
-  attr_accessible :data, :position, :title
+  attr_accessible :data, :position, :title, :difficulty
   
   before_create :determine_position, :set_default_level
   

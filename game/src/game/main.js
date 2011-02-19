@@ -37,9 +37,10 @@ function ajaxGet(what, url, onSuccess) {
 // class MenuItem
 ////////////////////////////////////////////////////////////////////////////////
 
-function MenuItem(levelname, title) {
+function MenuItem(levelname, title, difficulty) {
 	this.levelname = levelname;
 	this.title = title;
+	this.difficulty = difficulty;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ Menu.prototype.load = function(username, onSuccess) {
 		var levels = json['user']['levels'];
 		for (var i = 0; i < levels.length; i++) {
 			var level = levels[i];
-			this_.items.push(new MenuItem(level['html_title'], level['title']));
+			this_.items.push(new MenuItem(level['html_title'], level['title'], level['difficulty']));
 		}
 		this_.isLoading = false;
 		this_.selectedIndex = 0;
@@ -88,8 +89,8 @@ Menu.prototype.updateSelectedIndex = function() {
 		$('.level').blur();
 		$(selectedLevel).focus();
 
-		// no idea why 450 is the magic number that centers the selected level, but not going to worry about it
-		var scrollTop = $('#levelScreen').scrollTop() + $(selectedLevel).offset().top - 450;
+		// no idea why 475 is the magic number that centers the selected level, but not going to worry about it
+		var scrollTop = $('#levelScreen').scrollTop() + $(selectedLevel).offset().top - 475;
 		$('#levelScreen').scrollTop(scrollTop);
 	}
 };
@@ -108,9 +109,15 @@ Menu.prototype.show = function() {
 		var html = '<h2>';
 		html += (this.username == 'rapt') ? 'Official Levels' : 'Levels made by ' + this.username;
 		html += '</h2><div id="levels">';
+		var prevDifficulty = null;
 		for (var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
-			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">' + item.title;
+			var difficulty = ['Easy', 'Medium', 'Hard', 'Impossible', 'Demoralizing'][item.difficulty];
+			if (difficulty != prevDifficulty) {
+				prevDifficulty = difficulty;
+				html += '<div class="difficulty">' + difficulty + '</div>';
+			}
+			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">' + item.title + '</a>';
 		}
 		html += '</div>';
 		$('#levelScreen').html(html);

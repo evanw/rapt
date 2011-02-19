@@ -17,7 +17,7 @@ class UsersController < ApplicationController
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
         
-        respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title]}}})
+        respond_with(@user, {:only => :username, :include => {:levels => {:methods => [:html_title], :only => [:title, :difficulty]}}})
     rescue
         redirect_to "/", :flash => {:error => "Couldn't find user '#{params[:username]}'"}
         return
@@ -65,7 +65,7 @@ class UsersController < ApplicationController
   def update_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
     @level.update_attributes(params[:level])
-    respond_with(@level, :methods => [:html_title])
+    render :text => ''
   end
   
 end

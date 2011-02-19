@@ -18,7 +18,16 @@
   		    <% # no link to play a specific level, must click the play button above %>
     		  <%= level.title %>
   		  <% end %>
-  		  <%== edit_links_for_level level %>
+		<span class='links'>
+			<select>
+				<% ['Easy', 'Medium', 'Hard', 'Impossible', 'Demoralizing'].each_with_index do |name, index| %>
+					<option value="<%= index %>" <%= level.difficulty == index ? 'selected' : '' %>><%= name %></option>
+				<% end %>
+			</select>
+			&nbsp; &nbsp; &nbsp;
+			<a href='/edit/<%= @user.username %>/<%= level.html_title %>/'>Edit</a>
+			<a href='/levels/<%= level.id %>/' data-confirm='Deleted levels cannot be recovered!  Are you sure you want to delete #{level.html_title}?' data-method='delete' rel='nofollow'>Delete</a>
+		</span>
   	  </li>
   	<% end %>
   </ul>
@@ -39,14 +48,24 @@
   <% end %>
 
   <% content_for :javascript do %>
-  		function savePosition(element){
-  			$.ajax({
-  				url: '/edit/<%= @user.username %>/'+element.attr('html_title'),
-  				type: 'PUT',
-  				data: ({ levelname: element.attr('html_title'), level: { position: element.attr('position') }})
-  			});
-  		}
-	
+		function saveLevelByElement(element){
+			$.ajax({
+				url: '/edit/<%= @user.username %>/'+$(element).attr('html_title'),
+				type: 'PUT',
+				data: ({
+					levelname: $(element).attr('html_title'),
+					level: {
+						position: $(element).attr('position'),
+						difficulty: parseInt($(element).find('select')[0].value, 10)
+					}
+				})
+			});
+		}
+
+		$('.links select').change(function(e) {
+			saveLevelByElement(e.target.parentNode.parentNode);
+		});
+
   		$( "#levels" ).sortable({
   		  axis: 'y',
   			update: function(e, ui){
@@ -65,10 +84,9 @@
   					pos = parseFloat($("#levels li:nth-child("+idx+")").attr('position')) + 1.0;
   				}
   				$(ui.item).attr('position', pos);
-  				savePosition(ui.item);
+  				saveLevelByElement(ui.item);
   			}
   		});
-  		$( "#levels" ).disableSelection();
   <% end %>
 
   <div id="new_level">
