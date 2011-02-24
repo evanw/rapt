@@ -64,8 +64,15 @@ class UsersController < ApplicationController
   # update the level
   def update_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
-    @level.update_attributes(params[:level])
-    render :text => ''
+    respond_with @level do |format|
+      format.json do
+        if @level.update_attributes(params[:level])
+          render :json => @level, :methods => [:html_title]
+        else
+          render :json => @level.errors, :status => :unprocessable_entity
+        end
+      end
+    end
   end
   
 end

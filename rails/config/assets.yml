@@ -6,6 +6,8 @@ javascripts:
     - public/javascripts/editor.js
   game:
     - public/javascripts/rapt.js
+  level_list:
+    - public/javascripts/level_list.js
     
 stylesheets:
   editor:

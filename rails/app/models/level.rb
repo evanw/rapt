@@ -3,13 +3,14 @@ class Level < ActiveRecord::Base
   
   belongs_to :user
   
-  validate :title_content, :on => :create
+  validate :title_content
   validates_presence_of :title, :on => :create, :message => "can't be blank"
   validates_uniqueness_of :title, :scope => :user_id
   
   attr_accessible :data, :position, :title, :difficulty
   
   before_create :determine_position, :set_default_level
+  before_validation :clean_data
   
   def html_title
     self.title.gsub(' ', '_')
@@ -17,8 +18,12 @@ class Level < ActiveRecord::Base
   
   private
   
+  def clean_data
+    self.title.strip!
+  end
+  
   def title_content
-    errors.add(:base, "Title can only contain letters, numbers, and spaces") if self.title =~ /[^\w ]|_/
+    errors.add(:base, "Title can only contain letters, numbers, and spaces") if not self.title =~ /^[^\W_](([^\W_]| )*[^\W_])?$/
   end
   
   def determine_position

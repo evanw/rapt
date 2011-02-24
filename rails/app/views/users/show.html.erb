@@ -1,4 +1,5 @@
 <%= content_for :title, "Your levels" %>
+<%= include_javascripts :level_list %>
 
 <% if current_user and @user == current_user %>
   <p>RAPT is meant to be played with a friend!&nbsp; Share your levels with your friends by giving them this url: <a href="<%= play_url %>/#/<%= @user.username %>/"><%= play_url %>/#/<%= @user.username %>/</a></p>
@@ -7,86 +8,29 @@
     <a href="<%= play_url %>/#/<%= @user.username %>/" class="button"><span></span><b>Play&nbsp;your&nbsp;levels</b> <br> Go to your level menu</a>
   </div>
 
-  <ul id="levels">
-  	<% @user.levels.each do |level| %>
-  		<li html_title="<%= level.html_title %>" position="<%= level.position %>">
-  		  <span>&varr;</span>
-  		  <% if false %>
-  		    <% # link to play each level directly %>
-    		  <a href="/play/#/<%= @user.username %>/<%= level.html_title %>/"><%= level.title %></a>
-  		  <% else %>
-  		    <% # no link to play a specific level, must click the play button above %>
-    		  <%= level.title %>
-  		  <% end %>
-		<span class='links'>
-			<select>
-				<% ['Easy', 'Medium', 'Hard', 'Impossible', 'Demoralizing'].each_with_index do |name, index| %>
-					<option value="<%= index %>" <%= level.difficulty == index ? 'selected' : '' %>><%= name %></option>
-				<% end %>
-			</select>
-			&nbsp; &nbsp; &nbsp;
-			<a href='/edit/<%= @user.username %>/<%= level.html_title %>/'>Edit</a>
-			<a href='/levels/<%= level.id %>/' data-confirm='Deleted levels cannot be recovered!  Are you sure you want to delete #{level.html_title}?' data-method='delete' rel='nofollow'>Delete</a>
-		</span>
-  	  </li>
-  	<% end %>
-  </ul>
+  <ul id="levels">Loading list of levels...</ul>
 
   <% content_for :head do %>
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
   	<style>
-  		#levels { list-style-type: none; margin: 0; padding: 0; }
-  		#levels li {
-  		  margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
-  		  box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
-    	}
-  		#levels li span { margin-right: 3px; }
-  		#levels li span.links { position: relative; float: right; }
-  		#levels a, #levels li { color: black; }
+		#levels { list-style-type: none; margin: 0; padding: 0; }
+		#levels li {
+			margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
+			box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
+		}
+		#levels li span { margin-right: 3px; }
+		#levels li span.links { position: relative; float: right; }
+		#levels a, #levels li { color: black; }
   	</style>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
   <% end %>
 
   <% content_for :javascript do %>
-		function saveLevelByElement(element){
-			$.ajax({
-				url: '/edit/<%= @user.username %>/'+$(element).attr('html_title'),
-				type: 'PUT',
-				data: ({
-					levelname: $(element).attr('html_title'),
-					level: {
-						position: $(element).attr('position'),
-						difficulty: parseInt($(element).find('select')[0].value, 10)
-					}
-				})
-			});
-		}
-
-		$('.links select').change(function(e) {
-			saveLevelByElement(e.target.parentNode.parentNode);
-		});
-
-  		$( "#levels" ).sortable({
-  		  axis: 'y',
-  			update: function(e, ui){
-  				var numItems = $("#levels li").size();
-  				var idx = $(ui.item).index();
-  				var pos = parseFloat($(ui.item).attr('position'));
-  				if(idx == 0 && numItems > 1)
-  				{
-  					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
-  					pos = after / 2.0;
-  				}else if(idx > 0 && idx < numItems - 1 ){
-  					var before = parseFloat($("#levels li:nth-child("+idx+")").attr('position'));
-  					var after = parseFloat($("#levels li:nth-child("+(idx+2)+")").attr('position'));
-  					pos = (before + after) / 2.0;
-  				}else if(idx == numItems -1){
-  					pos = parseFloat($("#levels li:nth-child("+idx+")").attr('position')) + 1.0;
-  				}
-  				$(ui.item).attr('position', pos);
-  				saveLevelByElement(ui.item);
-  			}
-  		});
+window.username = '<%= @user.username %>';
+window.levels = [
+<% @user.levels.each_with_index do |level, index| %>
+	<%= index > 0 ? ', ' : '' %>new Level('<%= level.title %>', '<%= level.html_title %>', <%= level.position %>, <%= level.difficulty %>, <%= level.id %>)
+<% end %>
+];
   <% end %>
 
   <div id="new_level">
