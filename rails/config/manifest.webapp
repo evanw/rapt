@@ -1,0 +1,18 @@
+{
+	"name": "Robots Are People Too",
+	"description": "RAPT is a complex and challenging HTML5 platformer.  The exit to each level is blocked by enemies that roll, jump, fly, and shoot to prevent escape at all costs.  Gameplay is exclusively two-player and uses a unique split-screen mechanic.  The levels and enemies are designed to promote cooperation between players.\n\nRAPT also comes with a powerful level editor which allows players to create levels of any size.  Levels are saved to the player's account on the server, which has a public page listing custom levels.  Link to this page to share your levels with friends.",
+
+	"base_url": "http://raptjs.com",
+	"launch_path": "/play/",
+
+	"developer": {
+		"name": "Robots Are People Too",
+		"url": "http://raptjs.com"
+	},
+
+	"icons": {
+		"128": "/images/icon_128.png"
+	},
+
+	"installs_allowed_from": [ "*" ]
+}
