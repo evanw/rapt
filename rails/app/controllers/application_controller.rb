@@ -3,4 +3,8 @@ class ApplicationController < ActionController::Base
 
   def index
   end
+  
+  def manifest
+    send_file "#{Rails.root}/config/manifest.#{params[:format]}", :type => "application/x-web-app-manifest+json"
+  end
 end

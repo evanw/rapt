@@ -15,6 +15,8 @@ Rapt::Application.routes.draw do
   
   match 'play' => 'game#play'
   
+  match '/manifest.:format' => "application#manifest"
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
