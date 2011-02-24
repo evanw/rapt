@@ -112,7 +112,7 @@ Menu.prototype.show = function() {
 		var prevDifficulty = null;
 		for (var i = 0; i < this.items.length; i++) {
 			var item = this.items[i];
-			var difficulty = ['Easy', 'Medium', 'Hard', 'Impossible', 'Demoralizing'][item.difficulty];
+			var difficulty = ['Easy', 'Medium', 'Hard', 'Brutal', 'Demoralizing'][item.difficulty];
 			if (difficulty != prevDifficulty) {
 				prevDifficulty = difficulty;
 				html += '<div class="difficulty">' + difficulty + '</div>';

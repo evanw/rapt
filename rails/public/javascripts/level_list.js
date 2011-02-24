@@ -36,7 +36,7 @@ Level.prototype.createElement = function() {
 };
 
 Level.prototype.updateHTML = function() {
-	var difficulties = ['Easy', 'Medium', 'Hard', 'Impossible', 'Demoralizing'];
+	var difficulties = ['Easy', 'Medium', 'Hard', 'Brutal', 'Demoralizing'];
 	var html = '';
 	html += '<span>&varr;</span> ';
 	html += this.title + ' ';
