@@ -4,7 +4,7 @@ RAPT is a complex and challenging HTML5 platformer. The exit to each level is bl
 
 RAPT also comes with a powerful level editor which allows players to create levels of any size. Levels are saved to the player's account on the server, which has a public page listing custom levels. Link to this page for a simple way of sharing levels with friends!
 
-Our server is written in Rails and is currently hosted at [http://raptjs.heroku.com/](http://raptjs.heroku.com/). The game and editor are written entirely in JavaScript using just the HTML5 canvas API and some jQuery, and contain a little over 20,000 lines of JavaScript.
+Our server is written in Rails and is currently hosted at [http://raptjs.com/](http://raptjs.com/). The game and editor are written entirely in JavaScript using just the HTML5 canvas API and some jQuery, and contain a little over 20,000 lines of JavaScript.
 
 ### Building and Running RAPT
 
