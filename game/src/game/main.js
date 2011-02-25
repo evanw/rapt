@@ -327,6 +327,7 @@ Hash.getLevelHash = function(username, levelname) { return '#/' + username + '/'
 var hash = null;
 var menu = null;
 var level = null;
+var keyToChange = null;
 
 // scroll the game to the center of the window if it lies partially or completely off screen
 function scrollGameIntoWindow() {
@@ -340,6 +341,7 @@ function scrollGameIntoWindow() {
 
 $(document).ready(function() {
 	scrollGameIntoWindow();
+	Keys.load();
 	
 	hash = new Hash();
 	menu = new Menu();
@@ -349,7 +351,24 @@ $(document).ready(function() {
 	setInterval(tick, 1000 / 60);
 });
 
+$('.key.changeable').live('mousedown', function(e) {
+	keyToChange = this.id;
+	$('.key.changing').removeClass('changing');
+	$('#' + keyToChange).addClass('changing');
+	e.preventDefault();
+});
+
 $(document).keydown(function(e) {
+	// catch every key if we're remapping keys
+	if (keyToChange != null) {
+		Keys.keyMap[keyToChange] = e.which;
+		Keys.save();
+		$('#' + keyToChange).removeClass('changing');
+		e.preventDefault();
+		keyToChange = null;
+		return;
+	}
+
 	// Allow keyboard shortcuts to work
 	if (!e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
 		menu.keyDown(e);

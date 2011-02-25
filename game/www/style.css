@@ -94,12 +94,14 @@ div#levelScreen {
 }
 
 .key {
+	cursor: default;
 	position: absolute;
 	display: inline-block;
 	width: 50px;
 	height: 50px;
 	text-align: center;
 	font: bold 30px/50px Arial, sans-serif;
+	font-variant: small-caps;
 	color: black;
 	background: white;
 	border-top: 2px solid #CFCFCF;
@@ -114,7 +116,22 @@ div#levelScreen {
 	-webkit-box-shadow: 0 0 5px black;
 }
 
-.key small {
-	font-size: 25px;
-	font-variant: small-caps;
+.key.changeable {
+	cursor: pointer;
+}
+
+.key.changeable:hover {
+	box-shadow: 0 0 20px black, 0 0 15px black;
+	-moz-box-shadow: 0 0 20px black, 0 0 15px black;
+	-webkit-box-shadow: 0 0 20px black, 0 0 15px black;
+	z-index: 1;
+}
+
+.key.changing {
+	background: #BFBFBF;
+	border-color: #9F9F9F;
+}
+
+.key div {
+	background: none;
 }

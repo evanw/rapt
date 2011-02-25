@@ -1,22 +1,6 @@
 #require <class.js>
 #require <screen.js>
 
-// player key mappings
-var keyMapPlayerA = {
-	38: 'jumpKey',	 // up arrow key
-	40: 'crouchKey', // down arrow key
-	37: 'leftKey',	 // left arrow key
-	39: 'rightKey'	 // right arrow key
-};
-var keyMapPlayerB = {
-	87: 'jumpKey',	 // w key
-	83: 'crouchKey', // s key
-	65: 'leftKey',	 // a key
-	68: 'rightKey'	 // d key
-};
-var keyMapGame = {
-	75: 'killKey'		// k key
-};
 var gameScale = 50;
 
 // text constants
@@ -177,14 +161,20 @@ Game.prototype.draw = function(c) {
 	c.fillText(text, this.width - 5 - c.measureText(text).width, this.height - 5);
 };
 
-Game.prototype.keyDown = function(key) {
-	if (key in keyMapGame) gameState[keyMapGame[key]] = true;
-	if (key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = true;
-	if (key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = true;
+Game.prototype.keyDown = function(keyCode) {
+	var action = Keys.fromKeyCode(keyCode);
+	if (action != null) {
+		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = true;
+		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = true;
+		else gameState[keyMapGame[key]] = true;
+	}
 };
 
-Game.prototype.keyUp = function(key) {
-	if (key in keyMapGame) gameState[keyMapGame[key]] = false;
-	if (key in keyMapPlayerA) gameState.playerA[keyMapPlayerA[key]] = false;
-	if (key in keyMapPlayerB) gameState.playerB[keyMapPlayerB[key]] = false;
+Game.prototype.keyUp = function(keyCode) {
+	var action = Keys.fromKeyCode(keyCode);
+	if (action != null) {
+		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = false;
+		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = false;
+		else gameState[keyMapGame[key]] = false;
+	}
 };
