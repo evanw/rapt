@@ -312,7 +312,7 @@ def o(n, handledattrs=[]):
 
 		if n.type == "ARRAY_INIT":
 			check(subnodes=len(n))
-			return "[" + ", ".join(o(x) for x in n) + "]"
+			return "[" + ", ".join(o(x) if x else '' for x in n) + "]"
 
 		elif n.type == "ASSIGN":
 			check(subnodes=2)
