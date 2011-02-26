@@ -12,15 +12,15 @@
   <body>
     <div id="nav"><div>
     	<div id="logo"><a href="/">RAPT</a></div>
-  	  <% if current_user.nil? %>
-      	<a href="/users/sign_in">Sign in</a>
-      	&bull;
-      	<a href="/users/sign_up">Sign up</a>
-  	  <% else %>
-    	  Signed in as <a href="/edit/<%= current_user.username %>/"><%= current_user.username %></a>
-      	&bull;
-      	<a href="/users/sign_out">Sign out</a>
-  	  <% end %>
+    	<% if !current_user.nil? %>
+    	  Logged in as <%= current_user.username %>
+    	  &bull;
+    	  <a href="/users/sign_out">Sign Out</a>
+        &bull;
+    	<% end %>
+      <a href="/play/">Play</a>
+      &bull;
+  		<a href="/edit/">Level Editor</a>
     </div></div>
     <% if content_for?(:header) %>
       <%= yield(:header) %>

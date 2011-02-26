@@ -20,11 +20,7 @@
 </p>
 <div id="buttons">
     <a href="/play/" class="button"><span></span> <b>Play&nbsp;in&nbsp;browser</b> <br> Works best in Google Chrome</a>
-    <% if current_user.nil? %>
-        <a class="disabled button"><span></span> <b>Open&nbsp;level&nbsp;editor</b> <br> Please sign in first</a>
-    <% else %>
-        <a href="/edit/<%= current_user.username %>/" class="button"><span></span> <b>Open&nbsp;level&nbsp;editor</b> <br> Create your own levels</a>
-    <% end %>
+    <a href="/edit/" class="button"><span></span> <b>Open&nbsp;level&nbsp;editor</b> <br> Create your own levels</a>
 </div>
 <p>
     Note: RAPT is a physics intensive game and your browser might not be up to the task.&nbsp;

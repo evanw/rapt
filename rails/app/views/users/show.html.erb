@@ -1,48 +1,43 @@
 <%= content_for :title, "Your levels" %>
 <%= include_javascripts :level_list %>
 
-<% if current_user and @user == current_user %>
-  <p>RAPT is meant to be played with a friend!&nbsp; Share your levels with your friends by giving them this url: <a href="<%= play_url %>/#/<%= @user.username %>/"><%= play_url %>/#/<%= @user.username %>/</a></p>
+<p>RAPT is meant to be played with a friend!&nbsp; Share your levels with your friends by giving them this url: <a href="<%= play_url %>/#/<%= current_user.username %>/"><%= play_url %>/#/<%= current_user.username %>/</a></p>
 
-  <div id="buttons">
-    <a href="<%= play_url %>/#/<%= @user.username %>/" class="button"><span></span><b>Play&nbsp;your&nbsp;levels</b> <br> Go to your level menu</a>
-  </div>
+<div id="buttons">
+  <a href="<%= play_url %>/#/<%= current_user.username %>/" class="button"><span></span><b>Play&nbsp;your&nbsp;levels</b> <br> Go to your level menu</a>
+</div>
 
-  <ul id="levels">Loading list of levels...</ul>
+<ul id="levels">Loading list of levels...</ul>
 
-  <% content_for :head do %>
-  	<style>
-		#levels { list-style-type: none; margin: 0; padding: 0; }
-		#levels li {
-			margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
-			box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
-		}
-		#levels li span { margin-right: 3px; }
-		#levels li span.links { position: relative; float: right; }
-		#levels a, #levels li { color: black; }
-  	</style>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
-  <% end %>
+<% content_for :head do %>
+  <style>
+  #levels { list-style-type: none; margin: 0; padding: 0; }
+  #levels li {
+    margin: 0 0 -1px 0; padding: 0 8px; line-height: 30px; border: 1px solid black; background: #CFCFCF; cursor: default;
+    box-shadow: 0 2px 4px #3F3F3F; -moz-box-shadow: 0 2px 4px #3F3F3F; -webkit-box-shadow: 0 2px 4px #3F3F3F;
+  }
+  #levels li span { margin-right: 3px; }
+  #levels li span.links { position: relative; float: right; }
+  #levels a, #levels li { color: black; }
+  </style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js" defer="true"></script>
+<% end %>
 
-  <% content_for :javascript do %>
-window.username = '<%= @user.username %>';
+<% content_for :javascript do %>
+window.username = '<%= current_user.username %>';
 window.levels = [
-<% @user.levels.each_with_index do |level, index| %>
-	<%= index > 0 ? ', ' : '' %>new Level('<%= level.title %>', '<%= level.html_title %>', <%= level.position %>, <%= level.difficulty %>, <%= level.id %>)
+<% current_user.levels.each_with_index do |level, index| %>
+<%= index > 0 ? ', ' : '' %>new Level('<%= level.title %>', '<%= level.html_title %>', <%= level.position %>, <%= level.difficulty %>, <%= level.id %>)
 <% end %>
 ];
-  <% end %>
-
-  <div id="new_level">
-    Create new level
-    <form action="/levels" method="post">
-    	<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
-    	<input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
-    	<input type="text" name="level[title]" />
-    	<input type="submit" value="Create" />
-    </form>
-  </div>
-<% else %>
-  <div id="flash_error">Not allowed to edit <%= @user.username %>'s levels</div>
-  Please <a href="/users/sign_in">sign in</a> to edit your levels.
 <% end %>
+
+<div id="new_level">
+  Create new level
+  <form action="/levels" method="post">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+    <input type="hidden" name="level[user_id]" value="<%= current_user.id %>" />
+    <input type="text" name="level[title]" />
+    <input type="submit" value="Create" />
+  </form>
+</div>

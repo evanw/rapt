@@ -17,8 +17,12 @@ function overlay(text) {
 	$('#overlay').html(text).show().stop().fadeTo(0, 1);
 }
 
-function getLevelURL() {
-	return 'http://' + location.host + '/edit/' + username + '/' + levelname + '/';
+function getLevelLoadURL() {
+	return 'http://' + location.host + '/data/' + username + '/' + levelname + '/';
+}
+
+function getLevelSaveURL() {
+	return 'http://' + location.host + '/edit/' + levelname + '/';
 }
 
 function ajaxGetLevel(onSuccess) {
@@ -27,7 +31,7 @@ function ajaxGetLevel(onSuccess) {
 	}
 	
 	$.ajax({
-		'url': getLevelURL(),
+		'url': getLevelLoadURL(),
 		'type': 'GET',
 		'cache': false,
 		'dataType': 'json',
@@ -51,7 +55,7 @@ function ajaxPutLevel(json, onSuccess) {
 	
 	overlay('Saving');
 	$.ajax({
-		'url': getLevelURL(),
+		'url': getLevelSaveURL(),
 		'type': 'PUT',
 		'dataType': 'json',
 		'data': JSON.stringify({ 'level': { 'data': json } }),

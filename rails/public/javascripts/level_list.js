@@ -45,7 +45,7 @@ Level.prototype.updateHTML = function() {
 		html += '<option value="' + i + '"' + (this.difficulty == i ? ' selected' : '') + '>' + difficulties[i] + '</option>';
 	}
 	html += '</select>&nbsp; &nbsp; &nbsp ';
-	html += '<a href="/edit/' + username + '/' + this.html_title + '/">Edit</a> ';
+	html += '<a href="/edit/' + this.html_title + '/">Edit</a> ';
 	html += '<a href="javascript:void(0)" class="rename">Rename</a> ';
 	html += '<a href="/levels/' + this.id + '/" data-confirm="Deleted levels cannot be recovered!  Are you sure you want to delete ' + this.title + '?" data-method="delete" rel="nofollow">Delete</a>';
 	html += '</span>';
@@ -55,7 +55,7 @@ Level.prototype.updateHTML = function() {
 Level.prototype.trySavingToServer = function() {
 	var this_ = this;
 	$.ajax({
-		url: '/edit/' + username + '/' + this.html_title + '.json',
+		url: '/edit/' + this.html_title + '.json',
 		type: 'PUT',
 		data: this.saveToJSON(),
 		success: function(json) {

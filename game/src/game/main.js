@@ -6,8 +6,8 @@ var SPACEBAR = 32;
 var UP_ARROW = 38;
 var DOWN_ARROW = 40;
 
-function getMenuUrl(username) { return 'http://' + location.host + '/edit/' + username + '/'; }
-function getLevelUrl(username, levelname) { return 'http://' + location.host + '/edit/' + username + '/' + levelname + '/'; }
+function getMenuUrl(username) { return 'http://' + location.host + '/data/' + username + '/'; }
+function getLevelUrl(username, levelname) { return 'http://' + location.host + '/data/' + username + '/' + levelname + '/'; }
 
 // get json data via ajax
 function ajaxGet(what, url, onSuccess) {

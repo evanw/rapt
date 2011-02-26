@@ -7,12 +7,12 @@ en:
 
   devise:
     failure:
-      unauthenticated: 'You need to sign in or sign up before continuing.'
-      unconfirmed: 'You have to confirm your account before continuing.'
+      unauthenticated: 'You need to sign in or sign up before editing levels.'
+      unconfirmed: 'You have to confirm your account before editing levels.'
       locked: 'Your account is locked.'
       invalid: 'Invalid username or password.'
       invalid_token: 'Invalid authentication token.'
-      timeout: 'Your session expired, please sign in again to continue.'
+      timeout: 'Your session expired, please sign in again to edit levels.'
       inactive: 'Your account was not activated yet.'
     sessions:
       signed_in: 'Signed in successfully.'

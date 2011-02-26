@@ -23,7 +23,7 @@ class Level < ActiveRecord::Base
   end
   
   def title_content
-    errors.add(:base, "Title can only contain letters, numbers, and spaces") if not self.title =~ /^[^\W_](([^\W_]| )*[^\W_])?$/
+    errors.add(:title, "Title can only contain letters, numbers, and spaces") if not self.title =~ /^[^\W_](([^\W_]| )*[^\W_])?$/
   end
   
   def determine_position
