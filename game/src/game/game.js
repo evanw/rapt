@@ -166,7 +166,7 @@ Game.prototype.keyDown = function(keyCode) {
 	if (action != null) {
 		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = true;
 		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = true;
-		else gameState[keyMapGame[key]] = true;
+		else gameState[action] = true;
 	}
 };
 
@@ -175,6 +175,6 @@ Game.prototype.keyUp = function(keyCode) {
 	if (action != null) {
 		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = false;
 		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = false;
-		else gameState[keyMapGame[key]] = false;
+		else gameState[action] = false;
 	}
 };
