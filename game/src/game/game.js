@@ -20,6 +20,9 @@ function Game() {
 	this.camera = new Camera();
 	this.fps = 0;
 	this.fixedPhysicsTick = 0;
+
+	this.isDone = false;
+	this.onWin = null;
 	
 	// whether this game is the last level in the menu, this will be updated by main.js when the menu loads
 	this.lastLevel = false;
@@ -64,6 +67,14 @@ Game.prototype.tick = function(seconds) {
 
 	// smooth the fps a bit
 	this.fps = lerp(this.fps, 1 / seconds, 0.05);
+	
+	// handle winning the game
+	if (!this.isDone && gameState.gameStatus != GAME_IN_PLAY) {
+		this.isDone = true;
+		if (gameState.gameStatus == GAME_WON && this.onWin) {
+			this.onWin();
+		}
+	}
 };
 
 Game.prototype.render = function(c, center, width, height, backgroundCache) {

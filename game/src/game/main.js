@@ -209,6 +209,14 @@ Level.prototype.restart = function() {
 	this.game = new Game();
 	this.game.resize(this.canvas.width, this.canvas.height);
 	gameState.loadLevelFromJSON(this.json);
+
+	// add the check mark on the level menu when this level is won
+	var this_ = this;
+	this.game.onWin = function() {
+		var gotAllCogs = gameState.stats[STAT_COGS_COLLECTED] == gameState.stats[STAT_NUM_COGS];
+		var s = stats.getStatsForLevel(this_.levelname);
+		stats.setStatsForLevel(this_.levelname, true, s.gotAllCogs || gotAllCogs);
+	};
 };
 
 Level.prototype.load = function(username, levelname, onSuccess) {
