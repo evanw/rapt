@@ -135,3 +135,8 @@ div#levelScreen {
 .key div {
 	background: none;
 }
+
+.level img {
+	float: left;
+	margin: 4px 9px 0 5px;
+}

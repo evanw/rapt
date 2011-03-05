@@ -117,7 +117,9 @@ Menu.prototype.show = function() {
 				prevDifficulty = difficulty;
 				html += '<div class="difficulty">' + difficulty + '</div>';
 			}
-			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">' + item.title + '</a>';
+			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">';
+			// html += '<img src="/images/' + ['empty', 'check', 'checkplus'][Math.floor(Math.random() * 3)] + '.png">';
+			html += item.title + '</a>';
 		}
 		html += '</div>';
 		$('#levelScreen').html(html);
