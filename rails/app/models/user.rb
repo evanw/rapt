@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :login
   
   has_many :levels
+  has_many :statistics
   
   validates_uniqueness_of :username, :on => :create, :message => "must be unique"
   

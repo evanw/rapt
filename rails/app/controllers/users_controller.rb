@@ -35,6 +35,24 @@ class UsersController < ApplicationController
     render :json => @level, :methods => [:html_title]
   end
 
+  def get_stats
+    @user = User.find_by_username(params[:username])
+    render :json => @user.statistics, :methods => [:levelname]
+  end
+
+  def set_stats
+    @user = User.find_by_username(params[:username])
+    @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
+    @statistic = @user.statistics.select { |s| s.level.html_title == params[:levelname]}.first
+    if @statistic.nil?
+      @statistic = Statistic.new
+      @statistic.user = @user
+      @statistic.level = @level
+    end
+    @statistic.update_attributes(params[:statistic])
+    render :text => ''
+  end
+
   # update the level
   def update_level
     @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first

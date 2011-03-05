@@ -1,5 +1,9 @@
 <%= content_for :title, "Play" %>
 
+<script type="text/javascript"><!--
+var username = <%=raw current_user.nil? ? 'null' : '"' + current_user.username + '"' %>;
+// --></script>
+
 <div id="game">
   <canvas id="canvas">Your browser does not support the HTML5 canvas element.</canvas>
   <div id="levelScreen"></div>

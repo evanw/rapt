@@ -9,6 +9,9 @@ Rapt::Application.routes.draw do
   match 'data/:username' => 'users#menu_data'
   match 'data/:username/:levelname' => 'users#level_data', :via => :get
 
+  match 'stats/:username' => 'users#get_stats', :via => :get
+  match 'stats/:username/:levelname' => 'users#set_stats', :via => :put
+
   # resources :users do
   #   resources :levels
   # end

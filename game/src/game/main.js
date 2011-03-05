@@ -118,7 +118,8 @@ Menu.prototype.show = function() {
 				html += '<div class="difficulty">' + difficulty + '</div>';
 			}
 			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">';
-			// html += '<img src="/images/' + ['empty', 'check', 'checkplus'][Math.floor(Math.random() * 3)] + '.png">';
+			var s = stats.getStatsForLevel(item.levelname);
+			html += '<img src="/images/' + (s.gotAllCogs ? 'checkplus' : s.complete ? 'check' : 'empty') + '.png">';
 			html += item.title + '</a>';
 		}
 		html += '</div>';
@@ -326,6 +327,7 @@ Hash.getLevelHash = function(username, levelname) { return '#/' + username + '/'
 // module Main
 ////////////////////////////////////////////////////////////////////////////////
 
+var stats = null;
 var hash = null;
 var menu = null;
 var level = null;
@@ -348,6 +350,12 @@ $(document).ready(function() {
 	hash = new Hash();
 	menu = new Menu();
 	level = new Level();
+	stats = new PlayerStats(username, function() {
+		// if we're in the menu, reload the menu so the icons show up
+		if (hash.levelname == null) {
+			menu.show();
+		}
+	});
 
 	tick();
 	setInterval(tick, 1000 / 60);
