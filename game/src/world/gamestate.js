@@ -118,51 +118,66 @@ GameState.prototype.clearDoors = function() {
 }
 
 GameState.prototype.addDoor = function(start, end, type, color, startsOpen) {
-	var firstCell = new Vector();
-	var secondCell = new Vector();
+    var cell1;
+    var cell2;
+    var valid = true;
 	// left wall
 	if (start.y + 1 == end.y && start.x == end.x) {
-		firstCell.x = start.x;
-		firstCell.y = start.y;
-		secondCell.x = start.x - 1;
-		secondCell.y = start.y;
+        cell1 = this.world.getCell(start.x, start.y);
+        cell2 = this.world.getCell(start.x - 1, start.y);
+        if (!cell1 || !cell2 || cell1.leftWallOccupied() || cell2.rightWallOccupied()) {
+            valid = false;
+        }
 	}
 	// right wall
 	else if (start.y - 1 == end.y && start.x == end.x) {
-		firstCell.x = start.x - 1;
-		firstCell.y = end.y;
-		secondCell.x = start.x;
-		secondCell.y = end.y;
+        cell1 = this.world.getCell(start.x - 1, end.y);
+        cell2 = this.world.getCell(start.x, end.y);
+        if (!cell1 || !cell2 || cell1.rightWallOccupied() || cell2.leftWallOccupied()) {
+            valid = false;
+        }
 	}
 	// ceiling
 	else if (start.x + 1 == end.x && start.y == end.y) {
-		firstCell.x = start.x;
-		firstCell.y = start.y - 1;
-		secondCell.x = start.x;
-		secondCell.y = start.y;
+        cell1 = this.world.getCell(start.x, start.y - 1);
+        cell2 = this.world.getCell(start.x, start.y);
+        if (!cell1 || !cell2 || cell1.ceilingOccupied() || cell2.floorOccupied()) {
+            valid = false;
+        }
 	}
 	// floor
 	else if (start.x - 1 == end.x && start.y == end.y) {
-		firstCell.x = end.x;
-		firstCell.y = start.y;
-		secondCell.x = end.x;
-		secondCell.y = start.y - 1;
+        cell1 = this.world.getCell(end.x, start.y);
+        cell2 = this.world.getCell(end.x, start.y - 1);
+        if (!cell1 || !cell2 || cell1.floorOccupied() || cell2.ceilingOccupied()) {
+            valid = false;
+        }
 	}
 	//diagonal
 	else {
-		firstCell.x = secondCell.x = (start.x < end.x ? start.x : end.x);
-		firstCell.y = secondCell.y = (start.y < end.y ? start.y : end.y);
+        var x = start.x < end.x ? start.x : end.x;
+        var y = start.y < end.y ? start.y : end.y;
+        cell1 = this.world.getCell(x, y);
+        cell2 = this.world.getCell(x, y);
+        if ((start.x < end.x) === (start.y < end.y)) {
+            if (!cell1 || cell1.posDiagOccupied()) {
+                valid = false;
+            }
+        } else if (!cell1 || cell1.negDiagOccupied()) {
+            valid = false;
+        }
 	}
 
 	var door;
-	if (type === ONE_WAY) {
-		door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y, null, 0, 0);
-		this.doors.push(door);
+    if (!valid) {
+        // Make a dummy door that doesn't do anything
+        door = new Door(null, null, null, null);
+    } else if (type === ONE_WAY) {
+		door = new Door(new Edge(start, end, color), null, cell1, null);
 	} else {
-		door = new Door(new Edge(start, end, color), firstCell.x, firstCell.y,
-				   new Edge(end, start, color), secondCell.x, secondCell.y);
-		this.doors.push(door);
+		door = new Door(new Edge(start, end, color), new Edge(end, start, color), cell1, cell2);
 	}
+    this.doors.push(door);
 	if (!startsOpen) {
 		door.act(DOORBELL_CLOSE, true, false);
 	}
