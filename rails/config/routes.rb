@@ -1,5 +1,5 @@
 Rapt::Application.routes.draw do
-  devise_for :users
+  devise_for :users, :controllers => { :registrations => 'registrations' }
 
   # these have to be edit, not users, because the users namespace is taken up by devise (/users/sign_in, /users/sign_out, /users/sign_up, etc...)
   match 'edit' => 'users#show'
@@ -9,8 +9,8 @@ Rapt::Application.routes.draw do
   match 'data/:username' => 'users#menu_data'
   match 'data/:username/:levelname' => 'users#level_data', :via => :get
 
-  match 'stats/:username' => 'users#get_stats', :via => :get
-  match 'stats/:username/:levelname' => 'users#set_stats', :via => :put
+  match 'stats' => 'users#get_stats', :via => :get
+  match 'stats' => 'users#set_stats', :via => :put
 
   # resources :users do
   #   resources :levels

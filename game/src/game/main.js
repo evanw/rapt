@@ -118,8 +118,8 @@ Menu.prototype.show = function() {
 				html += '<div class="difficulty">' + difficulty + '</div>';
 			}
 			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">';
-			var s = stats.getStatsForLevel(item.levelname);
-			html += '<img src="/images/' + (s.gotAllCogs ? 'checkplus' : s.complete ? 'check' : 'empty') + '.png">';
+			var s = stats.getStatsForLevel(this.username, item.levelname);
+			html += '<img src="/images/' + (s['gotAllCogs'] ? 'checkplus' : s['complete'] ? 'check' : 'empty') + '.png">';
 			html += item.title + '</a>';
 		}
 		html += '</div>';
@@ -214,8 +214,8 @@ Level.prototype.restart = function() {
 	var this_ = this;
 	this.game.onWin = function() {
 		var gotAllCogs = gameState.stats[STAT_COGS_COLLECTED] == gameState.stats[STAT_NUM_COGS];
-		var s = stats.getStatsForLevel(this_.levelname);
-		stats.setStatsForLevel(this_.levelname, true, s.gotAllCogs || gotAllCogs);
+		var s = stats.getStatsForLevel(this_.username, this_.levelname);
+		stats.setStatsForLevel(this_.username, this_.levelname, true, s['gotAllCogs'] || gotAllCogs);
 	};
 };
 
@@ -358,7 +358,7 @@ $(document).ready(function() {
 	hash = new Hash();
 	menu = new Menu();
 	level = new Level();
-	stats = new PlayerStats(username, function() {
+	stats = new PlayerStats(function() {
 		// if we're in the menu, reload the menu so the icons show up
 		if (hash.levelname == null) {
 			menu.show();

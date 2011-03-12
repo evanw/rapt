@@ -1,70 +1,74 @@
-function loadStats(username, callback) {
-	$.ajax({
-		'url': '/stats/' + username,
-		'type': 'GET',
-		'cache': false,
-		'dataType': 'json',
-		'success': callback
-	});
-}
+function PlayerStats(callback) {
+	this.current_username = username;
+	this.stats = [];
 
-function saveStats(username, levelname, stats) {
-	$.ajax({
-		'url': '/stats/' + username + '/' + levelname,
-		'type': 'PUT',
-		'dataType': 'json',
-		'data': JSON.stringify({
-			'statistic': {
-				'complete': stats.complete,
-				'got_all_cogs': stats.gotAllCogs
-			}
-		}),
-		'contentType': 'application/json; charset=utf-8'
-	});
-}
-
-function PlayerStats(username, callback) {
-	this.username = username;
-	this.stats = {};
-
-	if (this.username != null) {
+	if (this.current_username !== null) {
+		// load from server if user is logged in
 		var this_ = this;
-		loadStats(username, function(stats) {
-			for (var i = 0; i < stats.length; i++) {
-				var s = stats[i]['statistic'];
-				this_.stats[s.levelname] = {
-					complete: s['complete'],
-					gotAllCogs: s['got_all_cogs']
-				};
+		$.ajax({
+			'url': '/stats/',
+			'type': 'GET',
+			'cache': false,
+			'dataType': 'json',
+			'success': function(stats) {
+				this_.stats = stats;
+				callback();
 			}
-			callback();
 		});
+	} else {
+		// load from cookie if user isn't logged in
+		this.stats = JSON.parse(getCookie('rapt') || '[]');
+		callback();
 	}
 }
 
-PlayerStats.prototype.getStatsForLevel = function(levelname) {
-	if (this.username != null) {
-		if (levelname in this.stats) {
-			return this.stats[levelname];
+PlayerStats.prototype.getStatsForLevel = function(username, levelname) {
+	// try looking up stat by username and levelname
+	for (var i = 0; i < this.stats.length; i++) {
+		var stat = this.stats[i];
+		if (stat['username'] == username && stat['levelname'] == levelname) {
+			return stat;
 		}
-	} else {
-		// TODO: cookies
 	}
+	
+	// return default if not found
 	return {
-		complete: false,
-		gotAllCogs: false
+		'username': username,
+		'levelname': levelname,
+		'complete': false,
+		'gotAllCogs': false
 	};
 };
 
-PlayerStats.prototype.setStatsForLevel = function(levelname, complete, gotAllCogs) {
-	if (this.username != null) {
-		var stats = {
-			complete: complete,
-			gotAllCogs: gotAllCogs
-		};
-		this.stats[levelname] = stats;
-		saveStats(this.username, levelname, stats);
+PlayerStats.prototype.setStatsForLevel = function(username, levelname, complete, gotAllCogs) {
+	// remove all existing stats for this level
+	for (var i = 0; i < this.stats.length; i++) {
+		var stat = this.stats[i];
+		if (stat['username'] == username && stat['levelname'] == levelname) {
+			this.stats.splice(i--, 1);
+		}
+	}
+
+	// insert new stat
+	var stat = {
+		'username': username,
+		'levelname': levelname,
+		'complete': complete,
+		'gotAllCogs': gotAllCogs
+	};
+	this.stats.push(stat);
+	
+	if (this.current_username !== null) {
+		// save stat to server if user is logged in
+		$.ajax({
+			'url': '/stats/',
+			'type': 'PUT',
+			'dataType': 'json',
+			'data': JSON.stringify(stat),
+			'contentType': 'application/json; charset=utf-8'
+		});
 	} else {
-		// TODO: cookies
+		// save stat to cookie if user isn't logged in
+		setCookie('rapt', JSON.stringify(this.stats), 365 * 5);
 	}
 };
