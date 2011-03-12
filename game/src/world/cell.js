@@ -18,6 +18,32 @@ Cell.prototype.bottomRight = function() { return new Vector(this.x + 1, this.y);
 Cell.prototype.topLeft = function() { return new Vector(this.x, this.y + 1); }
 Cell.prototype.topRight = function() { return new Vector(this.x + 1, this.y + 1); }
 
+Cell.prototype.ceilingOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_CEIL_DIAG_LEFT || this.type === CELL_CEIL_DIAG_RIGHT;
+}
+
+Cell.prototype.floorOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_FLOOR_DIAG_LEFT || this.type === CELL_FLOOR_DIAG_RIGHT;
+}
+
+Cell.prototype.leftWallOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_FLOOR_DIAG_LEFT || this.type === CELL_CEIL_DIAG_LEFT;
+}
+
+Cell.prototype.rightWallOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_FLOOR_DIAG_RIGHT || this.type === CELL_CEIL_DIAG_RIGHT;
+}
+
+// This diagonal: /
+Cell.prototype.posDiagOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_FLOOR_DIAG_RIGHT || this.type === CELL_CEIL_DIAG_LEFT;
+}
+
+// This diagonal: \
+Cell.prototype.negDiagOccupied = function() {
+    return this.type === CELL_SOLID || this.type === CELL_FLOOR_DIAG_LEFT || this.type === CELL_CEIL_DIAG_RIGHT;
+}
+
 Cell.prototype.addEdge = function(newEdge) {
 	this.edges.push(newEdge);
 }
