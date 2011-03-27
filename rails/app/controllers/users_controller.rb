@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
   def level_data
     @user = User.find_by_username(params[:username])
-    @level = @user.levels.select { |l| l.html_title == params[:levelname]}.first
+    @level = @user.levels.detect { |l| l.html_title == params[:levelname]}
     render :json => @level, :methods => [:html_title]
   end
 
@@ -46,23 +46,22 @@ class UsersController < ApplicationController
 
   def set_stats
     user = User.find_by_username(params[:username])
-    level = user.levels.select { |l| l.html_title == params[:levelname] }.first
-    stat = current_user.statistics.select { |s| s.level == level }.first
+    level = user.levels.detect { |l| l.html_title == params[:levelname] }
+    stat = current_user.statistics.detect { |s| s.level == level }
     if stat.nil?
-      stat = Statistic.new
-      stat.user = current_user
+      stat = current_user.statistics.create
       stat.level = level
     end
     stat.update_attributes({
       :complete => params[:complete],
       :got_all_cogs => params[:gotAllCogs]
     })
-    render :text => ''
+    render :nothing => true
   end
 
   # update the level
   def update_level
-    @level = current_user.levels.select { |l| l.html_title == params[:levelname]}.first
+    @level = current_user.levels.detect { |l| l.html_title == params[:levelname]}
     respond_with @level do |format|
       format.json do
         if @level.update_attributes(params[:level])
