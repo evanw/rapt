@@ -8,8 +8,8 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :login
   
-  has_many :levels
-  has_many :statistics
+  has_many :levels, :dependent => :destroy
+  has_many :statistics, :dependent => :destroy
   
   validates_uniqueness_of :username, :on => :create, :message => "must be unique"
   

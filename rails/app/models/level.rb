@@ -2,6 +2,7 @@ class Level < ActiveRecord::Base
   default_scope :order => 'position ASC'
   
   belongs_to :user
+  has_many :statistics, :dependent => :destroy
   
   validate :title_content
   validates_presence_of :title, :on => :create, :message => "can't be blank"
