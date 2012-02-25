@@ -8,11 +8,14 @@ var DOWN_ARROW = 40;
 
 function getMenuUrl(username) { return 'http://' + location.host + '/data/' + username + '/'; }
 function getLevelUrl(username, levelname) { return 'http://' + location.host + '/data/' + username + '/' + levelname + '/'; }
+function text2html(text) {
+       return text ? text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;') : '';
+}
 
 // get json data via ajax
 function ajaxGet(what, url, onSuccess) {
 	function showError() {
-		$('#loadingScreen').html('Could not load ' + what + ' from<br><b>' + url + '</b>');
+		$('#loadingScreen').html('Could not load ' + what + ' from<br><b>' + text2html(url) + '</b>');
 	}
 
 	$.ajax({
@@ -107,7 +110,7 @@ Menu.prototype.show = function() {
 		$('#loadingScreen').hide();
 
 		var html = '<h2>';
-		html += (this.username == 'rapt') ? 'Official Levels' : 'Levels made by ' + this.username;
+		html += (this.username == 'rapt') ? 'Official Levels' : 'Levels made by ' + text2html(this.username);
 		html += '</h2><div id="levels">';
 		var prevDifficulty = null;
 		for (var i = 0; i < this.items.length; i++) {
@@ -117,10 +120,10 @@ Menu.prototype.show = function() {
 				prevDifficulty = difficulty;
 				html += '<div class="difficulty">' + difficulty + '</div>';
 			}
-			html += '<a class="level" id="level' + i + '" href="' + Hash.getLevelHash(this.username, item.levelname) + '">';
+			html += '<a class="level" id="level' + i + '" href="' + text2html(Hash.getLevelHash(this.username, item.levelname)) + '">';
 			var s = stats.getStatsForLevel(this.username, item.levelname);
 			html += '<img src="/images/' + (s['gotAllCogs'] ? 'checkplus' : s['complete'] ? 'check' : 'empty') + '.png">';
-			html += item.title + '</a>';
+			html += text2html(item.title) + '</a>';
 		}
 		html += '</div>';
 		$('#levelScreen').html(html);
