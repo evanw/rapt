@@ -6,8 +6,8 @@ Rapt::Application.routes.draw do
   match 'edit/:levelname' => 'users#edit_level', :via => :get
   match 'edit/:levelname' => 'users#update_level', :via => :put
 
-  match 'data/:username' => 'users#menu_data'
-  match 'data/:username/:levelname' => 'users#level_data', :via => :get
+  match 'data/:username' => 'users#menu_data', :username => /[^\/]+/
+  match 'data/:username/:levelname' => 'users#level_data', :via => :get, :username => /[^\/]+/
 
   match 'stats' => 'users#get_stats', :via => :get
   match 'stats' => 'users#set_stats', :via => :put

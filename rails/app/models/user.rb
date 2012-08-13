@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :levels, :dependent => :destroy
   has_many :statistics, :dependent => :destroy
   
+  validate :username_content
   validates_uniqueness_of :username, :on => :create, :message => "must be unique"
   
   def normalize_level_positions
@@ -30,6 +31,12 @@ class User < ActiveRecord::Base
   
   def email=(str)
     write_attribute(:email, str.downcase)
+  end
+  
+  private
+  
+  def username_content
+    errors.add(:username, "can only contain letters, numbers, and spaces") if not self.username =~ /^[^\W_](([^\W_]| )*[^\W_])?$/
   end
   
 end

@@ -28,7 +28,7 @@ function drawBouncyRocket(c, isBlue) {
 BouncyRocket.subclasses(Rocket);
 
 function BouncyRocket(center, target, heading, launcher) {
-	Rocket.prototype.constructor.call(this, center, target, heading, BOUNCY_ROCKET_MAX_ROTATION, ENEMY_BOUNCY_ROCKET),
+	Rocket.prototype.constructor.call(this, center, target, heading, BOUNCY_ROCKET_MAX_ROTATION, ENEMY_BOUNCY_ROCKET);
 	this.velocity = new Vector(BOUNCY_ROCKET_SPEED * Math.cos(heading), BOUNCY_ROCKET_SPEED * Math.sin(heading));
 	this.launcher = launcher;
 	this.hitsUntilExplodes = BOUNCY_ROCKET_HEALTH;
