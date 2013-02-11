@@ -172,20 +172,26 @@ Game.prototype.draw = function(c) {
 	c.fillText(text, this.width - 5 - c.measureText(text).width, this.height - 5);
 };
 
-Game.prototype.keyDown = function(keyCode) {
+Game.prototype.keyDown = function(e) {
+	var keyCode = e.which;
 	var action = Keys.fromKeyCode(keyCode);
 	if (action != null) {
 		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = true;
 		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = true;
 		else gameState[action] = true;
+		e.preventDefault();
+		e.stopPropagation();
 	}
 };
 
-Game.prototype.keyUp = function(keyCode) {
+Game.prototype.keyUp = function(e) {
+	var keyCode = e.which;
 	var action = Keys.fromKeyCode(keyCode);
 	if (action != null) {
 		if (action.indexOf('a-') == 0) gameState.playerA[action.substr(2)] = false;
 		else if (action.indexOf('b-') == 0) gameState.playerB[action.substr(2)] = false;
 		else gameState[action] = false;
+		e.preventDefault();
+		e.stopPropagation();
 	}
 };

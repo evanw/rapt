@@ -257,7 +257,7 @@ Level.prototype.show = function() {
 
 Level.prototype.keyDown = function(e) {
 	if (this.game != null) {
-		this.game.keyDown(e.which);
+		this.game.keyDown(e);
 
 		if (e.which == SPACEBAR) {
 			if (gameState.gameStatus === GAME_LOST) {
@@ -279,7 +279,7 @@ Level.prototype.keyDown = function(e) {
 
 Level.prototype.keyUp = function(e) {
 	if (this.game != null) {
-		this.game.keyUp(e.which);
+		this.game.keyUp(e);
 	}
 };
 
@@ -377,6 +377,7 @@ $('.key.changeable').live('mousedown', function(e) {
 	$('.key.changing').removeClass('changing');
 	$('#' + keyToChange).addClass('changing');
 	e.preventDefault();
+	e.stopPropagation();
 });
 
 $(document).keydown(function(e) {
@@ -386,6 +387,7 @@ $(document).keydown(function(e) {
 		Keys.save();
 		$('#' + keyToChange).removeClass('changing');
 		e.preventDefault();
+		e.stopPropagation();
 		keyToChange = null;
 		return;
 	}
@@ -403,6 +405,7 @@ $(document).keydown(function(e) {
 		// Prevents default behaviors like scrolling up/down
 		if (e.which == UP_ARROW || e.which == DOWN_ARROW || e.which == SPACEBAR) {
 			e.preventDefault();
+			e.stopPropagation();
 		}
 	}
 });
@@ -416,6 +419,7 @@ $(document).keyup(function(e) {
 		// Prevents default behaviors like scrolling up/down
 		if (e.which == UP_ARROW || e.which == DOWN_ARROW || e.which == SPACEBAR) {
 			e.preventDefault();
+			e.stopPropagation();
 		}
 	}
 });
