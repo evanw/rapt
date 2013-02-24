@@ -14,8 +14,9 @@ After cloning this repository, run this in the root directory:
 
 This will combine all separate *.js files into two large files, run them through Google Closure Compiler, and place the result in the `rails` subfolder.  Next, from the `rails` subfolder, run the server:
 
+    bundle install
     rake db:setup
-    rails s
+    ruby script/rails server
 
 This will create a server at http://localhost:3000/.
 
