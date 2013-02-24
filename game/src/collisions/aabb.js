@@ -28,7 +28,16 @@ AABB.prototype.copy = function() {
 AABB.prototype.getPolygon = function() {
 	var center = this.getCenter();
 	var halfSize = this.size.div(2);
-	return new Polygon(center,
+	return new Polygon({
+			polygonHelpingBoundingBox: this,
+			polygonHelpingNormals: [
+				new Vector(0, 1),
+				new Vector(-1, 0),
+				new Vector(0, -1),
+				new Vector(1, 0)
+			]
+		},
+		center,
 		new Vector(+halfSize.x, +halfSize.y),
 		new Vector(-halfSize.x, +halfSize.y),
 		new Vector(-halfSize.x, -halfSize.y),

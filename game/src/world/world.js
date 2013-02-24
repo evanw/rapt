@@ -149,7 +149,7 @@ World.prototype.getCellsInAabb = function(aabb) {
 
 	for(var x = xmin; x < xmax; x++)
 		for(var y = ymin; y < ymax; y++)
-			cells = cells.concat(this.cells[x][y]);
+			cells.push(this.cells[x][y]);
 
 	return cells;
 };

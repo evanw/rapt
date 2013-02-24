@@ -4,18 +4,23 @@
 var SPIKE_BALL_RADIUS = 0.2;
 
 function makeDrawSpikes(count) {
-	var radii = [];
+	//var radii = [], angles = [];
+	var values = [];
 	for(var i = 0; i < count; i++) {
-		radii.push(randInRange(0.5, 1.5));
+		var radius = SPIKE_BALL_RADIUS * randInRange(0.5, 1.5);
+		var angle = i * 2 * Math.PI / count;
+		values.push({
+			x: Math.cos(angle) * radius,
+			y: Math.sin(angle) * radius
+		});
 	}
 	return function(c) {
 		c.strokeStyle = 'black';
 		c.beginPath();
 		for(var i = 0; i < count; i++) {
-			var angle = i * (2 * Math.PI / count);
-			var radius = SPIKE_BALL_RADIUS * radii[i];
 			c.moveTo(0, 0);
-			c.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+			var xy = values[i];
+			c.lineTo(xy.x, xy.y);
 		}
 		c.stroke();
 	};

@@ -10,26 +10,39 @@
   */
 
 // class Polygon extends Shape
-function Polygon() {
+function Polygon(data) {
 	// center is the first argument, the next arguments are the vertices relative to the center
 	arguments = Array.prototype.slice.call(arguments);
+	if (data.polygonHelpingBoundingBox) {
+		arguments.shift();
+	}
 	this.center = arguments.shift();
 	this.vertices = arguments;
 
-	this.segments = [];
-	for(var i = 0; i < this.vertices.length; i++) {
-		this.segments.push(new Segment(this.vertices[i], this.vertices[(i + 1) % this.vertices.length]));
+	var normals = [];
+	if (data.polygonHelpingNormals) {
+		normals = data.polygonHelpingNormals;
 	}
 
-	this.boundingBox = new AABB(this.vertices[0], this.vertices[0]);
-	this.initializeBounds();
+	this.segments = [];
+	for(var i = 0; i < this.vertices.length-1; i++) {
+		this.segments.push(new Segment(this.vertices[i], this.vertices[i + 1], normals[i]));
+	}
+	this.segments.push(new Segment(this.vertices[this.vertices.length-1], this.vertices[0], normals[this.vertices.length-1]));
+
+	if (data.polygonHelpingBoundingBox) {
+		this.boundingBox = data.polygonHelpingBoundingBox;
+	} else {
+		this.boundingBox = new AABB(this.vertices[0], this.vertices[0]);
+		this.initializeBounds();
+	}
 }
 
 Polygon.prototype.copy = function() {
 	var polygon = new Polygon(this.center, this.vertices[0]);
 	polygon.vertices = this.vertices;
 	polygon.segments = this.segments;
-	polygon.initializeBounds();
+	polygon.boundingBox = this.boundingBox.copy();
 	return polygon;
 };
 

@@ -139,10 +139,10 @@ CollisionDetector.collideShapeWorld = function(shape, ref_deltaPosition, ref_vel
 // overlaps
 CollisionDetector.overlapShapePlayers = function(shape) {
 	var players = [];
-	if(this.overlapShapes(gameState.playerA.getShape(), shape)) {
+	if(this.overlapShapes(shape, gameState.playerA.getShape())) {
 		players.push(gameState.playerA);
 	}
-	if(this.overlapShapes(gameState.playerB.getShape(), shape)) {
+	if(this.overlapShapes(shape, gameState.playerB.getShape())) {
 		players.push(gameState.playerB);
 	}
 	return players;
@@ -207,9 +207,9 @@ CollisionDetector.closestToEntityWorld = function(entity, radius, ref_shapePoint
 	var edges = world.getEdgesInAabb(boundingBox, entity.getColor());
 
 	var distance = Number.POSITIVE_INFINITY;
+	var ref_thisShapePoint = {}, ref_thisWorldPoint = {};
 	for (var it = 0; it < edges.length; it++)
 	{
-		var ref_thisShapePoint = {}, ref_thisWorldPoint = {};
 		var thisDistance = this.closestToShapeSegment(shape, ref_thisShapePoint, ref_thisWorldPoint, edges[it].segment);
 		if(thisDistance < distance)
 		{
@@ -271,29 +271,36 @@ CollisionDetector.intersectSegments = function(segment0, segment1, ref_segmentPr
 		return false;
 	}
 
+	var divisor = segSize0.y  * segSize1.x - segSize1.y * segSize0.x,
+	    segStartXDiff = segStart0.x - segStart1.x,
+	    segStartYDiff = segStart1.y - segStart0.y;
+
 	// calculate the point of intersection...
-	ref_segmentProportion0.ref = ((segStart1.y - segStart0.y) * segSize1.x + (segStart0.x - segStart1.x) * segSize1.y) /
-		(segSize0.y  * segSize1.x - segSize1.y * segSize0.x);
-	ref_segmentProportion1.ref = ((segStart0.y - segStart1.y) * segSize0.x + (segStart1.x - segStart0.x) * segSize0.y) /
-		(segSize1.y * segSize0.x - segSize0.y  * segSize1.x);
+	var segmentProportion0, segmentProportion1;
 
 	// where do these actually meet?
-	ref_contactPoint.ref = segStart0.add(segSize0.mul(ref_segmentProportion0.ref));
+	segmentProportion0 = (segStartYDiff * segSize1.x + segStartXDiff * segSize1.y) / divisor;
 
 	// make sure the point of intersection is inside segment0
-	if(ref_segmentProportion0.ref < 0 || ref_segmentProportion0.ref > 1) {
+	if (segmentProportion0 < 0 || segmentProportion0 > 1) {
 		return false;
 	}
 
+	ref_segmentProportion1.ref = segmentProportion1 = (segStartYDiff * segSize0.x + segStartXDiff * segSize0.y) / divisor;
+	ref_contactPoint.ref = segSize0;
+	segSize0.inplaceMul(ref_segmentProportion0.ref = segmentProportion0);
+	segSize0.inplaceAdd(segStart0);
+
 	// make sure the point of intersection is inside segment1
-	if(ref_segmentProportion1.ref < 0 || ref_segmentProportion1.ref > 1) {
+	if (segmentProportion1 < 0 || segmentProportion1 > 1) {
 		return false;
 	}
 
 	// now that we've checked all this, the segments do intersect.
 	return true;
 };
-CollisionDetector.intersectCircleLine = function(circle, line, ref_lineProportion0, ref_lineProportion1) {
+
+CollisionDetector.intersectCircleLine = function(circle, line) {
 	// variables taken from http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
 	// thanks, internet!
 
@@ -303,19 +310,21 @@ CollisionDetector.intersectCircleLine = function(circle, line, ref_lineProportio
 
 	// find quadratic equation variables
 	var a = lineSize.lengthSquared();
-	var b = 2 * lineSize.dot(lineStart.sub(circle.center));
+	var b = lineStart.sub(circle.center).dot(lineSize);
 	var c = lineStart.sub(circle.center).lengthSquared() - circle.radius * circle.radius;
 
-	var insideSqrt = b * b - 4 * a * c;
+	var insideSqrt = b * b - a * c;
 	if(insideSqrt < 0) {
 		return false;
 	}
 
-	// calculate the point of intersection...
-	ref_lineProportion0.ref = (-b - Math.sqrt(insideSqrt)) * 0.5 / a;
-	ref_lineProportion1.ref = (-b + Math.sqrt(insideSqrt)) * 0.5 / a;
+	insideSqrt = Math.sqrt(insideSqrt);
 
-	return true;
+	// calculate the point of intersection...
+	return [
+		(-b - insideSqrt) / a,
+		(-b + insideSqrt) / a
+	];
 };
 CollisionDetector.intersectShapeSegment = function(shape, segment) {
 	switch(shape.getType())
@@ -333,16 +342,12 @@ CollisionDetector.intersectShapeSegment = function(shape, segment) {
 	alert('assertion failed in CollisionDetector.intersectShapeSegment');
 };
 CollisionDetector.intersectCircleSegment = function(circle, segment) {
-	var ref_lineProportion0 = {}, ref_lineProportion1 = {};
-	if(!this.intersectCircleLine(circle, segment, ref_lineProportion0, ref_lineProportion1)) {
+	var lineProportions;
+	if(!(lineProportions = this.intersectCircleLine(circle, segment))) {
 		return false;
 	}
 
-	if(ref_lineProportion0.ref >= 0 && ref_lineProportion0.ref <= 1) {
-		return true;
-	}
-
-	return (ref_lineProportion1.ref >= 0 && ref_lineProportion1.ref <= 1);
+	return (lineProportions[0] >= 0 && lineProportions[0] <= 1) || (lineProportions[1] >= 0 && lineProportions[1] <= 1);
 };
 CollisionDetector.intersectPolygonSegment = function(polygon, segment) {
 	// may fail on large enemies (if the segment is inside)
@@ -429,29 +434,29 @@ CollisionDetector.collideCirclePoint = function(circle, deltaPosition, point) {
 	// deltaProportion1 is a throwaway
 	// we can only use segmentProportion0 because segmentProportion1 represents the intersection
 	// when the circle travels so that the point moves OUT of it, so we don't want to stop it from doing that.
-	var ref_deltaProportion0 = {}, ref_deltaProportion1 = {};
+	var deltaProportions;
 
 	// BUGFIX: shock hawks were disappearing on Traps when deltaPosition was very small, which caused
 	// us to try to solve a quadratic with a second order coefficient of zero and put NaNs everywhere
-	var delta = deltaPosition.length();
+	var delta = deltaPosition.lengthSquared();
 	if (delta < 0.0000001) {
 		return false;
 	}
 
 	// if these don't intersect at all, then forget about it.
-	if(!this.intersectCircleLine(circle, new Segment(point, point.sub(deltaPosition)), ref_deltaProportion0, ref_deltaProportion1)) {
+	if(!(deltaProportions = this.intersectCircleLine(circle, new Segment(point, point.sub(deltaPosition))))) {
 		return null;
 	}
 
 	// check that this actually happens inside of the segment.
-	if(ref_deltaProportion0.ref < 0 || ref_deltaProportion0.ref > 1) {
+	if(deltaProportions[0] < 0 || deltaProportions[0] > 1) {
 		return null;
 	}
 
 	// find where the circle will be at the time of the collision
-	var circleCenterWhenCollides = circle.center.add(deltaPosition.mul(ref_deltaProportion0.ref));
+	var circleCenterWhenCollides = deltaPosition.mul(deltaProportions[0]).add(circle.center);
 
-	return new Contact(point, circleCenterWhenCollides.sub(point).unit(), ref_deltaProportion0.ref);
+	return new Contact(point, circleCenterWhenCollides.sub(point).unit(), deltaProportions[0]);
 };
 CollisionDetector.collidePolygonSegment = function(polygon, deltaPosition, segment) {
 	// use these for storing parameters about the collision.
@@ -523,15 +528,13 @@ CollisionDetector.emergencyCollideShapeWorld = function(shape, ref_deltaPosition
 
 	var newShape = shape.copy();
 	newShape.moveBy(ref_deltaPosition.ref);
+	var shapeAabb = newShape.getAabb();
 
-	if(newShape.getAabb().getBottom() < 0) { push = true; }
-	if(newShape.getAabb().getTop() > world.height) { push = true; }
-	if(newShape.getAabb().getLeft() < 0) { push = true; }
-	if(newShape.getAabb().getRight() > world.width) { push = true; }
-
-	if(!push)
-	{
-		var cells = world.getCellsInAabb(newShape.getAabb());
+	if (shapeAabb.getBottom() < 0 || shapeAabb.getTop() > world.height
+	  || shapeAabb.getLeft() < 0 || shapeAabb.getRight() > world.width) {
+		push = true;
+	} else {
+		var cells = world.getCellsInAabb(shapeAabb);
 		for (var it = 0; it < cells.length; it++)
 		{
 			var cellShape = cells[it].getShape();
@@ -556,19 +559,22 @@ CollisionDetector.emergencyCollideShapeWorld = function(shape, ref_deltaPosition
 
 		// find the closest open square, push toward that
 		var bestSafety = world.safety;
+		var bestSafetyQuality = bestSafety.sub(newShape.getCenter()).lengthSquared();
+		var cell;
 		for(var x = minX; x <= maxX; x++)
 		{
 			for(var y = minY; y <= maxY; y++)
 			{
 				// if this cell doesn't exist or has a shape in it, not good to push towards.
-				if(!world.getCell(x, y) || world.getCell(x, y).type != CELL_EMPTY) {
+				if(!(cell=world.getCell(x, y)) || cell.type != CELL_EMPTY) {
 					continue;
 				}
 
 				// loop through centers of squares and replace if closer
 				var candidateSafety = new Vector(x + 0.5, y + 0.5);
-				if(candidateSafety.sub(newShape.getCenter()).lengthSquared() < bestSafety.sub(newShape.getCenter()).lengthSquared()) {
+				if(candidateSafety.sub(newShape.getCenter()).lengthSquared() < bestSafetyQuality) {
 					bestSafety = candidateSafety;
+					bestSafetyQuality = bestSafety.sub(newShape.getCenter()).lengthSquared();
 				}
 			}
 		}
@@ -583,47 +589,43 @@ CollisionDetector.emergencyCollideShapeWorld = function(shape, ref_deltaPosition
 
 // OVERLAPS
 CollisionDetector.overlapShapes = function(shape0, shape1) {
-	var shapeTempPointer = null;
-	var shape0Pointer = shape0.copy();
-	var shape1Pointer = shape1.copy();
+	var shapeTempPointer;
 
 	// convert aabb's to polygons
-	if(shape0Pointer.getType() == SHAPE_AABB)
+	if(shape0.getType() == SHAPE_AABB)
 	{
-		shapeTempPointer = shape0Pointer;
-		shape0Pointer = shape0Pointer.getPolygon();
+		shape0 = shape0.getPolygon(shape1.getType() != SHAPE_CIRCLE);
 	}
-	if(shape1Pointer.getType() == SHAPE_AABB)
+	if(shape1.getType() == SHAPE_AABB)
 	{
-		shapeTempPointer = shape1Pointer;
-		shape1Pointer = shape1Pointer.getPolygon();
+		shape1 = shape1.getPolygon(shape0.getType() != SHAPE_CIRCLE);
 	}
 
 	// swap the shapes so that they're in order
-	if(shape0Pointer.getType() > shape1Pointer.getType())
+	if(shape0.getType() > shape1.getType())
 	{
-		shapeTempPointer = shape1Pointer;
-		shape1Pointer = shape0Pointer;
-		shape0Pointer = shapeTempPointer;
+		shapeTempPointer = shape1;
+		shape1 = shape0;
+		shape0 = shapeTempPointer;
 	}
 
 	var result;
-	var shape0Type = shape0Pointer.getType();
-	var shape1Type = shape1Pointer.getType();
-
-	// if they're both circles
-	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
-		result = this.overlapCircles(shape0Pointer, shape1Pointer);
-	}
+	var shape0Type = shape0.getType();
+	var shape1Type = shape1.getType();
 
 	// if one is a circle and one is a polygon
-	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
-		result = this.overlapCirclePolygon(shape0Pointer, shape1Pointer);
+	if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_POLYGON) {
+		result = this.overlapCirclePolygon(shape0, shape1);
 	}
 
 	// if both are polygons
 	else if(shape0Type == SHAPE_POLYGON && shape1Type == SHAPE_POLYGON) {
-		result = this.overlapPolygons(shape0Pointer, shape1Pointer);
+		result = this.overlapPolygons(shape0, shape1);
+	}
+
+	// if they're both circles
+	else if(shape0Type == SHAPE_CIRCLE && shape1Type == SHAPE_CIRCLE) {
+		result = this.overlapCircles(shape0, shape1);
 	}
 
 	// we would only get here if we received an impossible pair of shapes.
@@ -639,6 +641,8 @@ CollisionDetector.overlapCircles = function(circle0, circle1) {
 CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 	// see if any point on the border of the the polygon is in the circle
 	var len = polygon.vertices.length;
+	var squaredCircleRadius = circle.radius * circle.radius;
+	var point = circle.center;
 	for(var i = 0; i < len; ++i)
 	{
 		// if a segment of the polygon crosses the edge of the circle
@@ -647,13 +651,12 @@ CollisionDetector.overlapCirclePolygon = function(circle, polygon) {
 		}
 
 		// if a vertex of the polygon is inside the circle
-		if(polygon.getVertex(i).sub(circle.center).lengthSquared() < circle.radius * circle.radius) {
+		if(polygon.getVertex(i).sub(point).lengthSquared() < squaredCircleRadius) {
 			return true;
 		}
 	}
 
 	// otherwise, the circle could be completely inside the polygon
-	var point = circle.center;
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
 		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
@@ -689,9 +692,10 @@ CollisionDetector.overlapPolygons = function(polygon0, polygon1) {
 // CONTAINS
 CollisionDetector.containsPointPolygon = function(point, polygon) {
 	var len = polygon.vertices.length;
+	point = point.add(polygon.center);
 	for (var i = 0; i < len; ++i) {
 		// Is this point outside this edge?  if so, it's not inside the polygon
-		if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
+		if (point.sub(polygon.vertices[i]).dot(polygon.segments[i].normal) > 0) {
 			return false;
 		}
 	}
