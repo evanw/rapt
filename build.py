@@ -44,11 +44,11 @@ def copy(a, b):
 
 js_op = compile if release else copy
 sources = {
-	'./editor/www/editor.js': [js_op, './rails/public/javascripts/editor.js'],
-	'./game/www/rapt.js': [js_op, './rails/public/javascripts/rapt.js'],
+	'./editor/www/editor.js': [js_op, './rails/app/assets/javascripts/editor.js'],
+	'./game/www/rapt.js': [js_op, './rails/app/assets/javascripts/rapt.js'],
 
-	'./editor/www/style.css': [copy, './rails/public/stylesheets/editor.css'],
-	'./game/www/style.css': [copy, './rails/public/stylesheets/game.css']
+	'./editor/www/style.css': [copy, './rails/app/assets/stylesheets/editor.css'],
+	'./game/www/style.css': [copy, './rails/app/assets/stylesheets/game.css']
 }
 
 oldStat = None

@@ -1,0 +1,142 @@
+/* inside game area */
+
+div#levelScreen {
+   width: 740px;
+   height: 540px;
+   overflow: auto;
+   padding: 30px;
+}
+
+#levelScreen h2 {
+   padding: 0 !important;
+   margin: 0 0 30px 0 !important;
+	color: black;
+}
+
+#levelScreen p {
+   text-align: center;
+   color: black;
+}
+
+#levels {
+   overflow: hidden;
+	width: 275px;
+	margin-left: auto;
+	margin-right: auto;
+	background: #C7C7C7 !important;
+	border: 1px solid black;
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.difficulty {
+	font: bold 14px/24px "Lucida Grande", Arial, sans-serif;
+	text-align: center;
+	color: black;
+	background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.level {
+	font: 14px/24px "Lucida Grande", Arial, sans-serif;
+	padding: 0 5px;
+	color: black;
+	display: block;
+	text-decoration: none;
+}
+
+.level:focus {
+	margin: -1px 0;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	background: white !important;
+	outline: none;
+}
+
+#loadingScreen {
+	width: 800px;
+	height: 300px;
+	padding-top: 300px;
+	color: black;
+	text-align: center;
+}
+
+/* keyboard info */
+
+#keys {
+	position: relative;
+	width: 600px;
+	height: 305px;
+	margin: 0 auto 40px auto;
+}
+
+#wasd, #arrows {
+	position: absolute;
+	top: 0;
+	width: 192px;
+	padding-top: 127px;
+	text-align: center;
+	line-height: 30px;
+}
+
+#wasd { left: 0; }
+#arrows { left: 408px; }
+
+#other {
+	position: absolute;
+	left: 175px;
+	top: 175px;
+	line-height: 65px;
+	padding-left: 75px;
+}
+
+.key {
+	cursor: default;
+	position: absolute;
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	font: bold 30px/50px Arial, sans-serif;
+	font-variant: small-caps;
+	color: black;
+	background: white;
+	border-top: 2px solid #CFCFCF;
+	border-left: 6px solid #CFCFCF;
+	border-right: 6px solid #CFCFCF;
+	border-bottom: 10px solid #CFCFCF;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	box-shadow: 0 0 5px black;
+	-moz-box-shadow: 0 0 5px black;
+	-webkit-box-shadow: 0 0 5px black;
+}
+
+.key.changeable {
+	cursor: pointer;
+}
+
+.key.changeable:hover {
+	box-shadow: 0 0 20px black, 0 0 15px black;
+	-moz-box-shadow: 0 0 20px black, 0 0 15px black;
+	-webkit-box-shadow: 0 0 20px black, 0 0 15px black;
+	z-index: 1;
+}
+
+.key.changing {
+	background: #BFBFBF;
+	border-color: #9F9F9F;
+}
+
+.key div {
+	background: none;
+}
+
+.level img {
+	float: left;
+	margin: 4px 9px 0 5px;
+}

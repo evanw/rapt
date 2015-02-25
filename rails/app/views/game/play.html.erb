@@ -10,9 +10,6 @@ var username = <%=raw current_user.nil? ? 'null' : '"' + current_user.username +
   <div id="loadingScreen"></div>
 </div>
 
-<%= include_stylesheets :game %>
-<%= include_javascripts :game %>
-
 <div id="keys">
   <div id="wasd">
     <div class="key changeable" style="left:65px;top:0;" id="b-jumpKey"></div>

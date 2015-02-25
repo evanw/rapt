@@ -75,7 +75,7 @@ Menu.prototype.load = function(username, onSuccess) {
 
 	var this_ = this;
 	ajaxGet('menu', getMenuUrl(username), function(json) {
-		var levels = json['user']['levels'];
+		var levels = json['levels'];
 		for (var i = 0; i < levels.length; i++) {
 			var level = levels[i];
 			this_.items.push(new MenuItem(level['html_title'], level['title'], level['difficulty']));
@@ -200,7 +200,7 @@ Level.prototype.tick = function() {
 
 	if (this.game != null) {
 		// if the computer goes to sleep, act like the game was paused
-		if (seconds > 0 && seconds < 1) this.game.tick(seconds); 
+		if (seconds > 0 && seconds < 1) this.game.tick(seconds);
 
 		this.game.lastLevel = menu.isLastLevel(this.username, this.levelname);
 		this.game.draw(this.context);
@@ -230,7 +230,7 @@ Level.prototype.load = function(username, levelname, onSuccess) {
 	var this_ = this;
 	ajaxGet('level', getLevelUrl(username, levelname), function(json) {
 		// reset the game
-		this_.json = JSON.parse(json['level']['data']);
+		this_.json = JSON.parse(json['data']);
 		this_.restart();
 
 		// reset the tick timer in case level loading took a while (we don't want the physics to
@@ -357,7 +357,7 @@ function scrollGameIntoWindow() {
 $(document).ready(function() {
 	scrollGameIntoWindow();
 	Keys.load();
-	
+
 	hash = new Hash();
 	menu = new Menu();
 	level = new Level();
@@ -440,10 +440,10 @@ function tick() {
 			menu.show();
 		} else {
 			scrollGameIntoWindow();
-			
+
 			// make sure the menu is loaded so we can go right to the menu when the user presses escape
 			menu.load(hash.username);
-			
+
 			level.load(hash.username, hash.levelname, function() {
 				level.show();
 			});

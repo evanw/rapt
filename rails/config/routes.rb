@@ -2,26 +2,26 @@ Rapt::Application.routes.draw do
   devise_for :users, :controllers => { :registrations => 'registrations' }
 
   # these have to be edit, not users, because the users namespace is taken up by devise (/users/sign_in, /users/sign_out, /users/sign_up, etc...)
-  match 'edit' => 'users#show'
-  match 'edit/:levelname' => 'users#edit_level', :via => :get
-  match 'edit/:levelname' => 'users#update_level', :via => :put
+  get 'edit' => 'users#show'
+  get 'edit/:levelname' => 'users#edit_level'
+  put 'edit/:levelname' => 'users#update_level'
 
-  match 'data/:username' => 'users#menu_data', :username => /[^\/]+/
-  match 'data/:username/:levelname' => 'users#level_data', :via => :get, :username => /[^\/]+/
+  get 'data/:username' => 'users#menu_data', :username => /[^\/]+/
+  get 'data/:username/:levelname' => 'users#level_data', :username => /[^\/]+/
 
-  match 'stats' => 'users#get_stats', :via => :get
-  match 'stats' => 'users#set_stats', :via => :put
+  get 'stats' => 'users#get_stats'
+  put 'stats' => 'users#set_stats'
 
   # resources :users do
   #   resources :levels
   # end
 
   resources :levels
-  
-  match 'play' => 'game#play'
-  
-  match '/manifest.:format' => "application#manifest"
-  
+
+  get 'play' => 'game#play'
+
+  get '/manifest.:format' => "application#manifest"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
