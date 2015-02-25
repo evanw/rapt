@@ -1,3 +1,7 @@
+/* ...
+*= require_self
+*= require_tree .
+*/
 body, span.left, span.right, span.center, div#footer div { background: #BFBFBF url(/images/gears.png) center top fixed no-repeat; }
 
 body { margin: 0; color: #DFDFDF; font: 13px/20px "Lucida Grande", Arial, sans-serif; }
