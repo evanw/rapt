@@ -1,4 +1,6 @@
 <%= content_for :title, "Play" %>
+<%= javascript_include_tag :rapt %>
+<%= stylesheet_link_tag :game %>
 
 <script type="text/javascript"><!--
 var username = <%=raw current_user.nil? ? 'null' : '"' + current_user.username + '"' %>;
