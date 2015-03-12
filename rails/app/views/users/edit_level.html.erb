@@ -53,8 +53,9 @@ var levelname = "<%= @level.html_title %>";
 	</div>
 	<div id="overlay"></div>
 
-	<%= include_stylesheets :editor %>
-	<%= include_javascripts :editor %>
+	<%= stylesheet_link_tag :editor %>
+	<%= javascript_include_tag :'jquery.mousewheel.min' %>
+	<%= javascript_include_tag :editor %>
 
 	<script type="text/javascript">
 	var _gaq = _gaq || [];

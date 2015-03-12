@@ -1,5 +1,5 @@
 <%= content_for :title, "Your levels" %>
-<%= include_javascripts :level_list %>
+<%= javascript_include_tag :level_list %>
 
 <p>RAPT is meant to be played with a friend!&nbsp; Share your levels with your friends by giving them this url: <a href="<%= play_url %>/#/<%= current_user.username %>/"><%= play_url %>/#/<%= current_user.username %>/</a></p>
 
