@@ -12,10 +12,10 @@ function Level(title, html_title, position, difficulty, id) {
 }
 
 Level.prototype.loadFromJSON = function(json) {
-	this.title = json.level.title;
-	this.position = json.level.position;
-	this.difficulty = json.level.difficulty;
-	this.html_title = json.level.html_title;
+	this.title = json.title;
+	this.position = json.position;
+	this.difficulty = json.difficulty;
+	this.html_title = json.html_title;
 };
 
 Level.prototype.saveToJSON = function() {
@@ -57,6 +57,9 @@ Level.prototype.trySavingToServer = function() {
 	$.ajax({
 		url: '/edit/' + this.html_title + '.json',
 		type: 'PUT',
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+    },
 		data: this.saveToJSON(),
 		success: function(json) {
 			this_.loadFromJSON(json);
