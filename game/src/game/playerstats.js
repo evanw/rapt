@@ -30,7 +30,7 @@ PlayerStats.prototype.getStatsForLevel = function(username, levelname) {
 			return stat;
 		}
 	}
-	
+
 	// return default if not found
 	return {
 		'username': username,
@@ -57,7 +57,7 @@ PlayerStats.prototype.setStatsForLevel = function(username, levelname, complete,
 		'gotAllCogs': gotAllCogs
 	};
 	this.stats.push(stat);
-	
+
 	if (this.current_username !== null) {
 		// save stat to server if user is logged in
 		$.ajax({
@@ -65,6 +65,9 @@ PlayerStats.prototype.setStatsForLevel = function(username, levelname, complete,
 			'type': 'PUT',
 			'dataType': 'json',
 			'data': JSON.stringify(stat),
+      'beforeSend': function(xhr) {
+        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+      },
 			'contentType': 'application/json; charset=utf-8'
 		});
 	} else {
