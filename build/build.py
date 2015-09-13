@@ -44,11 +44,11 @@ def copy(a, b):
 
 js_op = compile if release else copy
 sources = {
-	'./editor/www/editor.js': [js_op, './rails/app/assets/javascripts/editor.js'],
-	'./game/www/rapt.js': [js_op, './rails/app/assets/javascripts/rapt.js'],
+	'./editor/www/editor.js': [js_op, '../app/assets/javascripts/editor.js'],
+	'./game/www/rapt.js': [js_op, '../app/assets/javascripts/rapt.js'],
 
-	'./editor/www/style.css': [copy, './rails/app/assets/stylesheets/editor.css'],
-	'./game/www/style.css': [copy, './rails/app/assets/stylesheets/game.css']
+	'./editor/www/style.css': [copy, '../app/assets/stylesheets/editor.css'],
+	'./game/www/style.css': [copy, '../app/assets/stylesheets/game.css']
 }
 
 oldStat = None
@@ -64,7 +64,7 @@ def build():
 	oldStat = newStat
 
 def stat():
-	return dict((file, os.stat(file).st_mtime) for file in sources)
+	return dict((file, os.stat(os.path.abspath(file)).st_mtime) for file in sources)
 
 def monitor():
 	a = stat()

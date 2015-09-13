@@ -182,11 +182,12 @@ function Level() {
 	this.username = null;
 	this.levelname = null;
 	this.isLoading = false;
+	this.width = 800;
+	this.height = 600;
+	this.ratio = 0;
 
 	// set up the canvas
 	this.canvas = $('#canvas')[0];
-	this.canvas.width = 800;
-	this.canvas.height = 600;
 	this.context = this.canvas.getContext('2d');
 	this.lastTime = new Date();
 	this.game = null;
@@ -197,6 +198,16 @@ Level.prototype.tick = function() {
 	var currentTime = new Date();
 	var seconds = (currentTime - this.lastTime) / 1000;
 	this.lastTime = currentTime;
+
+	// Retina support
+	var ratio = window.devicePixelRatio;
+	if (ratio != this.ratio) {
+		this.canvas.width = Math.round(this.width * ratio);
+		this.canvas.height = Math.round(this.height * ratio);
+		this.canvas.style.width = this.width + 'px';
+		this.canvas.style.height = this.height + 'px';
+		this.context.scale(ratio, ratio);
+	}
 
 	if (this.game != null) {
 		// if the computer goes to sleep, act like the game was paused
@@ -210,7 +221,7 @@ Level.prototype.tick = function() {
 Level.prototype.restart = function() {
 	Particle.reset();
 	this.game = new Game();
-	this.game.resize(this.canvas.width, this.canvas.height);
+	this.game.resize(this.width, this.height);
 	gameState.loadLevelFromJSON(this.json);
 
 	// add the check mark on the level menu when this level is won

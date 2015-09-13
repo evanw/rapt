@@ -40,7 +40,9 @@ function Editor(canvas) {
 	this.selectedEnemy = 0;
 	this.selectedWall = 0;
 	this.isMouseOver = false;
-	
+	this.width = 0;
+	this.height = 0;
+
 	// simple default level
 	this.doc.world.playerStart = new Vector(-2, -1);
 	this.doc.world.playerGoal = new Vector(1, -1);
@@ -50,7 +52,7 @@ function Editor(canvas) {
 	this.doc.world.setCell(0, 0, CELL_EMPTY);
 	this.doc.world.setCell(1, 0, CELL_EMPTY);
 	this.doc.world.setCell(1, -1, CELL_EMPTY);
-	
+
 	this.enemies = [];
 	// add color-neutral enemies
 	for (var i = SPRITE_BOMBER; i <= SPRITE_WHEELIGATOR; i++) {
@@ -80,7 +82,7 @@ Editor.prototype.loadFromJSON = function(json) {
 
 Editor.prototype.setMode = function(mode) {
 	this.mode = mode;
-	
+
 	switch (mode) {
 	case MODE_EMPTY:
 		this.selectedTool = new SetCellTool(this.doc, SETCELL_EMPTY);
@@ -136,40 +138,47 @@ Editor.prototype.setSidePanelTool = function() {
 };
 
 Editor.prototype.resize = function(width, height) {
-	this.canvas.width = width;
-	this.canvas.height = height;
+	// Retina support
+	var ratio = window.devicePixelRatio;
+	this.width = width;
+	this.height = height;
+	this.canvas.width = Math.round(width * ratio);
+	this.canvas.height = Math.round(height * ratio);
+	this.canvas.style.width = width + 'px';
+	this.canvas.style.height = height + 'px';
+	this.c.scale(ratio, ratio);
 };
 
 Editor.prototype.draw = function() {
 	var c = this.c;
-	var w = this.canvas.width;
-	var h = this.canvas.height;
-	
+	var w = this.width;
+	var h = this.height;
+
 	// Fill the background in
 	c.fillStyle = '#7F7F7F';
 	c.fillRect(0, 0, w, h);
-	
+
 	c.save();
-	
+
 	// Set up camera transform (make sure the lines start off sharp by translating 0.5)
 	c.translate(Math.round(w / 2) + 0.5, Math.round(h / 2) + 0.5);
 	c.scale(this.worldScale, -this.worldScale);
 	c.translate(-this.worldCenter.x, -this.worldCenter.y);
 	c.lineWidth = 1 / this.worldScale;
-	
+
 	// Render the view
 	this.doc.world.draw(c);
 	this.drawGrid();
-	
+
 	// Let the tool draw overlays if needed
 	if (this.isMouseOver && this.selectedTool != null) this.selectedTool.draw(c);
-	
+
 	c.restore();
 };
 
 Editor.prototype.drawGrid = function() {
 	var c = this.c;
-	
+
 	// Blend away every other line as we zoom out
 	var logWorldScale = Math.log(50 / this.worldScale) / Math.log(2);
 	var currentResolution = (logWorldScale < 1) ? 1 : (1 << Math.floor(logWorldScale));
@@ -177,8 +186,8 @@ Editor.prototype.drawGrid = function() {
 	var percent = (logWorldScale < 0) ? 1 : (1 - logWorldScale + Math.floor(logWorldScale));
 
 	// Work out which lines we have to draw
-	var min = this.viewportToWorld(new Vector(0, this.canvas.height));
-	var max = this.viewportToWorld(new Vector(this.canvas.width, 0));
+	var min = this.viewportToWorld(new Vector(0, this.height));
+	var max = this.viewportToWorld(new Vector(this.width, 0));
 	var minX = Math.floor(min.x / nextResolution) * nextResolution;
 	var minY = Math.floor(min.y / nextResolution) * nextResolution;
 	var maxX = Math.ceil(max.x / nextResolution) * nextResolution;
@@ -197,7 +206,7 @@ Editor.prototype.drawGrid = function() {
 		c.lineTo(maxX, y);
 	}
 	c.stroke();
-	
+
 	// Draw the fading lines
 	c.strokeStyle = rgba(0, 0, 0, 0.2 * percent * percent);
 	c.beginPath();
@@ -220,7 +229,7 @@ Editor.prototype.mouseDown = function(point, buttons, modifierKeyPressed) {
 	} else if (buttons == MOUSE_LEFT) {
 		// Use selected tool on left click
 		this.activeTool = this.selectedTool;
-		
+
 		if (this.activeTool != null) {
 			// Need to clear macro stack here if we get a mousedown event without a mouseup event
 			this.doc.undoStack.endAllMacros();
@@ -282,8 +291,8 @@ Editor.prototype.doubleClick = function(point) {
 
 Editor.prototype.viewportToWorld = function(viewportPoint) {
 	// Convenience method to convert from viewport to world coordinates
-	var x = (viewportPoint.x - this.canvas.width / 2) / this.worldScale + this.worldCenter.x;
-	var y = (this.canvas.height / 2 - viewportPoint.y) / this.worldScale + this.worldCenter.y;
+	var x = (viewportPoint.x - this.width / 2) / this.worldScale + this.worldCenter.x;
+	var y = (this.height / 2 - viewportPoint.y) / this.worldScale + this.worldCenter.y;
 	return new Vector(x, y);
 };
 
