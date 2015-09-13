@@ -38,3 +38,5 @@ group :development do
 	gem 'sqlite3'
 	gem 'nifty-generators'
 end
+
+ruby "2.1.5"

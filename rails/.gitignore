@@ -1,9 +1,0 @@
-# standard annoying things
-.DS_Store
-*.pyc
-*.swp
-*~
-
-# build files
-game/www/rapt.js
-editor/www/editor.js
