@@ -1277,7 +1277,7 @@ this.modificationCount = -1;;
 
 };
 BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
-var ratio = window.devicePixelRatio;
+var ratio = window['devicePixelRatio'];
 if (this.modificationCount != gameState.modificationCount || xmin < this.xmin || xmax > this.xmax || ymin < this.ymin || ymax > this.ymax || this.ratio != ratio) {
 this.modificationCount = gameState.modificationCount;;
 var viewportWidth = 2 * (xmax - xmin);
@@ -1305,7 +1305,7 @@ this.c.restore();;
 };
 c.mozImageSmoothingEnabled = false;;
 c.save();;
-var ratio = window.devicePixelRatio;
+var ratio = window['devicePixelRatio'];
 c.setTransform(ratio, 0, 0, ratio, 0, 0);;
 c.drawImage(this.canvas, Math.round((this.xmin - xmin) * gameScale), Math.round((2 * ymin - ymax - this.ymin) * gameScale), this.width, this.height);;
 c.restore();;
@@ -4011,7 +4011,7 @@ Level.prototype.tick = function() {
 var currentTime = new Date();
 var seconds = (currentTime - this.lastTime) / 1000;
 this.lastTime = currentTime;;
-var ratio = window.devicePixelRatio;
+var ratio = window['devicePixelRatio'];
 if (ratio != this.ratio) {
 this.canvas.width = Math.round(this.width * ratio);;
 this.canvas.height = Math.round(this.height * ratio);;

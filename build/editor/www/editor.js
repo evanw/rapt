@@ -587,7 +587,7 @@ Editor.prototype.setSidePanelTool = function() {
 
 Editor.prototype.resize = function(width, height) {
 	// Retina support
-	var ratio = window.devicePixelRatio;
+	var ratio = window['devicePixelRatio'];
 	this.width = width;
 	this.height = height;
 	this.canvas.width = Math.round(width * ratio);
