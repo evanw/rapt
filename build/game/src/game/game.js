@@ -23,7 +23,7 @@ function Game() {
 
 	this.isDone = false;
 	this.onWin = null;
-	
+
 	// whether this game is the last level in the menu, this will be updated by main.js when the menu loads
 	this.lastLevel = false;
 
@@ -48,7 +48,7 @@ Game.prototype.tick = function(seconds) {
 	//	 - variable physics tick: 55 FPS
 	//	 - fixed physics tick: 50 FPS
 	// overall, a fixed physics tick provides about 5 FPS drop but fixes a lot of
-	// gameplay issues (measurements above approximate but within about +/-1) 
+	// gameplay issues (measurements above approximate but within about +/-1)
 
 	if (useFixedPhysicsTick) {
 		// fixed physics tick
@@ -67,7 +67,7 @@ Game.prototype.tick = function(seconds) {
 
 	// smooth the fps a bit
 	this.fps = lerp(this.fps, 1 / seconds, 0.05);
-	
+
 	// handle winning the game
 	if (!this.isDone && gameState.gameStatus != GAME_IN_PLAY) {
 		this.isDone = true;
@@ -86,14 +86,14 @@ Game.prototype.render = function(c, center, width, height, backgroundCache) {
 	var ymax = center.y + halfHeight;
 	c.save();
 	c.translate(-center.x, -center.y);
-	
+
 	// draw the background, backgroundCache is an optional argument
 	if (backgroundCache) {
 		backgroundCache.draw(c, xmin, ymin, xmax, ymax);
 	} else {
 		gameState.world.draw(c, xmin, ymin, xmax, ymax);
 	}
-	
+
 	gameState.draw(c, xmin, ymin, xmax, ymax);
 	Particle.draw(c);
 	c.restore();
@@ -142,7 +142,7 @@ Game.prototype.draw = function(c) {
 		c.fillStyle = '#BFBFBF';
 		c.fillRect(0, 0, this.width, this.height);
 	}
-	
+
 	// draw the game
 	c.save();
 	c.translate(this.width / 2, this.height / 2);

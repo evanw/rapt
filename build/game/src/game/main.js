@@ -36,6 +36,11 @@ function ajaxGet(what, url, onSuccess) {
 	});
 }
 
+function globalScaleFactor() {
+	// return window['devicePixelRatio']; // This is too slow T_T
+	return 1;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // class MenuItem
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +205,7 @@ Level.prototype.tick = function() {
 	this.lastTime = currentTime;
 
 	// Retina support
-	var ratio = window['devicePixelRatio'];
+	var ratio = globalScaleFactor();
 	if (ratio != this.ratio) {
 		this.canvas.width = Math.round(this.width * ratio);
 		this.canvas.height = Math.round(this.height * ratio);

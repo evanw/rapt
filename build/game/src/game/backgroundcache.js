@@ -52,7 +52,7 @@ function BackgroundCache(name) {
 }
 
 BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
-	var ratio = window['devicePixelRatio']; // Retina support
+	var ratio = globalScaleFactor(); // Retina support
 
 	// if cache is invalid, update cache
 	if (this.modificationCount != gameState.modificationCount || xmin < this.xmin || xmax > this.xmax || ymin < this.ymin || ymax > this.ymax || this.ratio != ratio) {
@@ -108,7 +108,7 @@ BackgroundCache.prototype.draw = function(c, xmin, ymin, xmax, ymax) {
 	// advantage of fast blitting, otherwise browsers will use slow software bilinear interpolation
 	c.mozImageSmoothingEnabled = false;
 	c.save();
-	var ratio = window['devicePixelRatio']; // Retina support
+	var ratio = globalScaleFactor(); // Retina support
 	c.setTransform(ratio, 0, 0, ratio, 0, 0);
 	c.drawImage(this.canvas,
 		Math.round((this.xmin - xmin) * gameScale),
