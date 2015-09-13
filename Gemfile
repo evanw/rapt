@@ -43,4 +43,4 @@ group :development do
 	gem 'nifty-generators'
 end
 
-ruby "2.1.5"
+ruby "2.0.0"
