@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head>
+	<title>Editor - Robots Are People Too</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+	<script src="jquery.mousewheel.min.js" type="text/javascript"></script>
+	<script src="editor.js" type="text/javascript"></script>
+	<link type="text/css" rel="stylesheet" href="style.css" />
+	
+	<!-- this is just for testing, TODO: remove this -->
+	<script type="text/javascript"><!--
+
+var username = "rapt";
+var levelname = "foo";
+
+	// --></script>
+</head><body>
+	<div id="toolbar">
+		<div class="section">
+			<a id="mode_empty" class="first toolbar-current">Empty
+			</a><a id="mode_solid">Solid
+			</a><a id="mode_diagonal" class="last">Diagonal
+			</a>
+			<div class="label">Tiles</div>
+		</div>
+		<div class="section">
+			<a id="mode_start" class="first">Start
+			</a><a id="mode_goal" class="last">Goal
+			</a>
+			<div class="label">Players</div>
+		</div>
+		<div class="section">
+			<a id="mode_enemies" class="first">Enemies
+			</a><a id="mode_walls_buttons">Walls / Buttons
+			</a><a id="mode_cog">Cog
+			</a><a id="mode_sign" class="last">Sign
+			</a>
+			<div class="label">Objects</div>
+		</div>
+		<div class="section">
+			<a id="mode_select" class="first">Select
+			</a><a id="mode_help">Help
+			</a><a id="mode_save_exit" class="last">Save &amp; Exit
+			</a>
+			<div class="label">Other</div>
+		</div>
+	</div>
+	<div id="loading">Loading...</div>
+	<canvas id="canvas"></canvas>
+	<div id="help" class="sidebar"></div>
+	<div id="enemies" class="sidebar"></div>
+	<div id="walls" class="sidebar"></div>
+	<div id="darken"></div>
+	<div id="sign-text-modal">
+		<div>Text for help sign:</div>
+		<input type="text" id="sign-text">
+		<button id="sign-text-change">Change</button>
+		<button id="sign-text-cancel">Cancel</button>
+	</div>
+	<div id="overlay"></div>
+</body</html>
