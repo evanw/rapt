@@ -18,11 +18,11 @@ function overlay(text) {
 }
 
 function getLevelLoadURL() {
-	return 'http://' + location.host + '/data/' + username + '/' + levelname + '/';
+	return '//' + location.host + '/data/' + username + '/' + levelname + '/';
 }
 
 function getLevelSaveURL() {
-	return 'http://' + location.host + '/edit/' + levelname + '/';
+	return '//' + location.host + '/edit/' + levelname + '/';
 }
 
 function ajaxGetLevel(onSuccess) {

@@ -6,8 +6,8 @@ var SPACEBAR = 32;
 var UP_ARROW = 38;
 var DOWN_ARROW = 40;
 
-function getMenuUrl(username) { return 'http://' + location.host + '/data/' + username + '/'; }
-function getLevelUrl(username, levelname) { return 'http://' + location.host + '/data/' + username + '/' + levelname + '/'; }
+function getMenuUrl(username) { return '//' + location.host + '/data/' + username + '/'; }
+function getLevelUrl(username, levelname) { return '//' + location.host + '/data/' + username + '/' + levelname + '/'; }
 function text2html(text) {
        return text ? text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;') : '';
 }
