@@ -17,6 +17,13 @@ function ajaxGet(what, url, onSuccess) {
 	function showError() {
 		$('#loadingScreen').html('Could not load ' + what + ' from<br><b>' + text2html(url) + '</b>');
 	}
+	
+	if (ajaxGet._cache[url]) {
+		setTimeout(function () {
+			onSuccess(ajaxGet._cache[url]);
+		}, 0);
+		return;
+	}
 
 	$.ajax({
 		'url': url,
@@ -26,6 +33,7 @@ function ajaxGet(what, url, onSuccess) {
 		'success': function(data, status, request) {
 			if (data != null) {
 				onSuccess(data);
+				ajaxGet._cache[url] = data;
 			} else {
 				showError();
 			}
@@ -35,6 +43,7 @@ function ajaxGet(what, url, onSuccess) {
 		}
 	});
 }
+ajaxGet._cache = Object.create(null); // IE9+, Opera 12+, iOS 6+
 
 function globalScaleFactor() {
 	// return window['devicePixelRatio']; // This is too slow T_T
