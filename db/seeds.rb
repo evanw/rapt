@@ -11,7 +11,7 @@ rapt_user = User.create(username: "rapt", email: "admin@raptgame.com", password:
 
 rapt_user = User.first
 Dir.foreach("#{Rails.root}/../official_levels") do |f|
-  next if f == '.' or f == '..'
+  next if f == '.' or f == '..' or !f.end_with?('.json')
   data = ''
   File.open("#{Rails.root}/../official_levels/#{f}", "r") { |fs| data = fs.read }
   title = f.chomp('.json').gsub(/-/, ' ').gsub(/[^A-Za-z0-9 ]/, '')
